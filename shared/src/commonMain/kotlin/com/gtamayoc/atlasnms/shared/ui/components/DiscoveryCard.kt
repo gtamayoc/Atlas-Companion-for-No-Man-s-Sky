@@ -16,6 +16,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -32,6 +33,17 @@ fun DiscoveryCard(
     modifier: Modifier = Modifier,
     onClick: () -> Unit = {}
 ) {
+    val surfaceColor = MaterialTheme.colorScheme.surface
+    val gradientBrush = remember(surfaceColor) {
+        Brush.verticalGradient(
+            colors = listOf(
+                Color.Transparent,
+                surfaceColor.copy(alpha = 0.4f),
+                surfaceColor
+            )
+        )
+    }
+
     Surface(
         modifier = modifier
             .fillMaxWidth()
@@ -51,19 +63,11 @@ fun DiscoveryCard(
                 )
             }
             
-            // Gradient Overlay
+            // Gradient Overlay optimizado
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(
-                        Brush.verticalGradient(
-                            colors = listOf(
-                                Color.Transparent,
-                                MaterialTheme.colorScheme.surface.copy(alpha = 0.4f),
-                                MaterialTheme.colorScheme.surface
-                            )
-                        )
-                    )
+                    .background(gradientBrush)
             )
 
             // Content
@@ -98,7 +102,8 @@ fun DiscoveryCard(
                 Text(
                     text = discovery.name,
                     style = MaterialTheme.typography.titleLarge,
-                    color = MaterialTheme.colorScheme.onSurface
+                    color = MaterialTheme.colorScheme.onSurface,
+                    maxLines = 1
                 )
                 
                 Spacer(modifier = Modifier.height(4.dp))
@@ -106,7 +111,8 @@ fun DiscoveryCard(
                 Text(
                     text = "${discovery.systemName} // ${discovery.galaxy}",
                     style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    maxLines = 1
                 )
                 
                 Spacer(modifier = Modifier.height(8.dp))

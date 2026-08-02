@@ -389,25 +389,28 @@ core/
 
 Las entidades de dominio pueden modelarse con Kotlin usando una base común, por ejemplo `Discovery`, y tipos especializados como `PlanetDiscovery`, `FaunaDiscovery`, `ShipDiscovery` o `BaseDiscovery`. Cada entidad debe conservar tanto sus datos normalizados como la evidencia original que justifica esos datos.
 
-## Fases de desarrollo
+## Fases de desarrollo y Progreso Actual
 
-### Fase 1: MVP de bitácora
+### Fase 1: MVP de bitácora **[COMPLETADA]**
 
-Construir navegación, diseño base, Room, creación manual mínima, importación de imágenes, bitácora y categorías iniciales: sistemas, planetas, fauna y naves.
+Construir navegación reactiva, diseño base (Grounded Material), base de datos KMP (SqlDelight), y categorías iniciales. 
+- *Estado:* Implementado el `HomeScreen`, `ExploreScreen` con filtros y estadísticas, y `SettingsScreen` con normativas legales. Optimización de rendimiento para dispositivos de baja memoria integrada exitosamente.
 
-### Fase 2: OCR y revisión
+### Fase 2: OCR y preprocesamiento **[EN PROGRESO]**
 
-Integrar OCR local, preprocesamiento de capturas y pantalla de revisión de campos detectados. El objetivo es que la aplicación ya reduzca la escritura manual incluso sin IA remota.
+Integrar OCR local, preprocesamiento de capturas y pantalla de revisión de campos detectados.
+- *Estado:* **Preprocesamiento nativo C completado** (`NativeImageProcessor` con algoritmos a nivel de bits). `ScanScreen` implementada con flujo de prueba interactivo.
+- *Pendiente:* Conectar una librería OCR real (como ML Kit) y la cámara/galería del dispositivo.
 
-### Fase 3: DeepSeek estructurado
+### Fase 3: DeepSeek estructurado **[PENDIENTE]**
 
 Incorporar el motor de interpretación JSON, validación de esquema, niveles de confianza, control de errores y almacenamiento de evidencia.
 
-### Fase 4: Biblioteca y herramientas
+### Fase 4: Biblioteca y herramientas **[PENDIENTE]**
 
-Añadir minerales, recetas, glifos, conversores, filtros avanzados, comparadores y estadísticas personales.
+Añadir minerales, recetas, glifos, conversores, filtros avanzados, comparadores y estadísticas personales avanzadas.
 
-### Fase 5: Exportación y sincronización
+### Fase 5: Exportación y sincronización **[PENDIENTE]**
 
 Generar fichas compartibles, JSON, CSV, enlaces, copias de seguridad y una API o sitio web opcional para mostrar la colección del usuario.
 

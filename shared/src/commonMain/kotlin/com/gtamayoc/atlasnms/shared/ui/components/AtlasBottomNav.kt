@@ -11,41 +11,45 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
+import com.gtamayoc.atlasnms.shared.ui.navigation.AppScreen
 
 @Composable
 fun AtlasBottomNav(
+    currentScreen: AppScreen,
+    onScreenSelected: (AppScreen) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    var selectedIndex by remember { mutableStateOf(0) }
-    
-    // Glassmorphism effect via alpha and border
     Row(
         modifier = modifier
             .fillMaxWidth()
             .background(MaterialTheme.colorScheme.surfaceContainerLow.copy(alpha = 0.95f))
             .border(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.2f))
-            .padding(vertical = 12.dp, horizontal = 24.dp),
-        horizontalArrangement = Arrangement.SpaceBetween,
+            .padding(vertical = 12.dp, horizontal = 16.dp),
+        horizontalArrangement = Arrangement.SpaceAround,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        NavItem("DESCUBRIMIENTOS", selectedIndex == 0) { selectedIndex = 0 }
-        NavItem("EXPLORAR", selectedIndex == 1) { selectedIndex = 1 }
-        NavItem("AJUSTES", selectedIndex == 2) { selectedIndex = 2 }
+        AppScreen.entries.forEach { screen ->
+            NavItem(
+                label = screen.label,
+                isSelected = currentScreen == screen,
+                onClick = { onScreenSelected(screen) }
+            )
+        }
     }
 }
 
 @Composable
-private fun NavItem(label: String, isSelected: Boolean, onClick: () -> Unit) {
+private fun NavItem(
+    label: String,
+    isSelected: Boolean,
+    onClick: () -> Unit
+) {
     val color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
-    val bgColor = if (isSelected) MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.3f) else MaterialTheme.colorScheme.surfaceColorAtElevation(0.dp).copy(alpha = 0f)
+    val bgColor = if (isSelected) MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.3f) else MaterialTheme.colorScheme.surface.copy(alpha = 0f)
     
     Text(
         text = label,
@@ -58,6 +62,3 @@ private fun NavItem(label: String, isSelected: Boolean, onClick: () -> Unit) {
             .padding(horizontal = 12.dp, vertical = 6.dp)
     )
 }
-// Helper para surfaceColorAtElevation, como no está expuesto directamente de forma fácil, usamos transparente
-private fun androidx.compose.material3.ColorScheme.surfaceColorAtElevation(elevation: androidx.compose.ui.unit.Dp) = this.surface
-

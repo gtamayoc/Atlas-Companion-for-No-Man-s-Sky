@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>ATLAS_LOGBOOK | INTERLOPER_01</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;600;700&amp;family=Space+Mono:wght@400;700&amp;family=Inter:wght@400;500;600&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface": "#121212",
+                        "surface-container-low": "#1e1e1e",
+                        "surface-container": "#252525",
+                        "surface-container-high": "#2c2c2c",
+                        "primary": "#d17d6c", // Muted terracotta
+                        "on-primary": "#2a100a",
+                        "primary-container": "#4a2a24",
+                        "on-primary-container": "#ffdad4",
+                        "secondary": "#7fb3b3", // Desaturated teal
+                        "on-secondary": "#003737",
+                        "secondary-container": "#1e4d4d",
+                        "on-secondary-container": "#b2eaea",
+                        "outline": "#857370",
+                        "outline-variant": "#534341",
+                        "on-surface": "#e6e1e0",
+                        "on-surface-variant": "#d8c2be"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "4px",
+                        "lg": "8px",
+                        "xl": "12px",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "stack-md": "20px",
+                        "stack-sm": "8px",
+                        "unit": "4px",
+                        "gutter": "12px",
+                        "container-margin": "16px",
+                        "stack-lg": "40px"
+                    },
+                    "fontFamily": {
+                        "headline-lg": ["Space Grotesk"],
+                        "code-sm": ["Space Mono"],
+                        "headline-lg-mobile": ["Space Grotesk"],
+                        "label-caps": ["Space Mono"],
+                        "display-lg": ["Space Grotesk"],
+                        "body-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "headline-lg": ["32px", {"lineHeight": "1.2", "fontWeight": "600"}],
+                        "code-sm": ["12px", {"lineHeight": "1.4", "letterSpacing": "0.05em", "fontWeight": "400"}],
+                        "headline-lg-mobile": ["24px", {"lineHeight": "1.2", "fontWeight": "600"}],
+                        "label-caps": ["10px", {"lineHeight": "1", "letterSpacing": "0.1em", "fontWeight": "700"}],
+                        "display-lg": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            background-color: #121212;
+            color: #e6e1e0;
+        }
+        .surface-card {
+            background-color: #1e1e1e;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: background-color 0.2s ease;
+        }
+        .surface-card:hover {
+            background-color: #252525;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        /* Matte scientific feel: remove all vibrant glows/animations */
+        @keyframes subtle-pulse {
+            0%, 100% { opacity: 0.4; }
+            50% { opacity: 0.8; }
+        }
+        .pulse-muted {
+            animation: subtle-pulse 3s ease-in-out infinite;
+        }
+    </style>
+</head>
+<body class="font-body-md overflow-x-hidden antialiased">
+<!-- Sidebar Navigation (Desktop) -->
+<nav class="hidden md:flex flex-col h-full fixed left-0 top-0 z-40 bg-surface-container-low border-r border-outline-variant/20 w-64">
+<div class="p-gutter pt-stack-lg">
+<h1 class="font-display-lg text-primary tracking-widest text-center">ATLAS</h1>
+<div class="mt-stack-lg space-y-1">
+<!-- Home Active -->
+<a class="flex items-center gap-stack-sm bg-primary-container/30 text-primary border-l-2 border-primary px-4 py-3 transition-all" href="#">
+<span class="material-symbols-outlined text-[20px]">home</span>
+<span class="font-label-caps text-label-caps">HOME</span>
+</a>
+<!-- Other Items -->
+<a class="flex items-center gap-stack-sm text-on-surface-variant/70 px-4 py-3 hover:bg-surface-container hover:text-on-surface transition-all" href="#">
+<span class="material-symbols-outlined text-[20px]">book</span>
+<span class="font-label-caps text-label-caps">JOURNAL</span>
+</a>
+<a class="flex items-center gap-stack-sm text-on-surface-variant/70 px-4 py-3 hover:bg-surface-container hover:text-on-surface transition-all" href="#">
+<span class="material-symbols-outlined text-[20px]">explore</span>
+<span class="font-label-caps text-label-caps">DISCOVERIES</span>
+</a>
+<a class="flex items-center gap-stack-sm text-on-surface-variant/70 px-4 py-3 hover:bg-surface-container hover:text-on-surface transition-all" href="#">
+<span class="material-symbols-outlined text-[20px]">inventory_2</span>
+<span class="font-label-caps text-label-caps">LIBRARY</span>
+</a>
+</div>
+</div>
+<div class="mt-auto p-gutter border-t border-outline-variant/20">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg overflow-hidden border border-outline-variant/40">
+<img alt="Astronaut profile" class="w-full h-full object-cover grayscale opacity-80" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAQgQxxjJXhoMrJ5IQvCBvP3OOliKsDqtaUms3TfmSyuSY7m2v8scVCcPYTRuTC_HlW0Et9WuwYw6tvJKdZ0tr2LPVAdHkMHbKWCQaczUki5-oaG1-5EnI0TUfSActJnBGDib9KxJdFMamg0YpHCc-KjNasUGKQVbF50LmV03Iu91B-d21za5XqUvymGfMIPN7M4VFxB4qgCn4X11P-G4EWfVT1WxV7hzXAiOym7WxI_QX2gbjMJmxdZQ"/>
+</div>
+<div>
+<p class="font-label-caps text-label-caps text-on-surface">INTERLOPER_01</p>
+<p class="text-[10px] text-on-surface-variant/60 font-code-sm">16-16-16-16</p>
+</div>
+</div>
+</div>
+</nav>
+<!-- Mobile Top Bar -->
+<header class="md:ml-64 flex justify-between items-center w-full px-gutter py-stack-sm max-w-full z-50 sticky top-0 bg-surface border-b border-outline-variant/20">
+<div class="flex flex-col">
+<span class="font-label-caps text-[9px] text-on-surface-variant/60">BIENVENIDO DE NUEVO,</span>
+<h2 class="font-headline-lg-mobile text-headline-lg-mobile font-semibold tracking-tight text-on-surface">INTERLOPER_01</h2>
+</div>
+<div class="flex items-center gap-stack-sm">
+<div class="hidden sm:flex flex-col items-end mr-4">
+<span class="font-label-caps text-[9px] text-on-surface-variant/60">GALAXIA ACTUAL</span>
+<span class="font-code-sm text-secondary font-medium">EUCLID</span>
+</div>
+<button class="material-symbols-outlined text-on-surface-variant p-2 hover:bg-surface-container-high rounded-full transition-colors">account_circle</button>
+</div>
+</header>
+<main class="md:ml-64 p-container-margin md:p-stack-lg space-y-stack-lg max-w-7xl mx-auto">
+<!-- Stats Row -->
+<section class="grid grid-cols-2 lg:grid-cols-4 gap-gutter">
+<div class="surface-card p-gutter">
+<span class="font-label-caps text-[10px] text-on-surface-variant/80 block mb-2">DESCUBRIMIENTOS TOTALES</span>
+<div class="flex items-baseline gap-2">
+<span class="font-headline-lg text-on-surface">1,284</span>
+<span class="font-code-sm text-primary text-[11px]">+12</span>
+</div>
+</div>
+<div class="surface-card p-gutter">
+<span class="font-label-caps text-[10px] text-on-surface-variant/80 block mb-2">SISTEMAS EXPLORADOS</span>
+<div class="flex items-baseline gap-2">
+<span class="font-headline-lg text-on-surface">86</span>
+<span class="font-code-sm text-on-surface-variant/40 text-[11px]">S:3</span>
+</div>
+</div>
+<div class="surface-card p-gutter border-l-4 border-l-primary/40">
+<span class="font-label-caps text-[10px] text-on-surface-variant/80 block mb-2">PLANETAS REGISTRADOS</span>
+<div class="flex items-baseline gap-2">
+<span class="font-headline-lg text-on-surface">412</span>
+<span class="font-code-sm text-primary text-[11px]">92%</span>
+</div>
+</div>
+<div class="surface-card p-gutter border-l-4 border-l-secondary/40">
+<span class="font-label-caps text-[10px] text-on-surface-variant/80 block mb-2">HALLAZGOS RAROS</span>
+<div class="flex items-baseline gap-2">
+<span class="font-headline-lg text-on-surface">07</span>
+<span class="font-code-sm text-secondary text-[11px]">EXOTIC</span>
+</div>
+</div>
+</section>
+<!-- Main Content Area -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-stack-lg">
+<!-- Recent Activity Timeline -->
+<section class="lg:col-span-1 space-y-gutter">
+<div class="flex items-center justify-between">
+<h3 class="font-label-caps text-[11px] text-on-surface-variant tracking-wider flex items-center gap-2">
+<span class="w-1.5 h-1.5 bg-primary pulse-muted"></span> ACTIVIDAD RECIENTE
+                    </h3>
+<a class="font-code-sm text-primary/80 hover:text-primary transition-colors text-[10px]" href="#">VER TODO &gt;</a>
+</div>
+<div class="space-y-3">
+<!-- Activity Item 1 -->
+<div class="surface-card p-3 flex gap-4 hover:border-outline-variant transition-all">
+<div class="w-14 h-14 shrink-0 bg-surface-container-high border border-outline-variant/30">
+<img alt="Ship finding" class="w-full h-full object-cover opacity-70 grayscale" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB7jgYT0gtUPxrVosBjE08RMHVRlvzZ_4qCHBJ3PObx64t8f46mIFPzgSWc7f7MhTGnPsowXt90Uzcyd1F5vp8TrYikR6_zkOK_MQHeRvwr5kCFGz3MaXXgnJS8D_3T0WI3fdBwE7dyUsHwLrckBVXRQRRtwa7Kdk2TGSuWLMDYG_pknjIEKDdC9dp4h4d6PuafMz0H9vQSN83nw2Biw47_043Tn8mBuDk5RvkFiqUNk3dqjXmp-vH9vQ"/>
+</div>
+<div class="flex flex-col justify-between flex-1 py-0.5">
+<div>
+<p class="text-[9px] font-code-sm text-secondary uppercase tracking-tighter">NAVE EXÓTICA ENCONTRADA</p>
+<p class="text-sm font-medium text-on-surface">Sistema Othaen V</p>
+</div>
+<div class="flex items-center justify-between">
+<span class="bg-secondary/10 text-secondary text-[8px] font-label-caps px-2 py-0.5 rounded border border-secondary/20">CONFIRMADO</span>
+<span class="text-[9px] font-code-sm text-on-surface-variant/50">HACE 2H</span>
+</div>
+</div>
+</div>
+<!-- Activity Item 2 -->
+<div class="surface-card p-3 flex gap-4 hover:border-outline-variant transition-all">
+<div class="w-14 h-14 shrink-0 bg-surface-container-high border border-outline-variant/30">
+<img alt="Paradise planet" class="w-full h-full object-cover opacity-70 grayscale" src="https://lh3.googleusercontent.com/aida-public/AB6AXuANDVTdBGRPWiCGa3yW4-3DpXoVxnRPQUz7Yl1Z4DyH-5zFzKECRCCXZ9ACwwd9hSnyUsQWsA7zrot3hu4mRczWYmIjHH6hoqvKWjVcS8nYfa8D8XKGLGekayFplez03jYGea5xWUKMIECAGvCWCuFjEEAgLY24VIIP75Cnxem4mJTiVFXHL6lhoOpqbMl5onumBfcTZKrVmK0RqdS3_6WgUDwpzviJqT7jzDDDHEVWmLWhU9bX_IjVLQ"/>
+</div>
+<div class="flex flex-col justify-between flex-1 py-0.5">
+<div>
+<p class="text-[9px] font-code-sm text-primary uppercase tracking-tighter">PLANETA PARAÍSO: ELYRIA PRIME</p>
+<p class="text-sm font-medium text-on-surface">Sector de Carga Alpha</p>
+</div>
+<div class="flex items-center justify-between">
+<span class="bg-secondary/10 text-secondary text-[8px] font-label-caps px-2 py-0.5 rounded border border-secondary/20">CONFIRMADO</span>
+<span class="text-[9px] font-code-sm text-on-surface-variant/50">HACE 5H</span>
+</div>
+</div>
+</div>
+<!-- Activity Item 3 -->
+<div class="surface-card p-3 flex gap-4 hover:border-outline-variant transition-all">
+<div class="w-14 h-14 shrink-0 bg-surface-container-high border border-outline-variant/30">
+<img alt="Rare resource" class="w-full h-full object-cover opacity-70 grayscale" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAWzFAJslXoS5ZnreWNJt2aSlrOjL9jbIITlMvGAifoEZ5tnfJVEfIYSGj8Z5fvi65NzTtJSpM0sxjkzH1OzaBFaqx_EGC4EQqxrPYxHRy_Oi_3nEFMQFIUwkztlWllFrqUit5_Y0tKCW8CFBvGiKQ5sSmcFPX9SHBjhOVSR2UBvA3Cy1qjt743IJfyJDiRASMvKt0ZdTrohQIMv9-WBrmmrowdnDlg4_6PACg9jBPIfPzQCgBNC5z5iw"/>
+</div>
+<div class="flex flex-col justify-between flex-1 py-0.5">
+<div>
+<p class="text-[9px] font-code-sm text-on-surface-variant uppercase tracking-tighter">RECURSO RARO: DEPÓSITO DE CADMIO</p>
+<p class="text-sm font-medium text-on-surface">Luna de Korth-9</p>
+</div>
+<div class="flex items-center justify-between">
+<span class="bg-secondary/10 text-secondary text-[8px] font-label-caps px-2 py-0.5 rounded border border-secondary/20">CONFIRMADO</span>
+<span class="text-[9px] font-code-sm text-on-surface-variant/50">HACE 1D</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Exploration Breakdown Grid -->
+<section class="lg:col-span-2 space-y-gutter">
+<h3 class="font-label-caps text-[11px] text-on-surface-variant tracking-wider flex items-center gap-2">
+                    ANÁLISIS DE EXPLORACIÓN
+                </h3>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-gutter">
+<!-- Biome Distribution -->
+<div class="surface-card p-gutter h-64 flex flex-col">
+<span class="font-label-caps text-[10px] text-on-surface-variant/60 mb-6">DISTRIBUCIÓN DE BIOMAS</span>
+<div class="flex-1 flex items-end gap-3 px-4">
+<div class="flex-1 bg-primary/20 h-[80%] border-t border-primary/40"></div>
+<div class="flex-1 bg-secondary/20 h-[65%] border-t border-secondary/40"></div>
+<div class="flex-1 bg-on-surface-variant/10 h-[40%] border-t border-on-surface-variant/30"></div>
+<div class="flex-1 bg-on-surface-variant/5 h-[20%] border-t border-on-surface-variant/20"></div>
+</div>
+<div class="mt-4 flex justify-between font-code-sm text-[9px] text-on-surface-variant/60 px-2">
+<span>TOTAL: 14 TIPOS</span>
+<span>PRECISIÓN: 99.8%</span>
+</div>
+</div>
+<!-- Fauna Progress -->
+<div class="surface-card p-gutter h-64 flex flex-col justify-between">
+<div>
+<span class="font-label-caps text-[10px] text-on-surface-variant/60">PROGRESO DE FAUNA</span>
+<div class="mt-6 flex items-center gap-6">
+<div class="relative w-20 h-20">
+<svg class="w-full h-full transform -rotate-90">
+<circle class="text-surface-container-high" cx="40" cy="40" fill="transparent" r="36" stroke="currentColor" stroke-width="6"></circle>
+<circle class="text-secondary" cx="40" cy="40" fill="transparent" r="36" stroke="currentColor" stroke-dasharray="226.2" stroke-dashoffset="56.5" stroke-linecap="round" stroke-width="6"></circle>
+</svg>
+<div class="absolute inset-0 flex items-center justify-center font-semibold text-lg text-on-surface">75%</div>
+</div>
+<div class="space-y-1">
+<p class="font-code-sm text-sm text-on-surface">3,412 <span class="text-[10px] text-on-surface-variant/60">ESPECIES</span></p>
+<p class="font-code-sm text-[9px] text-secondary/80 uppercase">DESCUBIERTO</p>
+<p class="font-code-sm text-sm text-on-surface-variant/40">1,130 <span class="text-[10px] text-on-surface-variant/40">PENDIENTES</span></p>
+</div>
+</div>
+</div>
+<div class="pt-4 border-t border-outline-variant/10">
+<button class="w-full text-left font-label-caps text-[9px] text-primary flex justify-between items-center hover:translate-x-1 transition-transform uppercase tracking-widest">
+                                ABRIR CATÁLOGO BIOLÓGICO <span class="material-symbols-outlined text-[14px]">arrow_forward</span>
+</button>
+</div>
+</div>
+<!-- Favorite Discovery (Bento Large) -->
+<div class="md:col-span-2 surface-card overflow-hidden flex flex-col md:flex-row min-h-[280px]">
+<div class="md:w-1/2 relative h-64 md:h-auto border-r border-outline-variant/10">
+<img alt="Xenofauna Discovery" class="w-full h-full object-cover opacity-60 grayscale hover:grayscale-0 transition-all duration-700" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCF4Q40DZKLJrNRPe7BQLKpbiSvZV3GCsUgMFGtPdfw63Uuoy7ULQzzlKFM4wO6uLuECP6EFTgnGnMJylG7QQHnFLaTD69nQFwJjRI97tt_qGZxXFWOiVsDUNLRJmK5HIqryH-ktdYCWciaj9nVFji0Y_-3VXdtlumvgnNAanxK15QhzNiLUlf-dH6kTt7RBx0ur8G8lFuCpWXArlB2ST_X_3NupWzUKSUzsafPlePFRolCBsP5RnzzUg"/>
+<div class="absolute inset-0 bg-gradient-to-t from-surface via-surface/40 to-transparent"></div>
+<div class="absolute bottom-4 left-4 right-4">
+<div class="flex gap-2 mb-2">
+<span class="bg-primary-container text-primary font-label-caps text-[8px] px-2 py-1 rounded border border-primary/20">HALLAZGO DESTACADO</span>
+<span class="bg-black/40 backdrop-blur-sm text-on-surface-variant font-code-sm text-[8px] px-2 py-1 rounded border border-white/5">REF: X-992-A</span>
+</div>
+<h4 class="font-headline-lg text-on-surface text-2xl">Xenofauna Gigante: "Atlas-Titan"</h4>
+</div>
+</div>
+<div class="md:w-1/2 p-gutter flex flex-col justify-between bg-surface-container-low/20">
+<div class="space-y-6">
+<div class="flex justify-between items-start">
+<span class="font-label-caps text-[10px] text-on-surface-variant/60 tracking-widest">REGISTRO DE GLIFOS</span>
+<span class="material-symbols-outlined text-primary text-[18px]">bookmark</span>
+</div>
+<!-- Gliph Grid -->
+<div class="grid grid-cols-6 gap-2">
+<div class="aspect-square bg-surface-container-high flex items-center justify-center border border-outline-variant/20 rounded"><span class="material-symbols-outlined text-[16px] text-on-surface-variant/40">filter_1</span></div>
+<div class="aspect-square bg-surface-container-high flex items-center justify-center border border-outline-variant/20 rounded"><span class="material-symbols-outlined text-[16px] text-on-surface-variant/40">filter_2</span></div>
+<div class="aspect-square bg-surface-container-high flex items-center justify-center border border-outline-variant/20 rounded"><span class="material-symbols-outlined text-[16px] text-on-surface-variant/40">filter_3</span></div>
+<div class="aspect-square bg-surface-container-high flex items-center justify-center border border-outline-variant/20 rounded"><span class="material-symbols-outlined text-[16px] text-on-surface-variant/40">filter_4</span></div>
+<div class="aspect-square bg-surface-container-high flex items-center justify-center border border-outline-variant/20 rounded"><span class="material-symbols-outlined text-[16px] text-on-surface-variant/40">filter_5</span></div>
+<div class="aspect-square bg-surface-container-high flex items-center justify-center border border-outline-variant/20 rounded"><span class="material-symbols-outlined text-[16px] text-on-surface-variant/40">filter_6</span></div>
+</div>
+<div class="space-y-3 pt-2">
+<div class="flex justify-between font-code-sm text-[11px]">
+<span class="text-on-surface-variant/50">UBICACIÓN:</span>
+<span class="text-on-surface font-medium">EISSENTAM // NODO 44</span>
+</div>
+<div class="flex justify-between font-code-sm text-[11px]">
+<span class="text-on-surface-variant/50">VALOR ESTIMADO:</span>
+<span class="text-primary font-medium">4.2M UNITS</span>
+</div>
+</div>
+</div>
+<button class="mt-8 border border-outline-variant text-on-surface font-label-caps py-2.5 rounded hover:bg-surface-container-high hover:border-outline transition-all text-[9px] tracking-widest uppercase">
+                                GENERAR PORTAL DE SALIDA
+                            </button>
+</div>
+</div>
+</div>
+</section>
+</div>
+</main>
+<!-- FAB: ANALYZE NEW CAPTURE -->
+<button class="fixed bottom-8 right-8 z-50 group flex items-center gap-3 bg-primary text-on-primary pl-6 pr-5 py-4 rounded-xl transition-all hover:bg-[#c16d5d] active:scale-95 shadow-lg border border-primary/20">
+<span class="font-label-caps text-[11px] tracking-[0.1em] font-bold">ANALIZAR NUEVA CAPTURA</span>
+<div class="bg-black/10 p-1.5 rounded-lg">
+<span class="material-symbols-outlined text-[20px]">add_photo_alternate</span>
+</div>
+</button>
+<!-- Mobile Bottom Nav -->
+<nav class="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-surface-container-low border-t border-outline-variant/20 px-gutter py-2.5 flex justify-around items-center">
+<a class="flex flex-col items-center gap-1 text-primary" href="#">
+<span class="material-symbols-outlined text-[22px]">home</span>
+<span class="text-[8px] font-label-caps">INICIO</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-on-surface-variant/60" href="#">
+<span class="material-symbols-outlined text-[22px]">explore</span>
+<span class="text-[8px] font-label-caps">EXPLORAR</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-on-surface-variant/60" href="#">
+<span class="material-symbols-outlined text-[22px]">inventory_2</span>
+<span class="text-[8px] font-label-caps">LOGS</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-on-surface-variant/60" href="#">
+<span class="material-symbols-outlined text-[22px]">settings</span>
+<span class="text-[8px] font-label-caps">AJUSTES</span>
+</a>
+</nav>
+<script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const statusText = document.querySelector('.text-on-surface-variant\\/60.font-code-sm');
+            setInterval(() => {
+                if (Math.random() > 0.98) {
+                    const originalText = statusText.innerText;
+                    statusText.innerText = "SYS_INT_16";
+                    statusText.classList.add('text-primary');
+                    setTimeout(() => {
+                        statusText.innerText = originalText;
+                        statusText.classList.remove('text-primary');
+                    }, 80);
+                }
+            }, 5000);
+        });
+    </script>
+</body></html>

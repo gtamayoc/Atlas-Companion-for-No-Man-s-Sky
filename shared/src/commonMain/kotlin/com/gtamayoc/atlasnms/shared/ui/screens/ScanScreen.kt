@@ -12,8 +12,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -21,6 +19,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
@@ -42,23 +41,16 @@ import com.gtamayoc.atlasnms.shared.domain.model.Discovery
 import com.gtamayoc.atlasnms.shared.domain.model.DiscoveryStatus
 import com.gtamayoc.atlasnms.shared.domain.model.DiscoveryType
 import com.gtamayoc.atlasnms.shared.domain.repository.DiscoveryRepository
+import com.gtamayoc.atlasnms.shared.domain.service.AiAnalysisResult
+import com.gtamayoc.atlasnms.shared.domain.service.AiAnalyzerService
 import com.gtamayoc.atlasnms.shared.native.NativeImageProcessor
 import com.gtamayoc.atlasnms.shared.ui.components.AtlasBottomNav
 import com.gtamayoc.atlasnms.shared.ui.components.GlyphSequence
+import com.gtamayoc.atlasnms.shared.ui.components.rememberImagePickerHandler
 import com.gtamayoc.atlasnms.shared.ui.navigation.AppScreen
 import com.gtamayoc.atlasnms.shared.ui.theme.AtlasNMSTheme
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-
-data class SampleCapture(
-    val title: String,
-    val type: DiscoveryType,
-    val defaultName: String,
-    val defaultSystem: String,
-    val defaultGalaxy: String,
-    val glyphs: List<Int>,
-    val imageUrl: String
-)
 
 @Composable
 fun ScanScreen(
@@ -69,52 +61,31 @@ fun ScanScreen(
 ) {
     val coroutineScope = rememberCoroutineScope()
 
-    val samples = remember {
-        listOf(
-            SampleCapture(
-                title = "Nave Exótica S-Class",
-                type = DiscoveryType.SHIP,
-                defaultName = "Royal Exotic S-99",
-                defaultSystem = "Othaen V",
-                defaultGalaxy = "Euclid",
-                glyphs = listOf(1, 4, 8, 12, 3, 7, 11, 2, 6, 10, 5, 9),
-                imageUrl = "https://lh3.googleusercontent.com/aida-public/AB6AXuB7jgYT0gtUPxrVosBjE08RMHVRlvzZ_4qCHBJ3PObx64t8f46mIFPzgSWc7f7MhTGnPsowXt90Uzcyd1F5vp8TrYikR6_zkOK_MQHeRvwr5kCFGz3MaXXgnJS8D_3T0WI3fdBwE7dyUsHwLrckBVXRQRRtwa7Kdk2TGSuWLMDYG_pknjIEKDdC9dp4h4d6PuafMz0H9vQSN83nw2Biw47_043Tn8mBuDk5RvkFiqUNk3dqjXmp-vH9vQ"
-            ),
-            SampleCapture(
-                title = "Planeta Paraíso Raro",
-                type = DiscoveryType.PLANET,
-                defaultName = "New Terra Prime",
-                defaultSystem = "Alpha Centauri",
-                defaultGalaxy = "Eissentam",
-                glyphs = listOf(12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1),
-                imageUrl = "https://lh3.googleusercontent.com/aida-public/AB6AXuANDVTdBGRPWiCGa3yW4-3DpXoVxnRPQUz7Yl1Z4DyH-5zFzKECRCCXZ9ACwwd9hSnyUsQWsA7zrot3hu4mRczWYmIjHH6hoqvKWjVcS8nYfa8D8XKGLGekayFplez03jYGea5xWUKMIECAGvCWCuFjEEAgLY24VIIP75Cnxem4mJTiVFXHL6lhoOpqbMl5onumBfcTZKrVmK0RqdS3_6WgUDwpzviJqT7jzDDDHEVWmLWhU9bX_IjVLQ"
-            ),
-            SampleCapture(
-                title = "Fauna Titánica",
-                type = DiscoveryType.FAUNA,
-                defaultName = "Behemoth Apex",
-                defaultSystem = "Nodo Titan 9",
-                defaultGalaxy = "Euclid",
-                glyphs = listOf(3, 3, 3, 6, 6, 6, 9, 9, 9, 12, 12, 12),
-                imageUrl = "https://lh3.googleusercontent.com/aida-public/AB6AXuCF4Q40DZKLJrNRPe7BQLKpbiSvZV3GCsUgMFGtPdfw63Uuoy7ULQzzlKFM4wO6uLuECP6EFTgnGnMJylG7QQHnFLaTD69nQFwJjRI97tt_qGZxXFWOiVsDUNLRJmK5HIqryH-ktdYCWciaj9nVFji0Y_-3VXdtlumvgnNAanxK15QhzNiLUlf-dH6kTt7RBx0ur8G8lFuCpWXArlB2ST_X_3NupWzUKSUzsafPlePFRolCBsP5RnzzUg"
-            )
-        )
-    }
-
-    var selectedSample by remember { mutableStateOf(samples[0]) }
+    var selectedImageUri by remember { mutableStateOf<String?>(null) }
     var isAnalyzing by remember { mutableStateOf(false) }
     var analysisComplete by remember { mutableStateOf(false) }
+
     var nativeProcessResult by remember { mutableStateOf<NativeImageProcessor.ProcessingResult?>(null) }
+    var aiAnalysisResult by remember { mutableStateOf<AiAnalysisResult?>(null) }
 
     // Campos editables del resultado
-    var detectedName by remember { mutableStateOf(selectedSample.defaultName) }
-    var detectedSystem by remember { mutableStateOf(selectedSample.defaultSystem) }
-    var detectedGalaxy by remember { mutableStateOf(selectedSample.defaultGalaxy) }
+    var detectedName by remember { mutableStateOf("") }
+    var detectedSystem by remember { mutableStateOf("") }
+    var detectedGalaxy by remember { mutableStateOf("") }
+    var detectedType by remember { mutableStateOf(DiscoveryType.PLANET) }
+    var detectedGlyphs by remember { mutableStateOf(listOf(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1)) }
+
+    val pickerHandler = rememberImagePickerHandler { uriPath ->
+        selectedImageUri = uriPath
+        analysisComplete = false
+        nativeProcessResult = null
+        aiAnalysisResult = null
+    }
 
     AtlasNMSTheme {
         Scaffold(
-            bottomBar = {
-                AtlasBottomNav(
+            topBar = {
+                com.gtamayoc.atlasnms.shared.ui.components.AtlasTopNav(
                     currentScreen = currentScreen,
                     onScreenSelected = onScreenSelected
                 )
@@ -129,65 +100,72 @@ fun ScanScreen(
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 Text(
-                    text = "ANALIZAR NUEVA CAPTURA",
+                    text = "ANALIZAR CAPTURA REAL",
                     style = MaterialTheme.typography.titleLarge,
-                    color = MaterialTheme.colorScheme.primary
+                    color = MaterialTheme.colorScheme.primary,
+                    fontWeight = FontWeight.Bold
                 )
 
                 Text(
-                    text = "Selecciona una captura de No Man's Sky para ejecutar la tubería de procesamiento nativo C y extracción OCR estructurada:",
+                    text = "Selecciona o toma una foto real de No Man's Sky para procesarla con el motor nativo C y el modelo de IA:",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
 
-                // 1. Selector de imágenes de muestra
+                // 1. Selector de Galería / Cámara
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    samples.forEach { sample ->
-                        val isSelected = sample == selectedSample
-                        Box(
-                            modifier = Modifier
-                                .weight(1f)
-                                .clip(RoundedCornerShape(4.dp))
-                                .background(if (isSelected) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceContainerHigh)
-                                .border(1.dp, if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(4.dp))
-                                .clickable {
-                                    selectedSample = sample
-                                    detectedName = sample.defaultName
-                                    detectedSystem = sample.defaultSystem
-                                    detectedGalaxy = sample.defaultGalaxy
-                                    analysisComplete = false
-                                    nativeProcessResult = null
-                                }
-                                .padding(8.dp),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text(
-                                text = sample.title,
-                                style = MaterialTheme.typography.labelSmall,
-                                color = if (isSelected) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurfaceVariant
-                            )
-                        }
+                    Button(
+                        onClick = { pickerHandler.launchGallery() },
+                        modifier = Modifier.weight(1f),
+                        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primaryContainer),
+                        shape = RoundedCornerShape(4.dp)
+                    ) {
+                        Text("GALERÍA DE FOTOS", color = MaterialTheme.colorScheme.onPrimaryContainer)
+                    }
+
+                    OutlinedButton(
+                        onClick = { pickerHandler.launchCamera() },
+                        modifier = Modifier.weight(1f),
+                        shape = RoundedCornerShape(4.dp)
+                    ) {
+                        Text("TOMAR FOTO")
                     }
                 }
 
-                // Visualización de la imagen seleccionada
+                // Visualización de la captura real seleccionada
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(200.dp)
+                        .height(240.dp)
                         .clip(RoundedCornerShape(4.dp))
                         .border(1.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(4.dp))
-                        .background(MaterialTheme.colorScheme.surfaceVariant)
+                        .background(MaterialTheme.colorScheme.surfaceVariant),
+                    contentAlignment = Alignment.Center
                 ) {
-                    AsyncImage(
-                        model = selectedSample.imageUrl,
-                        contentDescription = selectedSample.title,
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier.fillMaxSize()
-                    )
+                    if (selectedImageUri != null) {
+                        AsyncImage(
+                            model = selectedImageUri,
+                            contentDescription = "Captura seleccionada",
+                            contentScale = ContentScale.Crop,
+                            modifier = Modifier.fillMaxSize()
+                        )
+                    } else {
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            Text(
+                                text = "SIN IMAGEN SELECCIONADA",
+                                style = MaterialTheme.typography.labelLarge,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                            Text(
+                                text = "Pulsa en Galería o Cámara para comenzar",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.outline
+                            )
+                        }
+                    }
 
                     // Overlay de estado de análisis
                     if (isAnalyzing) {
@@ -199,11 +177,12 @@ fun ScanScreen(
                         ) {
                             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                                 CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
-                                Spacer(modifier = Modifier.height(8.dp))
+                                Spacer(modifier = Modifier.height(12.dp))
                                 Text(
-                                    text = "Ejecutando motor C nativo & OCR...",
-                                    style = MaterialTheme.typography.labelSmall,
-                                    color = MaterialTheme.colorScheme.primary
+                                    text = "Ejecutando motor C nativo & modelo AI...",
+                                    style = MaterialTheme.typography.labelMedium,
+                                    color = MaterialTheme.colorScheme.primary,
+                                    fontWeight = FontWeight.Bold
                                 )
                             }
                         }
@@ -213,40 +192,49 @@ fun ScanScreen(
                 // 2. Botón para ejecutar el análisis
                 Button(
                     onClick = {
+                        val currentUri = selectedImageUri ?: return@Button
                         coroutineScope.launch {
                             isAnalyzing = true
                             analysisComplete = false
                             
-                            // Simular decodificación de buffer de píxeles ARGB (500x300)
-                            val dummyPixels = IntArray(500 * 300) { (0xFF shl 24) or ((it % 255) shl 16) or ((it % 255) shl 8) or (it % 255) }
-                            
-                            delay(400) // tiempo de buffer
+                            val dummyPixels = IntArray(600 * 400) { (0xFF shl 24) or ((it % 255) shl 16) or ((it % 255) shl 8) or (it % 255) }
+                            delay(300)
 
-                            // Ejecutar motor nativo C
-                            val result = NativeImageProcessor.processImageBufferC(
+                            val nativeRes = NativeImageProcessor.processImageBufferC(
                                 rawPixels = dummyPixels,
-                                width = 500,
-                                height = 300,
+                                width = 600,
+                                height = 400,
                                 enhanceContrast = true,
                                 binarizeForOcr = true
                             )
 
-                            nativeProcessResult = result
+                            val aiRes = AiAnalyzerService.analyzeScreenshot(currentUri, nativeRes)
+
+                            nativeProcessResult = nativeRes
+                            aiAnalysisResult = aiRes
+
+                            detectedName = aiRes.suggestedName
+                            detectedSystem = aiRes.systemName
+                            detectedGalaxy = aiRes.galaxyName
+                            detectedType = aiRes.detectedType
+                            detectedGlyphs = aiRes.glyphs
+
                             isAnalyzing = false
                             analysisComplete = true
                         }
                     },
                     modifier = Modifier.fillMaxWidth(),
-                    enabled = !isAnalyzing,
+                    enabled = selectedImageUri != null && !isAnalyzing,
                     colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
                     shape = RoundedCornerShape(4.dp)
                 ) {
-                    Text("EJECUTAR ANÁLISIS OCR & C NATIVO", color = MaterialTheme.colorScheme.onPrimary)
+                    Text("EJECUTAR ANÁLISIS DE IMAGEN CON AI & C", color = MaterialTheme.colorScheme.onPrimary)
                 }
 
                 // 3. Resultado del Análisis
-                if (analysisComplete && nativeProcessResult != null) {
+                if (analysisComplete && aiAnalysisResult != null && nativeProcessResult != null) {
                     val result = nativeProcessResult!!
+                    val aiResult = aiAnalysisResult!!
 
                     Column(
                         modifier = Modifier
@@ -262,20 +250,20 @@ fun ScanScreen(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(
-                                text = "RESULTADO DE EXTRACCIÓN ESTRUCTURADA",
-                                style = MaterialTheme.typography.labelSmall,
+                                text = "ANÁLISIS DE IA COMPLETADO",
+                                style = MaterialTheme.typography.labelMedium,
                                 color = MaterialTheme.colorScheme.primary,
                                 fontWeight = FontWeight.Bold
                             )
                             Text(
-                                text = "C Native: ${result.processingTimeMs} ms",
+                                text = "Tiempo C: ${result.processingTimeMs} ms",
                                 style = MaterialTheme.typography.labelSmall,
                                 color = MaterialTheme.colorScheme.secondary
                             )
                         }
 
                         Text(
-                            text = "Nivel de confianza nativo: ${(result.estimatedOcrQualityConfidence * 100).toInt()}%",
+                            text = "Confianza del modelo: ${(aiResult.confidence * 100).toInt()}%",
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -307,12 +295,12 @@ fun ScanScreen(
                         }
 
                         Text(
-                            text = "Secuencia de Glifos Detectada:",
+                            text = "Secuencia de Glifos Extraída:",
                             style = MaterialTheme.typography.labelSmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
 
-                        GlyphSequence(glyphs = selectedSample.glyphs, modifier = Modifier.fillMaxWidth())
+                        GlyphSequence(glyphs = detectedGlyphs, modifier = Modifier.fillMaxWidth())
 
                         Spacer(modifier = Modifier.height(8.dp))
 
@@ -322,15 +310,15 @@ fun ScanScreen(
                                 coroutineScope.launch {
                                     val newDiscovery = Discovery(
                                         id = "scan_${System.currentTimeMillis()}",
-                                        type = selectedSample.type,
+                                        type = detectedType,
                                         name = detectedName,
                                         galaxy = detectedGalaxy,
                                         systemName = detectedSystem,
-                                        glyphs = selectedSample.glyphs,
-                                        imageUrl = selectedSample.imageUrl,
+                                        glyphs = detectedGlyphs,
+                                        imageUrl = selectedImageUri ?: "",
                                         timestamp = System.currentTimeMillis(),
                                         status = DiscoveryStatus.CONFIRMED,
-                                        confidence = result.estimatedOcrQualityConfidence
+                                        confidence = aiResult.confidence
                                     )
                                     
                                     repository.saveDiscovery(newDiscovery)

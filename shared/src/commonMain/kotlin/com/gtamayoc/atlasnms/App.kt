@@ -82,12 +82,13 @@ fun App(repository: DiscoveryRepository) {
                     )
                 }
                 AppScreen.EXPLORE -> {
-                    ExploreScreen(
-                        viewModel = viewModel,
+                    com.gtamayoc.atlasnms.shared.ui.screens.GalacticCalculatorScreen(
+                        repository = repository,
                         currentScreen = targetScreen,
                         onScreenSelected = { newScreen -> currentScreen = newScreen },
-                        onFabClick = { currentScreen = AppScreen.SCAN },
-                        onDiscoveryClick = { discovery -> selectedDiscovery = discovery }
+                        onDiscoverySaved = {
+                            currentScreen = AppScreen.DISCOVERIES
+                        }
                     )
                 }
                 AppScreen.WIKI -> {

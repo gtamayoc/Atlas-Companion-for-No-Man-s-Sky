@@ -59,8 +59,8 @@ fun ExploreScreen(
 
     AtlasNMSTheme {
         Scaffold(
-            bottomBar = {
-                AtlasBottomNav(
+            topBar = {
+                com.gtamayoc.atlasnms.shared.ui.components.AtlasTopNav(
                     currentScreen = currentScreen,
                     onScreenSelected = onScreenSelected
                 )

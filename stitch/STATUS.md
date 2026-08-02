@@ -1,46 +1,68 @@
 # Estado Actual de Atlas NMS (Actualizado)
 
-Este documento resume el progreso actual del desarrollo y define el punto de control (checkpoint) para los siguientes pasos.
-
-## Hitos Completados
-
-1. **Estructura y Arquitectura KMP**:
-   - Proyecto configurado con Kotlin Multiplatform (Android + Shared UI en Compose).
-   - Base de datos estructurada con SqlDelight (`AtlasDatabase`).
-   - Dependencias clave listas: Coil, Navigation Compose, Coroutines.
-
-2. **UI y Sistema de Diseño**:
-   - `DESIGN.md` validado y aplicado (Sistema *Grounded Material*, tonos oscuros sin elementos neón).
-   - Componentes principales creados: `AtlasBottomNav`, `ScanFab`, `DiscoveryCard`, `GlyphSequence`.
-
-3. **Navegación Deslizable Responsiva y Animaciones**:
-   - `AtlasBottomNav` refactorizado con `horizontalScroll` para garantizar que todos los ítems (`DESCUBRIMIENTOS`, `EXPLORAR`, `WIKI & NMS HUB`, `AJUSTES`, `ANALIZAR`) se desplieguen sin cortarse.
-   - Transiciones suaves de 1.5 segundos (`1500ms`) en navegación y cambio de pantallas con `AnimatedContent`.
-
-4. **Integración de Glifos PNG en Toda la App**:
-   - Integración local de los 16 glifos de portal (`glyph_0.png` a `glyph_f.png`) en `composeResources/drawable`.
-   - `GlyphSequence` renderiza las imágenes PNG oficiales en tarjetas, pantalla de escaneo y detalle.
-
-5. **Pantalla de Detalle de Descubrimientos y Ciclo de Vida (`BackHandler`)**:
-   - `DiscoveryDetailScreen`: Vista completa de cada hallazgo con imagen a pantalla completa, metadatos y dirección de portal de 12 glifos en PNG.
-   - `AtlasBackHandler`: Manejo de ciclo de vida del botón de retroceso en Android para regresar del detalle o subpantallas a `DISCOVERIES` sin cerrar la aplicación.
-
-6. **WebView Online Optimizado y Limpieza UI**:
-   - `AtlasWebView`: Carga optimizada de la Wiki oficial (`https://nomanssky.fandom.com/es/wiki/No_Man%27s_Sky_Wiki`) con caché del navegador nativo `LOAD_DEFAULT` y gestión estricta del ciclo de vida (`onPause()`, `onResume()`, `destroy()` vía `DisposableEffect`).
-   - Rediseño del Header en `WikiScreen` para seguir exactamente el sistema de diseño oscuro de la app.
+Este documento resume el progreso actual del desarrollo y define el punto de control (checkpoint) consolidado acorde al plan maestro ([plan.md](file:///c:/discolocal/PROYECTOS/COMPOSE/AtlasNMS/stitch/plan.md)).
 
 ---
 
-## Siguiente Paso Prioritario (Próxima Fase)
+## 🎯 Hitos Completados (Implementados y Verificados)
 
-**Conexión Real del Pipeline de Análisis en "Analizar nueva captura" (`ScanScreen`)**:
-Actualmente `ScanScreen` cuenta con la interfaz de usuario interactiva y muestras de prueba. El siguiente paso directo será:
+1. **Estructura y Arquitectura KMP**:
+   - Proyecto Kotlin Multiplatform (Android + Shared UI Compose).
+   - Base de datos estructurada con SqlDelight (`AtlasDatabase`).
+   - Gestión reactiva de estado en UI.
 
-1. **Selector de Imágenes Real (ImagePicker)**:
-   - Integrar la selección de imágenes directamente desde la galería del dispositivo Android o la cámara.
+2. **Sistema de Diseño (Grounded Material)**:
+   - Paleta sci-fi oscura optimizada (*Obsidian Slate, Atlas Crimson, Warp Blue*).
+   - Componentes creados: `DiscoveryCard`, `GlyphSequence`, `ScanFab`.
 
-2. **Ejecución del Procesador de Imagen Nativo (`NativeImageProcessor`)**:
-   - Procesar la imagen seleccionada mediante el motor C nativo (escala de grises, contraste y binarización adaptativa).
+3. **Glifos PNG Oficiales**:
+   - Integración local de los 16 glifos de portal (`glyph_0.png` a `glyph_f.png`) en `composeResources/drawable`.
 
-3. **Motor OCR e Inteligencia Artificial (ML Kit / Gemini / DeepSeek)**:
-   - Conectar la extracción de texto del OCR a la API de IA para generar automáticamente el objeto `Discovery` (tipo, sistema, galaxia, 12 glifos) y guardarlo en la base de datos SqlDelight.
+4. **Navegación Superior Adaptativa (`AtlasTopNav`)**:
+   - Barra de navegación en el encabezado superior con `statusBarsPadding()` para no solaparse con la barra de notificaciones del sistema Android.
+   - Iconografía y símbolos para cada sección (`📋 Bitácora`, `📡 Radar`, `📚 Wiki`, `⚙️ Ajustes`, `📷 Analizar`).
+
+5. **Radar de Teleports (Animación Tragaperras) & Teclado de Glifos 2x8**:
+   - Animación de rotación estilo tragamonedas (`Slot Machine`) al generar teleports aleatorios.
+   - Matriz de glifos interactiva organizada en 2 filas de 8 (1..8 arriba, 9..16 abajo) con tamaños simétricos y uniformes (`weight(1f).aspectRatio(1f)`).
+   - **Control de Guardado Estricto**: Opción explícita de `MARCAR COMO VISITADO Y GUARDAR EN BITÁCORA` (`CONFIRMED`) o `GUARDAR COMO SEÑAL PENDIENTE` (`PENDING`).
+
+6. **Selector de Imágenes Nativo (Galería & Cámara) en `ScanScreen`**:
+   - `rememberImagePickerHandler` (`expect/actual`) con soporte nativo en Android para seleccionar capturas reales (`GetContent`) o tomar fotos con la Cámara (`TakePicturePreview`).
+
+7. **Motor C Nativo & Servicio AI**:
+   - `NativeImageProcessor` con preprocesamiento de píxeles a nivel de bits (escala de grises, contraste y umbral adaptativo en C).
+   - `AiAnalyzerService` estructurado con manejo a prueba de fallos sin cierres de la app.
+
+8. **Ajustes y Persistencia SQLite (`AppSettingsEntity`)**:
+   - Tabla `AppSettingsEntity` en SqlDelight para guardar la **DeepSeek API Key**, el **Modelo** y la **Base URL** de forma permanente en la base de datos local SQLite.
+   - Guardado diferido atómico (**"GUARDAR CONFIGURACIÓN EN SQLITE"**) y detección de cambios no guardados al salir o navegar.
+
+9. **Wiki & NMS Hub Optimizado**:
+   - `AtlasWebView` con caché nativa y eliminación del botón `ScanFab` en la pantalla de Wiki para dar 100% de área visual útil.
+
+---
+
+## 📌 Pendientes y Próximas Fases ([plan.md](file:///c:/discolocal/PROYECTOS/COMPOSE/AtlasNMS/stitch/plan.md))
+
+De acuerdo al plan maestro del proyecto, quedan diferidas para las siguientes fases las siguientes características:
+
+1. **Fase 2: Conexión de Reconocimiento OCR Nativo (ML Kit)**:
+   - Conectar un motor OCR nativo para escanear regiones de texto específicas (nombre de planeta, clima, recursos, 12 glifos) desde la imagen capturada e inyectar el texto extraído directamente a la tubería C/IA.
+
+2. **Fase 3: Envío Directo y Validación JSON con DeepSeek API**:
+   - Habilitar el envío remoto de imágenes/texto OCR a la API de DeepSeek utilizando la API Key guardada en Ajustes.
+   - Validar las respuestas JSON estrictas contra esquemas de `kotlinx.serialization` (asignación automática de enumeraciones `SHIP`, `PLANET`, `FAUNA`, `MULTITOOL`).
+
+3. **Fase 4: Biblioteca NMS Offline & Herramientas de Comparación**:
+   - Catálogo offline de referencia (minerales, recetas de refinería, climas, biomas, razas).
+   - Herramienta comparadora de naves y planetas.
+
+4. **Fase 5: Exportación de Fichas y Sincronización**:
+   - Generación de tarjetas/fichas visuales para compartir en redes sociales.
+   - Exportación de la bitácora personal a JSON/CSV y respaldo en la nube.
+
+---
+
+## 🟢 Estado de Compilación
+- `./gradlew :androidApp:assembleDebug`: **BUILD SUCCESSFUL**.

@@ -3,14 +3,14 @@ package com.gtamayoc.atlasnms.shared.ui.components
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -39,7 +39,8 @@ import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
 
 fun getGlyphDrawableResource(glyphValue: Int): DrawableResource {
-    return when (glyphValue % 16) {
+    val index = (glyphValue - 1).let { if (it < 0) (it % 16 + 16) % 16 else it % 16 }
+    return when (index) {
         0 -> Res.drawable.glyph_0
         1 -> Res.drawable.glyph_1
         2 -> Res.drawable.glyph_2
@@ -65,33 +66,64 @@ fun GlyphSequence(
     glyphs: List<Int>,
     modifier: Modifier = Modifier
 ) {
-    // Muestra las imágenes PNG reales de los 12 glifos en una cuadrícula limpia de 6 columnas
-    LazyVerticalGrid(
-        columns = GridCells.Fixed(6),
-        modifier = modifier
+    val safeGlyphs = glyphs.take(12)
+    val firstHalf = safeGlyphs.take(6)
+    val secondHalf = if (safeGlyphs.size > 6) safeGlyphs.drop(6) else emptyList()
+
+    Column(
+        modifier = modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(4.dp)
     ) {
-        items(glyphs.size) { index ->
-            val glyphVal = glyphs[index]
-            val drawableRes = getGlyphDrawableResource(glyphVal)
-            
-            Box(
-                modifier = Modifier
-                    .aspectRatio(1f)
-                    .padding(2.dp)
-                    .clip(RoundedCornerShape(4.dp))
-                    .background(MaterialTheme.colorScheme.surfaceContainerHigh)
-                    .border(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.5f), RoundedCornerShape(4.dp)),
-                contentAlignment = Alignment.Center
-            ) {
-                Image(
-                    painter = painterResource(drawableRes),
-                    contentDescription = "Glifo ${glyphVal.toString(16).uppercase()}",
+        // Fila 1 (Primeros 6 glifos)
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(4.dp, Alignment.CenterHorizontally)
+        ) {
+            firstHalf.forEach { glyphVal ->
+                val drawableRes = getGlyphDrawableResource(glyphVal)
+                Box(
                     modifier = Modifier
-                        .fillMaxSize()
-                        .padding(3.dp)
-                )
+                        .size(36.dp)
+                        .clip(RoundedCornerShape(4.dp))
+                        .background(MaterialTheme.colorScheme.surfaceContainerHigh)
+                        .border(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.5f), RoundedCornerShape(4.dp))
+                        .padding(3.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Image(
+                        painter = painterResource(drawableRes),
+                        contentDescription = "Glifo $glyphVal",
+                        modifier = Modifier.fillMaxSize()
+                    )
+                }
+            }
+        }
+
+        // Fila 2 (Segundos 6 glifos)
+        if (secondHalf.isNotEmpty()) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(4.dp, Alignment.CenterHorizontally)
+            ) {
+                secondHalf.forEach { glyphVal ->
+                    val drawableRes = getGlyphDrawableResource(glyphVal)
+                    Box(
+                        modifier = Modifier
+                            .size(36.dp)
+                            .clip(RoundedCornerShape(4.dp))
+                            .background(MaterialTheme.colorScheme.surfaceContainerHigh)
+                            .border(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.5f), RoundedCornerShape(4.dp))
+                            .padding(3.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Image(
+                            painter = painterResource(drawableRes),
+                            contentDescription = "Glifo $glyphVal",
+                            modifier = Modifier.fillMaxSize()
+                        )
+                    }
+                }
             }
         }
     }
 }
-

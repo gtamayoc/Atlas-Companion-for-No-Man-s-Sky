@@ -25,11 +25,7 @@ class HomeViewModel(
     val uiState: StateFlow<HomeUiState> = _uiState.asStateFlow()
 
     init {
-        // Initialize mock data to verify UI functionality
-        viewModelScope.launch {
-            repository.syncWithMockData()
-            loadDiscoveries()
-        }
+        loadDiscoveries()
     }
 
     private fun loadDiscoveries() {

@@ -9,7 +9,7 @@ enum class DiscoveryType {
 
 @Serializable
 enum class DiscoveryStatus {
-    CONFIRMED, DRAFT, INCOMPLETE
+    CONFIRMED, PENDING, DRAFT, INCOMPLETE
 }
 
 @Serializable

@@ -36,8 +36,8 @@ fun HomeScreen(
 
     AtlasNMSTheme {
         Scaffold(
-            bottomBar = {
-                AtlasBottomNav(
+            topBar = {
+                com.gtamayoc.atlasnms.shared.ui.components.AtlasTopNav(
                     currentScreen = currentScreen,
                     onScreenSelected = onScreenSelected
                 )
@@ -60,21 +60,46 @@ fun HomeScreen(
                         )
                     }
                     is HomeUiState.Success -> {
-                        // LazyColumn optimizado con key y contentType para fluidez en gama baja / low-RAM
-                        LazyColumn(
-                            contentPadding = PaddingValues(16.dp),
-                            verticalArrangement = Arrangement.spacedBy(16.dp),
-                            modifier = Modifier.fillMaxSize()
-                        ) {
-                            items(
-                                items = state.discoveries,
-                                key = { discovery -> discovery.id },
-                                contentType = { discovery -> discovery.type }
-                            ) { discovery ->
-                                DiscoveryCard(
-                                    discovery = discovery,
-                                    onClick = { onDiscoveryClick(discovery) }
-                                )
+                        if (state.discoveries.isEmpty()) {
+                            Box(
+                                modifier = Modifier.fillMaxSize().padding(32.dp),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                androidx.compose.foundation.layout.Column(
+                                    horizontalAlignment = Alignment.CenterHorizontally,
+                                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                                ) {
+                                    Text(
+                                        text = "BITÁCORA VACÍA",
+                                        style = androidx.compose.material3.MaterialTheme.typography.titleMedium,
+                                        color = androidx.compose.material3.MaterialTheme.colorScheme.primary,
+                                        fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
+                                    )
+                                    Text(
+                                        text = "Aún no se han registrado descubrimientos en este sector galáctico. Presiona ANALIZAR para registrar tu primer hallazgo.",
+                                        style = androidx.compose.material3.MaterialTheme.typography.bodyMedium,
+                                        color = androidx.compose.material3.MaterialTheme.colorScheme.onSurfaceVariant,
+                                        textAlign = androidx.compose.ui.text.style.TextAlign.Center
+                                    )
+                                }
+                            }
+                        } else {
+                            // LazyColumn optimizado con key y contentType para fluidez en gama baja / low-RAM
+                            LazyColumn(
+                                contentPadding = PaddingValues(16.dp),
+                                verticalArrangement = Arrangement.spacedBy(16.dp),
+                                modifier = Modifier.fillMaxSize()
+                            ) {
+                                items(
+                                    items = state.discoveries,
+                                    key = { discovery -> discovery.id },
+                                    contentType = { discovery -> discovery.type }
+                                ) { discovery ->
+                                    DiscoveryCard(
+                                        discovery = discovery,
+                                        onClick = { onDiscoveryClick(discovery) }
+                                    )
+                                }
                             }
                         }
                     }

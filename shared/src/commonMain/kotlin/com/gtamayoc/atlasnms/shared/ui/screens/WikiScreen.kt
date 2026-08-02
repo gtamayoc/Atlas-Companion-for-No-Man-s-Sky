@@ -49,13 +49,12 @@ fun WikiScreen(
 
     AtlasNMSTheme {
         Scaffold(
-            bottomBar = {
-                AtlasBottomNav(
+            topBar = {
+                com.gtamayoc.atlasnms.shared.ui.components.AtlasTopNav(
                     currentScreen = currentScreen,
                     onScreenSelected = onScreenSelected
                 )
-            },
-            floatingActionButton = { ScanFab(onClick = onFabClick) }
+            }
         ) { paddingValues ->
             Column(
                 modifier = Modifier

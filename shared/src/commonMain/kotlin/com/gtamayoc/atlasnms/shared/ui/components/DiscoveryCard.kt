@@ -108,6 +108,16 @@ fun DiscoveryCard(
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
+                
+                Spacer(modifier = Modifier.height(8.dp))
+                
+                // Mostrar Glifos directamente en la tarjeta
+                if (discovery.glyphs.isNotEmpty()) {
+                    GlyphSequence(
+                        glyphs = discovery.glyphs,
+                        modifier = Modifier.fillMaxWidth().padding(top = 4.dp)
+                    )
+                }
             }
         }
     }

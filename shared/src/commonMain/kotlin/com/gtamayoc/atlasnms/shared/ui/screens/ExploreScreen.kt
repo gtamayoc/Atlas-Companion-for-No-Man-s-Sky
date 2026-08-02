@@ -36,6 +36,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.gtamayoc.atlasnms.shared.domain.model.Discovery
 import com.gtamayoc.atlasnms.shared.domain.model.DiscoveryType
 import com.gtamayoc.atlasnms.shared.ui.components.AtlasBottomNav
 import com.gtamayoc.atlasnms.shared.ui.components.DiscoveryCard
@@ -48,7 +49,8 @@ fun ExploreScreen(
     viewModel: HomeViewModel,
     currentScreen: AppScreen,
     onScreenSelected: (AppScreen) -> Unit,
-    onFabClick: () -> Unit
+    onFabClick: () -> Unit,
+    onDiscoveryClick: (Discovery) -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsState()
     
@@ -170,7 +172,10 @@ fun ExploreScreen(
                                         key = { discovery -> discovery.id },
                                         contentType = { discovery -> discovery.type }
                                     ) { discovery ->
-                                        DiscoveryCard(discovery = discovery)
+                                        DiscoveryCard(
+                                            discovery = discovery,
+                                            onClick = { onDiscoveryClick(discovery) }
+                                        )
                                     }
                                 }
                             }

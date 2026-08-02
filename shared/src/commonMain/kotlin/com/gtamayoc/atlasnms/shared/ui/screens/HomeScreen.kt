@@ -22,12 +22,15 @@ import com.gtamayoc.atlasnms.shared.ui.components.ScanFab
 import com.gtamayoc.atlasnms.shared.ui.navigation.AppScreen
 import com.gtamayoc.atlasnms.shared.ui.theme.AtlasNMSTheme
 
+import com.gtamayoc.atlasnms.shared.domain.model.Discovery
+
 @Composable
 fun HomeScreen(
     viewModel: HomeViewModel,
     currentScreen: AppScreen,
     onScreenSelected: (AppScreen) -> Unit,
-    onFabClick: () -> Unit
+    onFabClick: () -> Unit,
+    onDiscoveryClick: (Discovery) -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
@@ -68,7 +71,10 @@ fun HomeScreen(
                                 key = { discovery -> discovery.id },
                                 contentType = { discovery -> discovery.type }
                             ) { discovery ->
-                                DiscoveryCard(discovery = discovery)
+                                DiscoveryCard(
+                                    discovery = discovery,
+                                    onClick = { onDiscoveryClick(discovery) }
+                                )
                             }
                         }
                     }

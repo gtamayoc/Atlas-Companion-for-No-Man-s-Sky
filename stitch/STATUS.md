@@ -41,18 +41,23 @@ Este documento resume el progreso actual del desarrollo y define el punto de con
 9. **Wiki & NMS Hub Optimizado**:
    - `AtlasWebView` con caché nativa y eliminación del botón `ScanFab` en la pantalla de Wiki para dar 100% de área visual útil.
 
+10. **Tubería de Visión Híbrida, Overlay de Foto & Editor de Glifos UX (100% COMPLETADO)**:
+    - **Visión Híbrida**: OCR para texto plano y Template Matching local de los 16 glifos `.png` sobre la ROI inferior izquierda (`VisionExtractionEngine`).
+    - **Paso Intermedio con Foto Visible**: Vista previa de foto y botón modal **`🔎 VER FOTO COMPLETA (OVERLAY)`** flotante sobrepuesto al 92% de opacidad para inspeccionar la captura a pantalla completa mientras se completan datos.
+    - **Glifos Opcionales y Categorías**: Soporta capturas de Naves, Fauna, Multiherramientas, Bases y Planetas con chips de filtro y switch de glifos opcionales.
+    - **Teclado de Glifos 2x8 con Logos Grandes**: Asignación 1:1 de recursos sin desfasajes, logos al 100% de tamaño sin textos encimados, selección por ranura táctil (`#1` a `#12`), botón `⌫ BORRAR` y `🗑️ LIMPIAR TODO`.
+    - **Prompt Maestro & Sincronización BD**: Prompt Multimodal con tabla de equivalencias (0-F) sincronizado con `DiscoveryRepository` SQLite y opción de **`GUARDAR DIRECTO EN BD`**.
+    - **Depurador en Tiempo Real**: Panel `DevDebugDrawer` para inspeccionar tiempos C/OCR/IA, diffs de edición y JSON devuelto.
+
 ---
 
 ## 📌 Pendientes y Próximas Fases ([plan.md](file:///c:/discolocal/PROYECTOS/COMPOSE/AtlasNMS/stitch/plan.md))
 
-De acuerdo al plan maestro del proyecto, quedan diferidas para las siguientes fases las siguientes características:
+1. **Próxima Revisión de UX y Mejoras Visuales de UI**:
+   - Pulido estético adicional, animaciones de transición entre etapas y micro-interacciones.
 
-1. **Fase 2: Conexión de Reconocimiento OCR Nativo (ML Kit)**:
-   - Conectar un motor OCR nativo para escanear regiones de texto específicas (nombre de planeta, clima, recursos, 12 glifos) desde la imagen capturada e inyectar el texto extraído directamente a la tubería C/IA.
-
-2. **Fase 3: Envío Directo y Validación JSON con DeepSeek API**:
-   - Habilitar el envío remoto de imágenes/texto OCR a la API de DeepSeek utilizando la API Key guardada en Ajustes.
-   - Validar las respuestas JSON estrictas contra esquemas de `kotlinx.serialization` (asignación automática de enumeraciones `SHIP`, `PLANET`, `FAUNA`, `MULTITOOL`).
+2. **Próxima Fase de Optimización de Rendimiento**:
+   - Ajustes de tiempo de respuesta en C nativo, compresión de imágenes pesadas y gestión de memoria RAM.
 
 3. **Fase 4: Biblioteca NMS Offline & Herramientas de Comparación**:
    - Catálogo offline de referencia (minerales, recetas de refinería, climas, biomas, razas).

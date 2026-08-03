@@ -9,17 +9,32 @@ private val DarkColorScheme = darkColorScheme(
     primary = PrimaryColor,
     onPrimary = OnPrimary,
     primaryContainer = PrimaryContainer,
+    onPrimaryContainer = OnPrimaryContainer,
     secondary = SecondaryColor,
     onSecondary = OnSecondary,
     secondaryContainer = SecondaryContainer,
+    onSecondaryContainer = OnSecondaryContainer,
+    tertiary = TertiaryColor,
+    onTertiary = OnTertiary,
+    tertiaryContainer = TertiaryContainer,
+    onTertiaryContainer = OnTertiaryContainer,
     surface = SurfaceColor,
     onSurface = OnSurface,
-    surfaceVariant = SurfaceContainer,
+    surfaceVariant = SurfaceContainerHighest,
     onSurfaceVariant = OnSurfaceVariant,
+    surfaceContainerLowest = SurfaceContainerLowest,
+    surfaceContainerLow = SurfaceContainerLow,
+    surfaceContainer = SurfaceContainer,
+    surfaceContainerHigh = SurfaceContainerHigh,
+    surfaceContainerHighest = SurfaceContainerHighest,
     outline = OutlineColor,
     outlineVariant = OutlineVariant,
     background = SurfaceColor,
-    onBackground = OnSurface
+    onBackground = OnSurface,
+    error = ErrorColor,
+    onError = OnError,
+    errorContainer = ErrorContainer,
+    onErrorContainer = OnErrorContainer
 )
 
 @Composable
@@ -27,7 +42,7 @@ fun AtlasNMSTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable () -> Unit
 ) {
-    // Atlas NMS is designed primarily for dark mode to match the game's aesthetic and reduce eye strain
+    // Atlas NMS Interface (DESIGN.md: Deep Space Void canvas #210E0B)
     val colorScheme = DarkColorScheme
 
     MaterialTheme(

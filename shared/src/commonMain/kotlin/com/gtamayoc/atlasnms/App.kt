@@ -62,12 +62,12 @@ fun App(repository: DiscoveryRepository) {
             onBack = { selectedDiscovery = null }
         )
     } else {
-        // Transición de 1.5 segundos (entre 1 y 2 segundos) al cambiar de pantalla
+        // Transición fluida y responsiva de 350ms al cambiar de pantalla
         AnimatedContent(
             targetState = currentScreen,
             transitionSpec = {
-                fadeIn(animationSpec = tween(durationMillis = 1500, easing = FastOutSlowInEasing)) togetherWith
-                fadeOut(animationSpec = tween(durationMillis = 1500, easing = FastOutSlowInEasing))
+                fadeIn(animationSpec = tween(durationMillis = 350, easing = FastOutSlowInEasing)) togetherWith
+                fadeOut(animationSpec = tween(durationMillis = 350, easing = FastOutSlowInEasing))
             },
             label = "ScreenTransition"
         ) { targetScreen ->

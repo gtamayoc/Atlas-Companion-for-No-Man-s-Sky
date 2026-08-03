@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -24,15 +23,14 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
@@ -62,18 +60,19 @@ import com.gtamayoc.atlasnms.shared.domain.model.DiscoveryType
 import com.gtamayoc.atlasnms.shared.domain.repository.DiscoveryRepository
 import com.gtamayoc.atlasnms.shared.domain.service.AiAnalysisResult
 import com.gtamayoc.atlasnms.shared.domain.service.AiAnalyzerService
-import com.gtamayoc.atlasnms.shared.domain.service.DiscrepancySeverity
 import com.gtamayoc.atlasnms.shared.domain.service.ExtractionResult
-import com.gtamayoc.atlasnms.shared.domain.service.NMS_GLYPH_NAMES
 import com.gtamayoc.atlasnms.shared.domain.service.PipelineDiscrepancyValidator
 import com.gtamayoc.atlasnms.shared.domain.service.PipelineStageSource
 import com.gtamayoc.atlasnms.shared.domain.service.ScanPipelineDebugger
 import com.gtamayoc.atlasnms.shared.domain.service.ValidationDiscrepancy
 import com.gtamayoc.atlasnms.shared.domain.service.VisionExtractionEngine
+import com.gtamayoc.atlasnms.shared.ui.components.AtlasTopNav
 import com.gtamayoc.atlasnms.shared.ui.components.getGlyphDrawableResource
 import com.gtamayoc.atlasnms.shared.ui.components.rememberImagePickerHandler
 import com.gtamayoc.atlasnms.shared.ui.navigation.AppScreen
+import com.gtamayoc.atlasnms.shared.ui.theme.AmberDustHighlight
 import com.gtamayoc.atlasnms.shared.ui.theme.AtlasNMSTheme
+import com.gtamayoc.atlasnms.shared.ui.theme.WarpFuelOrangeHighlight
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
 
@@ -101,7 +100,7 @@ fun ScanScreen(
     var isOcrRunning by remember { mutableStateOf(false) }
     var isAiRunning by remember { mutableStateOf(false) }
     var showDevDebugDrawer by remember { mutableStateOf(false) }
-    var showPhotoOverlayModal by remember { mutableStateOf(false) } // Modal Overlay para inspección de foto
+    var showPhotoOverlayModal by remember { mutableStateOf(false) }
 
     var enhanceContrast by remember { mutableStateOf(true) }
     var binarizeForOcr by remember { mutableStateOf(true) }
@@ -110,7 +109,6 @@ fun ScanScreen(
     var aiResult by remember { mutableStateOf<AiAnalysisResult?>(null) }
     var validationDiscrepancies by remember { mutableStateOf<List<ValidationDiscrepancy>>(emptyList()) }
 
-    // PASO INTERMEDIO: Campos editables por el usuario tras la Extracción Híbrida
     var userVerifiedName by remember { mutableStateOf("") }
     var userVerifiedSystem by remember { mutableStateOf("") }
     var userVerifiedGalaxy by remember { mutableStateOf("") }
@@ -118,8 +116,6 @@ fun ScanScreen(
     var includeGlyphsInCapture by remember { mutableStateOf(true) }
     var userVerifiedGlyphs by remember { mutableStateOf(listOf(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1)) }
     var activeGlyphSlotIndex by remember { mutableStateOf(0) }
-
-    val telemetry by ScanPipelineDebugger.telemetry.collectAsState()
 
     val pickerHandler = rememberImagePickerHandler { uriPath ->
         selectedImageUri = uriPath
@@ -132,7 +128,7 @@ fun ScanScreen(
         ScanPipelineDebugger.log(
             stage = PipelineStageSource.OCR_EXTRACTION,
             level = "INFO",
-            summary = "Nueva imagen seleccionada",
+            summary = "Nueva captura seleccionada",
             details = "URI: $uriPath"
         )
         ScanPipelineDebugger.updateTelemetry { it.copy(selectedImageUri = uriPath) }
@@ -141,7 +137,7 @@ fun ScanScreen(
     AtlasNMSTheme {
         Scaffold(
             topBar = {
-                com.gtamayoc.atlasnms.shared.ui.components.AtlasTopNav(
+                AtlasTopNav(
                     currentScreen = currentScreen,
                     onScreenSelected = onScreenSelected
                 )
@@ -155,8 +151,8 @@ fun ScanScreen(
                     .padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                // Encabezado y Stepper
-                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                // Header & Stepper (DESIGN.md: 4px Soft-Industrial geometry)
+                Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween,
@@ -165,20 +161,16 @@ fun ScanScreen(
                         Text(
                             text = "ANÁLISIS DE CAPTURA NMS",
                             style = MaterialTheme.typography.titleMedium,
-                            color = MaterialTheme.colorScheme.primary,
+                            color = AmberDustHighlight,
                             fontWeight = FontWeight.Bold
                         )
-                        Button(
+                        OutlinedButton(
                             onClick = { showDevDebugDrawer = !showDevDebugDrawer },
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = if (showDevDebugDrawer) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.surfaceVariant
-                            ),
                             shape = RoundedCornerShape(4.dp)
                         ) {
                             Text(
-                                text = if (showDevDebugDrawer) "🛠️ DEPURADOR ON" else "🛠️ MODO DEV",
-                                style = MaterialTheme.typography.labelSmall,
-                                color = if (showDevDebugDrawer) MaterialTheme.colorScheme.onTertiary else MaterialTheme.colorScheme.onSurfaceVariant
+                                text = if (showDevDebugDrawer) "🛠️ OCULTAR DEV" else "🛠️ MODO DEV",
+                                style = MaterialTheme.typography.labelSmall
                             )
                         }
                     }
@@ -186,34 +178,34 @@ fun ScanScreen(
                     PipelineStepper(currentStage = currentStage)
                 }
 
-                // ETAPA 1: Captura & Filtro C Nativo
-                Card(
+                // TARJETA 1: Selección de Captura & Preprocesamiento
+                OutlinedCard(
                     modifier = Modifier.fillMaxWidth(),
-                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLow),
+                    colors = CardDefaults.outlinedCardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLow),
                     shape = RoundedCornerShape(4.dp)
                 ) {
                     Column(
-                        modifier = Modifier.padding(12.dp),
-                        verticalArrangement = Arrangement.spacedBy(12.dp)
+                        modifier = Modifier.padding(16.dp),
+                        verticalArrangement = Arrangement.spacedBy(14.dp)
                     ) {
                         Text(
-                            text = "1. SELECCIÓN DE CAPTURA (NAVES, PLANETAS, FAUNA, BASES)",
+                            text = "1. SELECCIÓN DE CAPTURA",
                             style = MaterialTheme.typography.labelLarge,
-                            color = MaterialTheme.colorScheme.secondary,
+                            color = AmberDustHighlight,
                             fontWeight = FontWeight.Bold
                         )
 
                         Row(
                             modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                            horizontalArrangement = Arrangement.spacedBy(10.dp)
                         ) {
                             Button(
                                 onClick = { pickerHandler.launchGallery() },
                                 modifier = Modifier.weight(1f),
-                                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primaryContainer),
+                                colors = ButtonDefaults.buttonColors(containerColor = AmberDustHighlight),
                                 shape = RoundedCornerShape(4.dp)
                             ) {
-                                Text("GALERÍA DE FOTOS", color = MaterialTheme.colorScheme.onPrimaryContainer)
+                                Text("📁 GALERÍA", color = Color.Black, fontWeight = FontWeight.Bold)
                             }
 
                             OutlinedButton(
@@ -221,18 +213,18 @@ fun ScanScreen(
                                 modifier = Modifier.weight(1f),
                                 shape = RoundedCornerShape(4.dp)
                             ) {
-                                Text("TOMAR FOTO")
+                                Text("📷 CÁMARA")
                             }
                         }
 
-                        // Vista Previa de la Captura
+                        // Visor de la Captura
                         Box(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .height(200.dp)
+                                .height(190.dp)
                                 .clip(RoundedCornerShape(4.dp))
                                 .border(1.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(4.dp))
-                                .background(MaterialTheme.colorScheme.surfaceVariant),
+                                .background(MaterialTheme.colorScheme.surfaceContainer),
                             contentAlignment = Alignment.Center
                         ) {
                             if (selectedImageUri != null) {
@@ -246,7 +238,7 @@ fun ScanScreen(
                                 Text(
                                     text = "SELECCIONA UNA CAPTURA REAL DE NO MAN'S SKY",
                                     style = MaterialTheme.typography.bodySmall,
-                                    color = MaterialTheme.colorScheme.outline
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
                             }
 
@@ -258,12 +250,12 @@ fun ScanScreen(
                                     contentAlignment = Alignment.Center
                                 ) {
                                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                        CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
+                                        CircularProgressIndicator(color = AmberDustHighlight)
                                         Spacer(modifier = Modifier.height(8.dp))
                                         Text(
-                                            text = if (isOcrRunning) "Extrayendo texto tipográfico & analizando captura..." else "Estructurando respuesta JSON con IA Multimodal...",
-                                            style = MaterialTheme.typography.labelSmall,
-                                            color = MaterialTheme.colorScheme.primary,
+                                            text = if (isOcrRunning) "Analizando texto y visión..." else "Estructurando con IA Multimodal...",
+                                            style = MaterialTheme.typography.labelMedium,
+                                            color = AmberDustHighlight,
                                             fontWeight = FontWeight.Bold
                                         )
                                     }
@@ -280,9 +272,9 @@ fun ScanScreen(
                                 Switch(
                                     checked = enhanceContrast,
                                     onCheckedChange = { enhanceContrast = it },
-                                    colors = SwitchDefaults.colors(checkedThumbColor = MaterialTheme.colorScheme.primary)
+                                    colors = SwitchDefaults.colors(checkedThumbColor = AmberDustHighlight)
                                 )
-                                Spacer(modifier = Modifier.width(4.dp))
+                                Spacer(modifier = Modifier.width(6.dp))
                                 Text("Realce Contraste C", style = MaterialTheme.typography.bodySmall)
                             }
 
@@ -290,9 +282,9 @@ fun ScanScreen(
                                 Switch(
                                     checked = binarizeForOcr,
                                     onCheckedChange = { binarizeForOcr = it },
-                                    colors = SwitchDefaults.colors(checkedThumbColor = MaterialTheme.colorScheme.primary)
+                                    colors = SwitchDefaults.colors(checkedThumbColor = AmberDustHighlight)
                                 )
-                                Spacer(modifier = Modifier.width(4.dp))
+                                Spacer(modifier = Modifier.width(6.dp))
                                 Text("Binarización Adaptativa", style = MaterialTheme.typography.bodySmall)
                             }
                         }
@@ -303,8 +295,6 @@ fun ScanScreen(
                                 coroutineScope.launch {
                                     isOcrRunning = true
                                     val dummyPixels = IntArray(600 * 400) { (0xFF shl 24) or ((it % 255) shl 16) or ((it % 255) shl 8) or (it % 255) }
-                                    
-                                    val startTime = System.currentTimeMillis()
                                     val extRes = VisionExtractionEngine.extractHybridData(
                                         imageUriOrPath = uri,
                                         rawPixels = dummyPixels,
@@ -313,7 +303,6 @@ fun ScanScreen(
                                         enhanceContrast = enhanceContrast,
                                         binarizeForOcr = binarizeForOcr
                                     )
-                                    val ocrTime = System.currentTimeMillis() - startTime
 
                                     extractionResult = extRes
                                     userVerifiedName = extRes.candidateName
@@ -324,45 +313,30 @@ fun ScanScreen(
                                     userVerifiedGlyphs = if (extRes.hasGlyphs) extRes.matchedGlyphsIndices else emptyList()
                                     activeGlyphSlotIndex = 0
 
-                                    ScanPipelineDebugger.log(
-                                        stage = PipelineStageSource.OCR_EXTRACTION,
-                                        level = "INFO",
-                                        summary = "Extracción completada",
-                                        details = "Tipo: ${extRes.candidateType} | Contiene Glifos: ${extRes.hasGlyphs}"
-                                    )
-
-                                    ScanPipelineDebugger.updateTelemetry { current ->
-                                        current.copy(
-                                            nativeTimeMs = extRes.processingTimeMs,
-                                            ocrTimeMs = ocrTime,
-                                            ocrRawText = extRes.rawText
-                                        )
-                                    }
-
                                     isOcrRunning = false
                                     currentStage = AnalysisStage.STAGE_3_USER_REVIEW
                                 }
                             },
                             modifier = Modifier.fillMaxWidth(),
                             enabled = selectedImageUri != null && !isOcrRunning && !isAiRunning,
-                            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
+                            colors = ButtonDefaults.buttonColors(containerColor = AmberDustHighlight),
                             shape = RoundedCornerShape(4.dp)
                         ) {
-                            Text("1. ESCANEAR E IDENTIFICAR CAPTURA", color = MaterialTheme.colorScheme.onPrimary, fontWeight = FontWeight.Bold)
+                            Text("1. ESCANEAR CAPTURA", color = Color.Black, fontWeight = FontWeight.Bold)
                         }
                     }
                 }
 
-                // ETAPA 2 & 3: PASO CLAVE INTERMEDIO CON VISTA INTERACTIVA Y OVERLAY MODAL DE FOTO
+                // TARJETA 2: Formulario & Selección de Categoría
                 if (extractionResult != null && currentStage >= AnalysisStage.STAGE_3_USER_REVIEW) {
-                    Card(
+                    OutlinedCard(
                         modifier = Modifier.fillMaxWidth(),
-                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerHigh),
+                        colors = CardDefaults.outlinedCardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLow),
                         shape = RoundedCornerShape(4.dp)
                     ) {
                         Column(
-                            modifier = Modifier.padding(12.dp),
-                            verticalArrangement = Arrangement.spacedBy(12.dp)
+                            modifier = Modifier.padding(16.dp),
+                            verticalArrangement = Arrangement.spacedBy(14.dp)
                         ) {
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
@@ -375,102 +349,73 @@ fun ScanScreen(
                                     color = MaterialTheme.colorScheme.tertiary,
                                     fontWeight = FontWeight.Bold
                                 )
-                                Button(
+                                OutlinedButton(
                                     onClick = { showPhotoOverlayModal = true },
-                                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.tertiary),
                                     shape = RoundedCornerShape(4.dp)
                                 ) {
-                                    Text("🔎 VER FOTO COMPLETA (OVERLAY)", fontSize = 10.sp, color = MaterialTheme.colorScheme.onTertiary, fontWeight = FontWeight.Bold)
+                                    Text("🔎 OVERLAY FOTO", fontSize = 11.sp, fontWeight = FontWeight.Bold)
                                 }
                             }
 
-                            Text(
-                                text = "Usa el botón flotante arriba para abrir la foto sobre puesta en pantalla y copiar los glifos o nombres sin perder la vista:",
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
-
-                            // Muestra visual DE LA FOTO EN ESTA SECCIÓN para referencia rápida
                             Box(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .height(150.dp)
+                                    .height(130.dp)
                                     .clip(RoundedCornerShape(4.dp))
-                                    .border(1.dp, MaterialTheme.colorScheme.tertiary, RoundedCornerShape(4.dp))
+                                    .border(1.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(4.dp))
                                     .clickable { showPhotoOverlayModal = true }
                             ) {
                                 AsyncImage(
                                     model = selectedImageUri,
-                                    contentDescription = "Toca para abrir overlay flotante",
+                                    contentDescription = "Overlay flotante",
                                     contentScale = ContentScale.Crop,
                                     modifier = Modifier.fillMaxSize()
                                 )
-                                Box(
-                                    modifier = Modifier
-                                        .align(Alignment.BottomEnd)
-                                        .background(Color.Black.copy(alpha = 0.7f))
-                                        .padding(horizontal = 8.dp, vertical = 4.dp)
-                                ) {
-                                    Text("🔍 TOCA PARA OVERLAY COMPLETO", fontSize = 9.sp, color = Color.White, fontWeight = FontWeight.Bold)
-                                }
                             }
 
-                            // Muestra del Texto Bruto Extraído
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .background(MaterialTheme.colorScheme.surface, RoundedCornerShape(4.dp))
-                                    .border(1.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(4.dp))
-                                    .padding(8.dp)
-                            ) {
-                                Text(
-                                    text = extractionResult!!.rawText,
-                                    fontFamily = FontFamily.Monospace,
-                                    fontSize = 11.sp,
-                                    color = MaterialTheme.colorScheme.onSurface
-                                )
-                            }
-
-                            // Selector de Categoría (DiscoveryType)
                             Text(
-                                text = "Categoría del Descubrimiento:",
-                                style = MaterialTheme.typography.labelSmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                fontWeight = FontWeight.Bold
+                                text = "Categoría:",
+                                style = MaterialTheme.typography.labelMedium,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
 
                             FlowRow(
                                 modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.spacedBy(4.dp)
+                                horizontalArrangement = Arrangement.spacedBy(6.dp),
+                                verticalArrangement = Arrangement.spacedBy(6.dp)
                             ) {
                                 DiscoveryType.entries.forEach { type ->
                                     FilterChip(
                                         selected = userVerifiedType == type,
                                         onClick = { userVerifiedType = type },
                                         label = { Text(type.name, fontSize = 11.sp) },
+                                        shape = RoundedCornerShape(0.dp),
                                         colors = FilterChipDefaults.filterChipColors(
-                                            selectedContainerColor = MaterialTheme.colorScheme.tertiaryContainer,
-                                            selectedLabelColor = MaterialTheme.colorScheme.onTertiaryContainer
+                                            selectedContainerColor = AmberDustHighlight,
+                                            selectedLabelColor = Color.Black
                                         )
                                     )
                                 }
                             }
 
-                            // Formulario interactivo
                             OutlinedTextField(
                                 value = userVerifiedName,
                                 onValueChange = { userVerifiedName = it },
-                                label = { Text("Nombre del Hallazgo (Planeta, Nave, Criatura, etc.)") },
+                                label = { Text("Nombre del Hallazgo") },
+                                singleLine = true,
                                 modifier = Modifier.fillMaxWidth(),
-                                shape = RoundedCornerShape(4.dp),
-                                colors = OutlinedTextFieldDefaults.colors(focusedBorderColor = MaterialTheme.colorScheme.tertiary)
+                                shape = RoundedCornerShape(4.dp)
                             )
 
-                            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                            ) {
                                 OutlinedTextField(
                                     value = userVerifiedSystem,
                                     onValueChange = { userVerifiedSystem = it },
                                     label = { Text("Sistema Solar") },
+                                    singleLine = true,
                                     modifier = Modifier.weight(1f),
                                     shape = RoundedCornerShape(4.dp)
                                 )
@@ -478,22 +423,21 @@ fun ScanScreen(
                                     value = userVerifiedGalaxy,
                                     onValueChange = { userVerifiedGalaxy = it },
                                     label = { Text("Galaxia") },
+                                    singleLine = true,
                                     modifier = Modifier.weight(1f),
                                     shape = RoundedCornerShape(4.dp)
                                 )
                             }
 
-                            // Toggle para Indicar si la Captura Incluye Glifos de Portal
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
                                 horizontalArrangement = Arrangement.SpaceBetween,
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Text(
-                                    text = "¿La imagen incluye Glifos de Portal?",
-                                    style = MaterialTheme.typography.bodySmall,
-                                    fontWeight = FontWeight.Bold,
-                                    color = MaterialTheme.colorScheme.onSurface
+                                    text = "¿Incluye Glifos de Portal?",
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    fontWeight = FontWeight.Bold
                                 )
                                 Switch(
                                     checked = includeGlyphsInCapture,
@@ -505,11 +449,11 @@ fun ScanScreen(
                                             userVerifiedGlyphs = emptyList()
                                         }
                                     },
-                                    colors = SwitchDefaults.colors(checkedThumbColor = MaterialTheme.colorScheme.tertiary)
+                                    colors = SwitchDefaults.colors(checkedThumbColor = AmberDustHighlight)
                                 )
                             }
 
-                            // SECCIÓN DE EDITOR DE GLIFOS CON LOGOS GRANDES Y CLAROS
+                            // TARJETA 3: Editor de Glifos
                             if (includeGlyphsInCapture) {
                                 InteractiveGlyphSequenceEditor(
                                     glyphs = userVerifiedGlyphs,
@@ -565,7 +509,7 @@ fun ScanScreen(
                                     modifier = Modifier.weight(1f),
                                     shape = RoundedCornerShape(4.dp)
                                 ) {
-                                    Text("GUARDAR DIRECTO EN BD", fontSize = 11.sp)
+                                    Text("GUARDAR DIRECTO", fontSize = 11.sp)
                                 }
 
                                 Button(
@@ -573,18 +517,7 @@ fun ScanScreen(
                                         val uri = selectedImageUri ?: return@Button
                                         coroutineScope.launch {
                                             isAiRunning = true
-
                                             val finalGlyphsList = if (includeGlyphsInCapture) userVerifiedGlyphs else emptyList()
-
-                                            val diff = "Diff Extracción vs Usuario: Tipo (${userVerifiedType.name}), Nombre ('$userVerifiedName'), Glifos ($finalGlyphsList)"
-                                            ScanPipelineDebugger.log(
-                                                stage = PipelineStageSource.USER_EDIT,
-                                                level = "INFO",
-                                                summary = "Datos confirmados manualmente por el usuario",
-                                                details = diff
-                                            )
-                                            ScanPipelineDebugger.updateTelemetry { it.copy(userEditedTextDiff = diff) }
-
                                             val aiRes = AiAnalyzerService.analyzeScreenshotWithVerifiedText(
                                                 imageUriOrPath = uri,
                                                 verifiedName = userVerifiedName,
@@ -594,10 +527,8 @@ fun ScanScreen(
                                                 verifiedGlyphs = finalGlyphsList,
                                                 nativeResult = extractionResult?.nativeCMetrics
                                             )
-
                                             aiResult = aiRes
-
-                                            val discrepancies = PipelineDiscrepancyValidator.validatePipeline(
+                                            validationDiscrepancies = PipelineDiscrepancyValidator.validatePipeline(
                                                 ocrResult = null,
                                                 userVerifiedName = userVerifiedName,
                                                 userVerifiedSystem = userVerifiedSystem,
@@ -606,89 +537,53 @@ fun ScanScreen(
                                                 userVerifiedGlyphs = finalGlyphsList,
                                                 aiResult = aiRes
                                             )
-
-                                            validationDiscrepancies = discrepancies
-
-                                            ScanPipelineDebugger.updateTelemetry { current ->
-                                                current.copy(discrepanciesCount = discrepancies.size)
-                                            }
-
                                             isAiRunning = false
                                             currentStage = AnalysisStage.STAGE_5_COMPLETED
                                         }
                                     },
                                     modifier = Modifier.weight(1.3f),
                                     enabled = !isAiRunning,
-                                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.tertiary),
+                                    colors = ButtonDefaults.buttonColors(containerColor = AmberDustHighlight),
                                     shape = RoundedCornerShape(4.dp)
                                 ) {
-                                    Text("PROCESAR CON IA MULTIMODAL", fontSize = 11.sp, color = MaterialTheme.colorScheme.onTertiary, fontWeight = FontWeight.Bold)
+                                    Text("PROCESAR IA", fontSize = 11.sp, color = Color.Black, fontWeight = FontWeight.Bold)
                                 }
                             }
                         }
                     }
                 }
 
-                // ETAPA 4 & 5: RESULTADO FINAL E INSPECCIÓN DE SALIDA JSON MULTIMODAL
+                // TARJETA 4: Resultado Final IA
                 if (aiResult != null && currentStage >= AnalysisStage.STAGE_5_COMPLETED) {
-                    Card(
+                    OutlinedCard(
                         modifier = Modifier.fillMaxWidth(),
-                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLow),
+                        colors = CardDefaults.outlinedCardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLow),
                         shape = RoundedCornerShape(4.dp)
                     ) {
                         Column(
-                            modifier = Modifier.padding(12.dp),
+                            modifier = Modifier.padding(16.dp),
                             verticalArrangement = Arrangement.spacedBy(12.dp)
                         ) {
                             Text(
-                                text = "3. RESULTADO REFINADO POR IA & REPORTE DE DISCREPANCIAS",
+                                text = "3. RESULTADO IA Y CONFIRMACIÓN",
                                 style = MaterialTheme.typography.labelLarge,
-                                color = MaterialTheme.colorScheme.primary,
+                                color = AmberDustHighlight,
                                 fontWeight = FontWeight.Bold
                             )
 
                             Box(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .background(MaterialTheme.colorScheme.surface, RoundedCornerShape(4.dp))
-                                    .border(1.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(4.dp))
-                                    .padding(8.dp)
+                                    .background(MaterialTheme.colorScheme.surfaceContainer, RoundedCornerShape(4.dp))
+                                    .padding(12.dp)
                             ) {
                                 Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                                    Text("Categoría: ${aiResult!!.detectedType.name}", fontSize = 11.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.tertiary)
-                                    Text("Nombre Refinado: ${aiResult!!.suggestedName}", fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                                    Text("Categoría: ${aiResult!!.detectedType.name}", fontSize = 11.sp, fontWeight = FontWeight.Bold, color = AmberDustHighlight)
+                                    Text("Nombre: ${aiResult!!.suggestedName}", fontSize = 13.sp, fontWeight = FontWeight.Bold)
                                     Text("Sistema: ${aiResult!!.systemName} | Galaxia: ${aiResult!!.galaxyName}", fontSize = 11.sp)
                                     if (aiResult!!.glyphsHex.isNotBlank()) {
-                                        Text("NMS Portal Hex: ${aiResult!!.glyphsHex}", fontFamily = FontFamily.Monospace, fontSize = 12.sp, color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold)
+                                        Text("Portal Hex: ${aiResult!!.glyphsHex}", fontFamily = FontFamily.Monospace, fontSize = 12.sp, color = MaterialTheme.colorScheme.tertiary, fontWeight = FontWeight.Bold)
                                     }
-                                    Text("Confidence Score: ${aiResult!!.confidenceScoreLabel}", fontSize = 11.sp, color = MaterialTheme.colorScheme.secondary)
-                                }
-                            }
-
-                            if (validationDiscrepancies.isNotEmpty()) {
-                                Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                                    Text(
-                                        text = "DISCREPANCIAS DETECTADAS (${validationDiscrepancies.size}):",
-                                        style = MaterialTheme.typography.labelSmall,
-                                        color = MaterialTheme.colorScheme.error,
-                                        fontWeight = FontWeight.Bold
-                                    )
-                                    validationDiscrepancies.forEach { disc ->
-                                        DiscrepancyBadge(discrepancy = disc)
-                                    }
-                                }
-                            } else {
-                                Box(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .background(MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.4f), RoundedCornerShape(4.dp))
-                                        .padding(8.dp)
-                                ) {
-                                    Text(
-                                        text = "✅ Todos los datos fueron sincronizados exitosamente con la BD de Bitácora.",
-                                        style = MaterialTheme.typography.bodySmall,
-                                        color = MaterialTheme.colorScheme.onSecondaryContainer
-                                    )
                                 }
                             }
 
@@ -697,35 +592,31 @@ fun ScanScreen(
                                     coroutineScope.launch {
                                         val newDiscovery = Discovery(
                                             id = "scan_${System.currentTimeMillis()}",
-                                            type = userVerifiedType,
-                                            name = userVerifiedName,
-                                            galaxy = userVerifiedGalaxy,
-                                            systemName = userVerifiedSystem,
+                                            type = aiResult!!.detectedType,
+                                            name = aiResult!!.suggestedName,
+                                            galaxy = aiResult!!.galaxyName,
+                                            systemName = aiResult!!.systemName,
                                             glyphs = if (includeGlyphsInCapture) userVerifiedGlyphs else emptyList(),
-                                            imageUrl = selectedImageUri ?: "",
+                                            imageUrl = selectedImageUri,
                                             timestamp = System.currentTimeMillis(),
                                             status = DiscoveryStatus.CONFIRMED,
-                                            confidence = aiResult!!.confidence
+                                            confidence = 1.0
                                         )
                                         repository.saveDiscovery(newDiscovery)
                                         onDiscoverySaved()
                                     }
                                 },
                                 modifier = Modifier.fillMaxWidth(),
-                                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primaryContainer),
+                                colors = ButtonDefaults.buttonColors(containerColor = AmberDustHighlight),
                                 shape = RoundedCornerShape(4.dp)
                             ) {
-                                Text("GUARDAR EN BITÁCORA DE SQLITE", color = MaterialTheme.colorScheme.onPrimaryContainer, fontWeight = FontWeight.Bold)
+                                Text("GUARDAR EN BITÁCORA", color = Color.Black, fontWeight = FontWeight.Bold)
                             }
                         }
                     }
                 }
 
-                if (showDevDebugDrawer) {
-                    DevDebugDrawer(telemetry = telemetry)
-                }
-
-                // OVERLAY DIALOG MODAL: FOTO A PANTALLA COMPLETA PARA INSPECCIÓN MANUAL DE GLIFOS
+                // Modal Overlay de Foto
                 if (showPhotoOverlayModal && selectedImageUri != null) {
                     Dialog(
                         onDismissRequest = { showPhotoOverlayModal = false },
@@ -735,54 +626,23 @@ fun ScanScreen(
                             modifier = Modifier
                                 .fillMaxSize()
                                 .background(Color.Black.copy(alpha = 0.92f))
-                                .padding(16.dp),
+                                .clickable { showPhotoOverlayModal = false },
                             contentAlignment = Alignment.Center
                         ) {
-                            Column(
-                                modifier = Modifier.fillMaxSize(),
-                                verticalArrangement = Arrangement.SpaceBetween,
-                                horizontalAlignment = Alignment.CenterHorizontally
+                            AsyncImage(
+                                model = selectedImageUri,
+                                contentDescription = "Captura completa",
+                                contentScale = ContentScale.Fit,
+                                modifier = Modifier.fillMaxSize()
+                            )
+                            Button(
+                                onClick = { showPhotoOverlayModal = false },
+                                modifier = Modifier
+                                    .align(Alignment.TopEnd)
+                                    .padding(24.dp),
+                                shape = RoundedCornerShape(4.dp)
                             ) {
-                                Row(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    horizontalArrangement = Arrangement.SpaceBetween,
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    Text(
-                                        text = "🔍 INSPECCIÓN DE CAPTURA (GLIFOS EN MARGEN INFERIOR)",
-                                        color = Color.Yellow,
-                                        fontWeight = FontWeight.Bold,
-                                        fontSize = 12.sp
-                                    )
-                                    Button(
-                                        onClick = { showPhotoOverlayModal = false },
-                                        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)
-                                    ) {
-                                        Text("✕ CERRAR VISTA", color = Color.White, fontWeight = FontWeight.Bold)
-                                    }
-                                }
-
-                                AsyncImage(
-                                    model = selectedImageUri,
-                                    contentDescription = "Foto ampliada para copia manual de glifos",
-                                    contentScale = ContentScale.Fit,
-                                    modifier = Modifier
-                                        .weight(1f)
-                                        .fillMaxWidth()
-                                        .padding(vertical = 8.dp)
-                                )
-
-                                Card(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    colors = CardDefaults.cardColors(containerColor = Color(0xFF222222))
-                                ) {
-                                    Text(
-                                        text = "📌 CONSEJO: Revisa los 12 iconos ubicados en el margen inferior izquierdo de la captura para ingresarlos fácilmente en el editor.",
-                                        color = Color.LightGray,
-                                        fontSize = 11.sp,
-                                        modifier = Modifier.padding(10.dp)
-                                    )
-                                }
+                                Text("✕ CERRAR")
                             }
                         }
                     }
@@ -792,11 +652,60 @@ fun ScanScreen(
     }
 }
 
-/**
- * Editor Interactivo de Secuencia de Glifos con Alta UX y LOGOS GRANDES:
- * - Selección táctil de ranuras (Slot 0..11) para reemplazar el glifo en la posición exacta.
- * - Iconos en la grilla 2x8 GRANDES, sin números encimados que oscurezcan los logos.
- */
+@Composable
+fun PipelineStepper(currentStage: AnalysisStage) {
+    val stages = listOf("1. Captura", "2. Revisión", "3. IA", "4. Guardar")
+    val currentIndex = when (currentStage) {
+        AnalysisStage.STAGE_1_CAPTURE -> 0
+        AnalysisStage.STAGE_2_OCR_DONE -> 1
+        AnalysisStage.STAGE_3_USER_REVIEW -> 1
+        AnalysisStage.STAGE_4_AI_DONE -> 2
+        AnalysisStage.STAGE_5_COMPLETED -> 3
+    }
+
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(MaterialTheme.colorScheme.surfaceContainer, RoundedCornerShape(4.dp))
+            .padding(8.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        stages.forEachIndexed { index, name ->
+            val isActive = index <= currentIndex
+            val isCurrent = index == currentIndex
+
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Box(
+                    modifier = Modifier
+                        .size(20.dp)
+                        .clip(RoundedCornerShape(2.dp))
+                        .background(
+                            if (isCurrent) AmberDustHighlight
+                            else if (isActive) MaterialTheme.colorScheme.primaryContainer
+                            else MaterialTheme.colorScheme.surfaceContainerHigh
+                        ),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "${index + 1}",
+                        fontSize = 10.sp,
+                        color = if (isCurrent) Color.Black else MaterialTheme.colorScheme.onSurfaceVariant,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+                Spacer(modifier = Modifier.width(4.dp))
+                Text(
+                    text = name,
+                    fontSize = 10.sp,
+                    color = if (isActive) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.outline,
+                    fontWeight = if (isCurrent) FontWeight.Bold else FontWeight.Normal
+                )
+            }
+        }
+    }
+}
+
 @Composable
 fun InteractiveGlyphSequenceEditor(
     glyphs: List<Int>,
@@ -807,8 +716,11 @@ fun InteractiveGlyphSequenceEditor(
     onClearAll: () -> Unit
 ) {
     Column(
-        modifier = Modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(MaterialTheme.colorScheme.surfaceContainer, RoundedCornerShape(4.dp))
+            .padding(12.dp),
+        verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -816,105 +728,49 @@ fun InteractiveGlyphSequenceEditor(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "Coordenadas de Portal (${glyphs.size}/12 glifos):",
-                style = MaterialTheme.typography.labelSmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                text = "Secuencia de Glifos (12):",
+                style = MaterialTheme.typography.labelMedium,
                 fontWeight = FontWeight.Bold
             )
-
-            val currentHex = glyphs.take(12).joinToString("") { (it - 1).coerceIn(0, 15).toString(16).uppercase() }
-            Text(
-                text = "HEX: [ $currentHex ]",
-                style = MaterialTheme.typography.labelSmall,
-                fontFamily = FontFamily.Monospace,
-                color = MaterialTheme.colorScheme.primary,
-                fontWeight = FontWeight.Bold
-            )
-        }
-
-        // Grilla interactiva de las 12 ranuras (2 filas de 6 ranuras cada una)
-        Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-            val fullList = (0..11).map { idx -> if (idx < glyphs.size) glyphs[idx] else null }
-            val firstRow = fullList.take(6)
-            val secondRow = fullList.drop(6)
-
-            // Fila 1: Ranuras 0 a 5
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(4.dp)
-            ) {
-                firstRow.forEachIndexed { rowIdx, glyphVal ->
-                    val slotIndex = rowIdx
-                    val isSelected = slotIndex == activeSlotIndex
-                    GlyphSlotBox(
-                        slotIndex = slotIndex,
-                        glyphVal = glyphVal,
-                        isSelected = isSelected,
-                        onClick = { onSlotClick(slotIndex) },
-                        modifier = Modifier.weight(1f)
-                    )
+            Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                OutlinedButton(
+                    onClick = onDeleteSingle,
+                    shape = RoundedCornerShape(4.dp)
+                ) {
+                    Text("⌫ BORRAR", fontSize = 10.sp)
                 }
-            }
-
-            // Fila 2: Ranuras 6 a 11
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(4.dp)
-            ) {
-                secondRow.forEachIndexed { rowIdx, glyphVal ->
-                    val slotIndex = rowIdx + 6
-                    val isSelected = slotIndex == activeSlotIndex
-                    GlyphSlotBox(
-                        slotIndex = slotIndex,
-                        glyphVal = glyphVal,
-                        isSelected = isSelected,
-                        onClick = { onSlotClick(slotIndex) },
-                        modifier = Modifier.weight(1f)
-                    )
+                OutlinedButton(
+                    onClick = onClearAll,
+                    shape = RoundedCornerShape(4.dp)
+                ) {
+                    Text("🗑️ LIMPIAR", fontSize = 10.sp)
                 }
             }
         }
 
-        // Barra de Herramientas de Edición Rápida UX
+        // 12 Ranuras
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            verticalAlignment = Alignment.CenterVertically
+            horizontalArrangement = Arrangement.spacedBy(4.dp)
         ) {
-            val activeName = if (activeSlotIndex in 0..11 && activeSlotIndex < glyphs.size) {
-                val key = (glyphs[activeSlotIndex] - 1).coerceIn(0, 15)
-                NMS_GLYPH_NAMES[key] ?: "Ranura #${activeSlotIndex + 1}"
-            } else "Ranura #${activeSlotIndex + 1}"
-
-            Text(
-                text = "Editando: $activeName",
-                style = MaterialTheme.typography.bodySmall,
-                fontSize = 11.sp,
-                color = MaterialTheme.colorScheme.tertiary,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.weight(1f)
-            )
-
-            OutlinedButton(
-                onClick = onDeleteSingle,
-                modifier = Modifier.height(32.dp),
-                shape = RoundedCornerShape(4.dp),
-                colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.error)
-            ) {
-                Text("⌫ BORRAR", fontSize = 10.sp, fontWeight = FontWeight.Bold)
-            }
-
-            OutlinedButton(
-                onClick = onClearAll,
-                modifier = Modifier.height(32.dp),
-                shape = RoundedCornerShape(4.dp),
-                colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.error)
-            ) {
-                Text("🗑️ LIMPIAR TODO", fontSize = 10.sp, fontWeight = FontWeight.Bold)
+            (0..11).forEach { index ->
+                val gVal = glyphs.getOrNull(index)
+                GlyphSlotBox(
+                    slotIndex = index,
+                    glyphVal = gVal,
+                    isSelected = activeSlotIndex == index,
+                    onClick = { onSlotClick(index) },
+                    modifier = Modifier.weight(1f)
+                )
             }
         }
 
-        // TECLADO DE GLIFOS CON LOGOS GRANDES Y CLAROS
+        Text(
+            text = "Teclado Táctil 2x8:",
+            style = MaterialTheme.typography.labelSmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+
         GlyphKeyboardPicker2x8(onGlyphSelected = onGlyphSelected)
     }
 }
@@ -930,12 +786,12 @@ fun GlyphSlotBox(
     Box(
         modifier = modifier
             .aspectRatio(1f)
-            .clip(RoundedCornerShape(4.dp))
-            .background(if (isSelected) MaterialTheme.colorScheme.tertiaryContainer else MaterialTheme.colorScheme.surface)
+            .clip(RoundedCornerShape(0.dp))
+            .background(if (isSelected) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceContainerHigh)
             .border(
                 width = if (isSelected) 2.dp else 1.dp,
-                color = if (isSelected) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.outlineVariant,
-                shape = RoundedCornerShape(4.dp)
+                color = if (isSelected) AmberDustHighlight else MaterialTheme.colorScheme.outlineVariant,
+                shape = RoundedCornerShape(0.dp)
             )
             .clickable { onClick() }
             .padding(2.dp),
@@ -945,7 +801,7 @@ fun GlyphSlotBox(
             val res = getGlyphDrawableResource(glyphVal)
             Image(
                 painter = painterResource(res),
-                contentDescription = "Ranura ${slotIndex + 1} - Glifo $glyphVal",
+                contentDescription = "Glifo $glyphVal",
                 modifier = Modifier.fillMaxSize()
             )
         } else {
@@ -959,18 +815,12 @@ fun GlyphSlotBox(
     }
 }
 
-/**
- * Teclado 2x8 Optimizado con LOGOS GRANDES Y CLAROS:
- * - Los iconos ocupan el 100% del espacio del botón para máxima nitidez visual.
- * - Sin textos encimados que achiquen el gráfico del glifo.
- */
 @Composable
 fun GlyphKeyboardPicker2x8(onGlyphSelected: (Int) -> Unit) {
     Column(
         modifier = Modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(4.dp)
     ) {
-        // FILA 1: Primeros 8 Glifos (Valores 1..8)
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(4.dp)
@@ -981,9 +831,9 @@ fun GlyphKeyboardPicker2x8(onGlyphSelected: (Int) -> Unit) {
                     modifier = Modifier
                         .weight(1f)
                         .aspectRatio(1f)
-                        .clip(RoundedCornerShape(4.dp))
+                        .clip(RoundedCornerShape(0.dp))
                         .background(MaterialTheme.colorScheme.surfaceContainerHigh)
-                        .border(1.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(4.dp))
+                        .border(1.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(0.dp))
                         .clickable { onGlyphSelected(glyphValue) }
                         .padding(4.dp),
                     contentAlignment = Alignment.Center
@@ -997,7 +847,6 @@ fun GlyphKeyboardPicker2x8(onGlyphSelected: (Int) -> Unit) {
             }
         }
 
-        // FILA 2: Segundos 8 Glifos (Valores 9..16)
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(4.dp)
@@ -1008,9 +857,9 @@ fun GlyphKeyboardPicker2x8(onGlyphSelected: (Int) -> Unit) {
                     modifier = Modifier
                         .weight(1f)
                         .aspectRatio(1f)
-                        .clip(RoundedCornerShape(4.dp))
+                        .clip(RoundedCornerShape(0.dp))
                         .background(MaterialTheme.colorScheme.surfaceContainerHigh)
-                        .border(1.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(4.dp))
+                        .border(1.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(0.dp))
                         .clickable { onGlyphSelected(glyphValue) }
                         .padding(4.dp),
                     contentAlignment = Alignment.Center
@@ -1021,145 +870,6 @@ fun GlyphKeyboardPicker2x8(onGlyphSelected: (Int) -> Unit) {
                         modifier = Modifier.fillMaxSize()
                     )
                 }
-            }
-        }
-    }
-}
-
-@Composable
-fun PipelineStepper(currentStage: AnalysisStage) {
-    val stages = listOf("1. Captura", "2. Visión", "3. Usuario+Foto", "4. IA Vision", "5. Fin")
-    val currentIndex = when (currentStage) {
-        AnalysisStage.STAGE_1_CAPTURE -> 0
-        AnalysisStage.STAGE_2_OCR_DONE -> 1
-        AnalysisStage.STAGE_3_USER_REVIEW -> 2
-        AnalysisStage.STAGE_4_AI_DONE -> 3
-        AnalysisStage.STAGE_5_COMPLETED -> 4
-    }
-
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(MaterialTheme.colorScheme.surfaceVariant, RoundedCornerShape(4.dp))
-            .padding(6.dp),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        stages.forEachIndexed { index, name ->
-            val isActive = index <= currentIndex
-            val isCurrent = index == currentIndex
-            Box(
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(2.dp)
-                    .background(
-                        color = when {
-                            isCurrent -> MaterialTheme.colorScheme.primary
-                            isActive -> MaterialTheme.colorScheme.primaryContainer
-                            else -> MaterialTheme.colorScheme.surface
-                        },
-                        shape = RoundedCornerShape(2.dp)
-                    )
-                    .padding(vertical = 4.dp),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = name,
-                    fontSize = 10.sp,
-                    fontWeight = if (isCurrent) FontWeight.Bold else FontWeight.Normal,
-                    color = when {
-                        isCurrent -> MaterialTheme.colorScheme.onPrimary
-                        isActive -> MaterialTheme.colorScheme.onPrimaryContainer
-                        else -> MaterialTheme.colorScheme.outline
-                    }
-                )
-            }
-        }
-    }
-}
-
-@Composable
-fun DiscrepancyBadge(discrepancy: ValidationDiscrepancy) {
-    val bgColor = when (discrepancy.severity) {
-        DiscrepancySeverity.HIGH -> MaterialTheme.colorScheme.errorContainer
-        DiscrepancySeverity.WARNING -> MaterialTheme.colorScheme.tertiaryContainer
-        DiscrepancySeverity.INFO -> MaterialTheme.colorScheme.surfaceContainerHigh
-    }
-
-    val textColor = when (discrepancy.severity) {
-        DiscrepancySeverity.HIGH -> MaterialTheme.colorScheme.onErrorContainer
-        DiscrepancySeverity.WARNING -> MaterialTheme.colorScheme.onTertiaryContainer
-        DiscrepancySeverity.INFO -> MaterialTheme.colorScheme.onSurface
-    }
-
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(bgColor, RoundedCornerShape(4.dp))
-            .padding(8.dp)
-    ) {
-        Column {
-            Text(text = "⚠️ [${discrepancy.stage}] ${discrepancy.title}", style = MaterialTheme.typography.labelSmall, color = textColor, fontWeight = FontWeight.Bold)
-            Text(text = discrepancy.description, style = MaterialTheme.typography.bodySmall, fontSize = 11.sp, color = textColor)
-        }
-    }
-}
-
-@Composable
-fun DevDebugDrawer(telemetry: com.gtamayoc.atlasnms.shared.domain.service.PipelineTelemetrySnapshot) {
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(containerColor = Color(0xFF1E1E1E)),
-        shape = RoundedCornerShape(4.dp)
-    ) {
-        Column(
-            modifier = Modifier.padding(12.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            Text(
-                text = "🛠️ ARQUITECTURA DE DEPURACIÓN Y SINCRONIZACIÓN",
-                style = MaterialTheme.typography.labelMedium,
-                color = Color(0xFFFFCC00),
-                fontWeight = FontWeight.Bold
-            )
-
-            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                Text("Tiempo C Nativo: ${telemetry.nativeTimeMs} ms", fontSize = 11.sp, color = Color.White)
-                Text("Tiempo OCR/Híbrido: ${telemetry.ocrTimeMs} ms", fontSize = 11.sp, color = Color.White)
-                Text("Tiempo IA Vision: ${telemetry.aiTimeMs} ms", fontSize = 11.sp, color = Color.White)
-            }
-
-            Text("Modificaciones de Usuario (Diff):", fontSize = 11.sp, color = Color(0xFFAAAAFF))
-            Text(telemetry.userEditedTextDiff, fontSize = 10.sp, fontFamily = FontFamily.Monospace, color = Color.LightGray)
-
-            Text("Prompt Maestro Multimodal:", fontSize = 11.sp, color = Color(0xFFAAAAFF))
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(Color.Black, RoundedCornerShape(2.dp))
-                    .padding(6.dp)
-            ) {
-                Text(
-                    text = telemetry.promptSentToAi.ifBlank { "Sin prompt generado aún" },
-                    fontSize = 10.sp,
-                    fontFamily = FontFamily.Monospace,
-                    color = Color.Green
-                )
-            }
-
-            Text("Respuesta JSON Multimodal (Sincronizada con BD):", fontSize = 11.sp, color = Color(0xFFAAAAFF))
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(Color.Black, RoundedCornerShape(2.dp))
-                    .padding(6.dp)
-            ) {
-                Text(
-                    text = telemetry.rawAiJsonResponse.ifBlank { "Sin JSON devuelto aún" },
-                    fontSize = 10.sp,
-                    fontFamily = FontFamily.Monospace,
-                    color = Color.Cyan
-                )
             }
         }
     }

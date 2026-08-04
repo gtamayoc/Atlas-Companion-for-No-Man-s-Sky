@@ -67,7 +67,7 @@ object ScanPipelineDebugger {
 
     fun log(stage: PipelineStageSource, level: String, summary: String, details: String = "") {
         val newEntry = StageLogEntry(
-            timestampMs = System.currentTimeMillis(),
+            timestampMs = com.gtamayoc.atlasnms.shared.util.currentTimeMillis(),
             stage = stage,
             level = level,
             summary = summary,

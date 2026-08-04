@@ -87,7 +87,6 @@ object NativeImageProcessor {
     }
 
     private fun currentTimestampMs(): Long {
-        // En Kotlin Multiplatform, fallback simple de tiempo de sistema
-        return kotlin.math.abs(System.currentTimeMillis())
+        return com.gtamayoc.atlasnms.shared.util.currentTimeMillis()
     }
 }

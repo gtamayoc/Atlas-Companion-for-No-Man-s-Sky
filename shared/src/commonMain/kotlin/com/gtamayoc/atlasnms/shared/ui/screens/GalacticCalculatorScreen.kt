@@ -10,25 +10,33 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Scaffold
+import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.SecondaryScrollableTabRow
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -40,21 +48,21 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import atlasnms.shared.generated.resources.Res
 import com.gtamayoc.atlasnms.shared.domain.model.Discovery
 import com.gtamayoc.atlasnms.shared.domain.model.DiscoveryStatus
 import com.gtamayoc.atlasnms.shared.domain.model.DiscoveryType
 import com.gtamayoc.atlasnms.shared.domain.repository.DiscoveryRepository
-import com.gtamayoc.atlasnms.shared.ui.components.AtlasTopNav
+import com.gtamayoc.atlasnms.shared.ui.components.GalaxySelectorModal
+import com.gtamayoc.atlasnms.shared.ui.components.GlyphSelector
 import com.gtamayoc.atlasnms.shared.ui.components.GlyphSequence
-import com.gtamayoc.atlasnms.shared.ui.components.getGlyphDrawableResource
 import com.gtamayoc.atlasnms.shared.ui.navigation.AppScreen
-import com.gtamayoc.atlasnms.shared.ui.theme.AtlasNMSTheme
 import com.gtamayoc.atlasnms.shared.util.GalacticCoordinate
 import com.gtamayoc.atlasnms.shared.util.GalacticCoordinateUtils
+import com.gtamayoc.atlasnms.shared.util.NmsGalaxies
+import com.gtamayoc.atlasnms.shared.util.NmsGalaxy
+import com.gtamayoc.atlasnms.shared.util.currentTimeMillis
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import org.jetbrains.compose.resources.painterResource
 
 @Composable
 fun GalacticCalculatorScreen(
@@ -64,412 +72,438 @@ fun GalacticCalculatorScreen(
     onDiscoverySaved: () -> Unit
 ) {
     val coroutineScope = rememberCoroutineScope()
+    val allDiscoveries by repository.getAllDiscoveries().collectAsState(initial = emptyList())
 
     var selectedTabIndex by remember { mutableIntStateOf(0) }
-    val tabs = listOf("RADAR TELEPORTS", "CALCULADORA DE GLIFOS")
+    val tabs = listOf("🌌 REGISTRO PORTAL", "🧮 CALCULADORA GLIFOS", "📡 RADAR TELEPORTS")
 
-    // Estado del Teleport Aleatorio (Animación Tragaperras)
+    // --- ESTADO 1: REGISTRO DE PORTAL ---
+    var portalName by remember { mutableStateOf("") }
+    var selectedGalaxy by remember { mutableStateOf(NmsGalaxies.getByNumber(1)) }
+    var showGalaxyModal by remember { mutableStateOf(false) }
+    var portalGlyphs by remember { mutableStateOf(listOf(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1)) }
+
+    // Coordenada calculada reactiva para el Portal
+    val portalCoordinate by remember(portalGlyphs) {
+        derivedStateOf { GalacticCoordinateUtils.parseGlyphsToCoordinate(portalGlyphs) }
+    }
+
+    // Portales relacionados que comparten la misma dirección de sistema/planeta (últimos 9 glifos)
+    val relatedPortals by remember(portalGlyphs, allDiscoveries) {
+        derivedStateOf {
+            val systemAddressKey = portalGlyphs.drop(3).take(9)
+            allDiscoveries.filter { discovery ->
+                discovery.type == DiscoveryType.PORTAL &&
+                discovery.glyphs.size >= 12 &&
+                discovery.glyphs.drop(3).take(9) == systemAddressKey
+            }
+        }
+    }
+
+    // --- ESTADO 2: CALCULADORA MANUAL ---
+    var calcGlyphs by remember { mutableStateOf(listOf(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1)) }
+    val calcCoordinate by remember(calcGlyphs) {
+        derivedStateOf { GalacticCoordinateUtils.parseGlyphsToCoordinate(calcGlyphs) }
+    }
+
+    // --- ESTADO 3: RADAR DE TELEPORTS ALEATORIOS ---
     var isSpinning by remember { mutableStateOf(false) }
     var displayedGlyphs by remember { mutableStateOf((1..12).map { (1..16).random() }) }
     var randomTeleport by remember { mutableStateOf<GalacticCoordinate?>(null) }
     var teleportName by remember { mutableStateOf("") }
     var teleportGalaxy by remember { mutableStateOf("Euclid") }
 
-    // Estado de la Calculadora Manual
-    var selectedGlyphs by remember { mutableStateOf(listOf(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1)) }
-    var calculatedCoordinate by remember {
-        mutableStateOf(GalacticCoordinateUtils.parseGlyphsToCoordinate(selectedGlyphs))
-    }
-
-    AtlasNMSTheme {
-        Scaffold(
-            topBar = {
-                AtlasTopNav(
-                    currentScreen = currentScreen,
-                    onScreenSelected = onScreenSelected
-                )
-            }
-        ) { paddingValues ->
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues)
-            ) {
-                // Selector de pestañas superiores
-                TabRow(
-                    selectedTabIndex = selectedTabIndex,
-                    containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
-                    contentColor = MaterialTheme.colorScheme.primary
-                ) {
-                    tabs.forEachIndexed { index, title ->
-                        Tab(
-                            selected = selectedTabIndex == index,
-                            onClick = { selectedTabIndex = index },
-                            text = {
-                                Text(
-                                    text = title,
-                                    fontWeight = if (selectedTabIndex == index) FontWeight.Bold else FontWeight.Normal
-                                )
-                            }
+    Column(
+        modifier = Modifier.fillMaxSize()
+    ) {
+        // PESTAÑAS PRINCIPALES DEL MÓDULO RADAR
+        TabRow(
+            selectedTabIndex = selectedTabIndex,
+            containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+            contentColor = MaterialTheme.colorScheme.primary
+        ) {
+            tabs.forEachIndexed { index, title ->
+                Tab(
+                    selected = selectedTabIndex == index,
+                    onClick = { selectedTabIndex = index },
+                    text = {
+                        Text(
+                            text = title,
+                            style = MaterialTheme.typography.labelLarge,
+                            fontWeight = if (selectedTabIndex == index) FontWeight.Bold else FontWeight.Medium
                         )
                     }
-                }
+                )
+            }
+        }
 
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .verticalScroll(rememberScrollState())
-                        .padding(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(16.dp)
-                ) {
-                    if (selectedTabIndex == 0) {
-                        // --- PESTAÑA 1: RADAR DE TELEPORTS (ANIMACIÓN TRAGAPERRAS) ---
-                        Text(
-                            text = "RADAR DE TELEPORTS SALVAJES",
-                            style = MaterialTheme.typography.titleLarge,
-                            color = MaterialTheme.colorScheme.primary,
-                            fontWeight = FontWeight.Bold
-                        )
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+                .padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            when (selectedTabIndex) {
+                0 -> {
+                    // =========================================================================
+                    // PESTAÑA 0: REGISTRO DE PORTALES (PRINCIPAL)
+                    // =========================================================================
+                    Text(
+                        text = "🌌 REGISTRO GENERAL DE PORTAL",
+                        style = MaterialTheme.typography.titleLarge,
+                        color = MaterialTheme.colorScheme.primary,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Text(
+                        text = "Guarda una dirección de portal de planeta y vincúlala automáticamente a otros hallazgos dentro del mismo sistema estelar.",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
 
-                        Text(
-                            text = "Gira el rodillo para descubrir coordenadas galácticas aleatorias únicas. La ubicación NO se guarda automáticamente en la bitácora hasta que decidas marcarla como visitada.",
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-
-                        // Muestra visual de los 12 glifos en rotación
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .background(MaterialTheme.colorScheme.surfaceContainerLow, RoundedCornerShape(4.dp))
-                                .border(1.dp, if (isSpinning) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(4.dp))
-                                .padding(16.dp),
-                            contentAlignment = Alignment.Center
+                    // FORMULARIO DE PORTAL
+                    Card(
+                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer),
+                        shape = RoundedCornerShape(12.dp)
+                    ) {
+                        Column(
+                            modifier = Modifier.padding(16.dp),
+                            verticalArrangement = Arrangement.spacedBy(14.dp)
                         ) {
-                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                Text(
-                                    text = if (isSpinning) "🎰 GIRANDO RODILLO TRAGAPERRAS..." else "SECUENCIA DE PORTAL",
-                                    style = MaterialTheme.typography.labelSmall,
-                                    color = if (isSpinning) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
-                                    fontWeight = FontWeight.Bold
+                            OutlinedTextField(
+                                value = portalName,
+                                onValueChange = { portalName = it },
+                                label = { Text("Nombre del Portal / Planeta / Base") },
+                                placeholder = { Text("Ej. Portal Alfa - Planeta Paraíso") },
+                                singleLine = true,
+                                modifier = Modifier.fillMaxWidth(),
+                                colors = OutlinedTextFieldDefaults.colors(
+                                    focusedBorderColor = MaterialTheme.colorScheme.primary,
+                                    unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant
                                 )
-
-                                Spacer(modifier = Modifier.height(12.dp))
-
-                                GlyphSequence(glyphs = displayedGlyphs, modifier = Modifier.fillMaxWidth())
-                            }
-                        }
-
-                        // Botón Tragaperras
-                        Button(
-                            onClick = {
-                                if (!isSpinning) {
-                                    coroutineScope.launch {
-                                        isSpinning = true
-                                        // Animación estilo Tragaperras (~1000ms de giros rápidos)
-                                        repeat(16) {
-                                            displayedGlyphs = (1..12).map { (1..16).random() }
-                                            delay(60)
-                                        }
-
-                                        val finalGenerated = GalacticCoordinateUtils.generateRandomTeleport()
-                                        displayedGlyphs = finalGenerated.glyphIndices
-                                        randomTeleport = finalGenerated
-                                        teleportName = "Portal Inexplorado ${finalGenerated.formattedString.takeLast(4)}"
-                                        isSpinning = false
-                                    }
-                                }
-                            },
-                            modifier = Modifier.fillMaxWidth(),
-                            enabled = !isSpinning,
-                            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
-                            shape = RoundedCornerShape(4.dp)
-                        ) {
-                            Text(
-                                text = if (isSpinning) "GIRANDO PORTAL..." else "🎰 GENERAR TELEPORT (GIRAR TRAGAPERRAS)",
-                                color = MaterialTheme.colorScheme.onPrimary,
-                                fontWeight = FontWeight.Bold
                             )
-                        }
 
-                        // Vista previa de Teleport Generado (Sólo cuando se ha terminado el giro)
-                        AnimatedVisibility(visible = randomTeleport != null && !isSpinning) {
-                            val coord = randomTeleport ?: return@AnimatedVisibility
-
-                            Column(
+                            // CAMPO DE GALAXIA CON MODAL DE 256 GALAXIAS
+                            Row(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .background(MaterialTheme.colorScheme.surfaceContainerLow, RoundedCornerShape(4.dp))
-                                    .border(1.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(4.dp))
-                                    .padding(16.dp),
-                                verticalArrangement = Arrangement.spacedBy(12.dp)
+                                    .background(
+                                        color = MaterialTheme.colorScheme.surfaceContainerHigh,
+                                        shape = RoundedCornerShape(8.dp)
+                                    )
+                                    .border(1.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(8.dp))
+                                    .clickable { showGalaxyModal = true }
+                                    .padding(14.dp),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
                             ) {
-                                Row(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    horizontalArrangement = Arrangement.SpaceBetween,
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
+                                Column {
                                     Text(
-                                        text = "NUEVA UBICACIÓN FIJADA",
+                                        text = "GALAXIA SELECCIONADA",
                                         style = MaterialTheme.typography.labelSmall,
-                                        color = MaterialTheme.colorScheme.primary,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                                    )
+                                    Text(
+                                        text = "#${selectedGalaxy.number} - ${selectedGalaxy.name} (${selectedGalaxy.type})",
+                                        style = MaterialTheme.typography.bodyLarge,
+                                        fontWeight = FontWeight.Bold,
+                                        color = MaterialTheme.colorScheme.primary
+                                    )
+                                }
+                                Button(
+                                    onClick = { showGalaxyModal = true },
+                                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primaryContainer),
+                                    shape = RoundedCornerShape(6.dp)
+                                ) {
+                                    Text("CAMBIAR 🔍", color = MaterialTheme.colorScheme.onPrimaryContainer)
+                                }
+                            }
+
+                            // SECTOR DE SELECCIÓN DE GLIFOS CON TECLADO UNIFICADO
+                            Text(
+                                text = "SECUENCIA DE 12 GLIFOS DE PORTAL",
+                                style = MaterialTheme.typography.labelMedium,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                fontWeight = FontWeight.Bold
+                            )
+
+                            GlyphSelector(
+                                selectedGlyphs = portalGlyphs,
+                                onGlyphsChanged = { portalGlyphs = it }
+                            )
+
+                            // DATOS CALCULADOS DE DIRECCIÓN DE PLANETA
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .background(
+                                        color = MaterialTheme.colorScheme.surfaceContainerLow,
+                                        shape = RoundedCornerShape(8.dp)
+                                    )
+                                    .padding(12.dp)
+                            ) {
+                                Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                                    Text(
+                                        text = "📍 DIRECCIÓN TÁCTICA Y VOXEL",
+                                        style = MaterialTheme.typography.labelSmall,
+                                        color = MaterialTheme.colorScheme.secondary,
                                         fontWeight = FontWeight.Bold
                                     )
                                     Text(
-                                        text = "${coord.distanceToCoreLightYears} AL del Centro",
-                                        style = MaterialTheme.typography.labelSmall,
-                                        color = MaterialTheme.colorScheme.secondary
+                                        text = "Coordenada NMS: ${portalCoordinate.formattedString}",
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                    Text(
+                                        text = "Distancia al Centro Galáctico: ${portalCoordinate.distanceToCoreLightYears} Años Luz",
+                                        style = MaterialTheme.typography.bodySmall,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                                    )
+                                    Text(
+                                        text = "Clase de Sistema: ${portalCoordinate.systemClass}",
+                                        style = MaterialTheme.typography.bodySmall,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant
                                     )
                                 }
+                            }
 
-                                Text(
-                                    text = "Coordenadas Galácticas: ${coord.formattedString}",
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    color = MaterialTheme.colorScheme.onSurface,
-                                    fontWeight = FontWeight.Bold
-                                )
-
-                                Text(
-                                    text = "${coord.systemClass} | ${coord.regionType} (Planeta #${coord.planetIndex})",
-                                    style = MaterialTheme.typography.bodySmall,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                                )
-
-                                OutlinedTextField(
-                                    value = teleportName,
-                                    onValueChange = { teleportName = it },
-                                    label = { Text("Nombre / Notas de la Ubicación") },
-                                    modifier = Modifier.fillMaxWidth(),
-                                    shape = RoundedCornerShape(4.dp)
-                                )
-
-                                OutlinedTextField(
-                                    value = teleportGalaxy,
-                                    onValueChange = { teleportGalaxy = it },
-                                    label = { Text("Galaxia") },
-                                    modifier = Modifier.fillMaxWidth(),
-                                    shape = RoundedCornerShape(4.dp)
-                                )
-
-                                Spacer(modifier = Modifier.height(8.dp))
-
-                                // Botón 1: Marcar como VISITADO y Guardar
-                                Button(
-                                    onClick = {
+                            // BOTÓN GUARDAR PORTAL
+                            Button(
+                                onClick = {
+                                    if (portalGlyphs.size == 12) {
                                         coroutineScope.launch {
+                                            val nameToSave = portalName.ifBlank { "Portal #${portalCoordinate.formattedString}" }
                                             val newDiscovery = Discovery(
-                                                id = "teleport_${System.currentTimeMillis()}",
-                                                type = DiscoveryType.PLANET,
-                                                name = teleportName.ifEmpty { "Portal Galáctico ${coord.formattedString}" },
-                                                galaxy = teleportGalaxy.ifEmpty { "Euclid" },
-                                                systemName = "Sistema ${coord.formattedString.takeLast(4)}",
-                                                glyphs = coord.glyphIndices,
-                                                imageUrl = "https://lh3.googleusercontent.com/aida-public/AB6AXuANDVTdBGRPWiCGa3yW4-3DpXoVxnRPQUz7Yl1Z4DyH-5zFzKECRCCXZ9ACwwd9hSnyUsQWsA7zrot3hu4mRczWYmIjHH6hoqvKWjVcS8nYfa8D8XKGLGekayFplez03jYGea5xWUKMIECAGvCWCuFjEEAgLY24VIIP75Cnxem4mJTiVFXHL6lhoOpqbMl5onumBfcTZKrVmK0RqdS3_6WgUDwpzviJqT7jzDDDHEVWmLWhU9bX_IjVLQ",
-                                                timestamp = System.currentTimeMillis(),
-                                                status = DiscoveryStatus.CONFIRMED,
+                                                id = "portal_${currentTimeMillis()}",
+                                                type = DiscoveryType.PORTAL,
+                                                name = nameToSave,
+                                                galaxy = selectedGalaxy.name,
+                                                systemName = "Sistema ${portalCoordinate.systemIndex}",
+                                                glyphs = portalGlyphs,
+                                                imageUrl = "",
+                                                timestamp = currentTimeMillis(),
+                                                status = DiscoveryStatus.VALIDATED,
                                                 confidence = 1.0
                                             )
-
                                             repository.saveDiscovery(newDiscovery)
+                                            portalName = ""
                                             onDiscoverySaved()
                                         }
-                                    },
-                                    modifier = Modifier.fillMaxWidth(),
-                                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primaryContainer),
-                                    shape = RoundedCornerShape(4.dp)
-                                ) {
-                                    Text("MARCAR COMO VISITADO Y GUARDAR EN BITÁCORA", color = MaterialTheme.colorScheme.onPrimaryContainer, fontWeight = FontWeight.Bold)
-                                }
-
-                                // Botón 2: Guardar como PENDIENTE
-                                OutlinedButton(
-                                    onClick = {
-                                        coroutineScope.launch {
-                                            val pendingDiscovery = Discovery(
-                                                id = "pending_${System.currentTimeMillis()}",
-                                                type = DiscoveryType.PLANET,
-                                                name = teleportName.ifEmpty { "Portal Pendiente ${coord.formattedString}" },
-                                                galaxy = teleportGalaxy.ifEmpty { "Euclid" },
-                                                systemName = "Sistema ${coord.formattedString.takeLast(4)}",
-                                                glyphs = coord.glyphIndices,
-                                                imageUrl = "https://lh3.googleusercontent.com/aida-public/AB6AXuANDVTdBGRPWiCGa3yW4-3DpXoVxnRPQUz7Yl1Z4DyH-5zFzKECRCCXZ9ACwwd9hSnyUsQWsA7zrot3hu4mRczWYmIjHH6hoqvKWjVcS8nYfa8D8XKGLGekayFplez03jYGea5xWUKMIECAGvCWCuFjEEAgLY24VIIP75Cnxem4mJTiVFXHL6lhoOpqbMl5onumBfcTZKrVmK0RqdS3_6WgUDwpzviJqT7jzDDDHEVWmLWhU9bX_IjVLQ",
-                                                timestamp = System.currentTimeMillis(),
-                                                status = DiscoveryStatus.PENDING,
-                                                confidence = 0.9
-                                            )
-
-                                            repository.saveDiscovery(pendingDiscovery)
-                                            onDiscoverySaved()
-                                        }
-                                    },
-                                    modifier = Modifier.fillMaxWidth(),
-                                    shape = RoundedCornerShape(4.dp)
-                                ) {
-                                    Text("GUARDAR COMO SEÑAL PENDIENTE DE VIAJE")
-                                }
+                                    }
+                                },
+                                enabled = portalGlyphs.size == 12,
+                                modifier = Modifier.fillMaxWidth(),
+                                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
+                                shape = RoundedCornerShape(8.dp)
+                            ) {
+                                Text(
+                                    text = if (portalGlyphs.size == 12) "💾 GUARDAR PORTAL EN BITÁCORA" else "COMPLETA LOS 12 GLIFOS PARA GUARDAR",
+                                    color = MaterialTheme.colorScheme.onPrimary,
+                                    fontWeight = FontWeight.Bold
+                                )
                             }
                         }
-                    } else {
-                        // --- PESTAÑA 2: CALCULADORA MANUAL CON TECLADO DE GLIFOS (2 FILAS DE 8) ---
-                        Text(
-                            text = "CALCULADORA DE GLIFOS DE PORTAL",
-                            style = MaterialTheme.typography.titleLarge,
-                            color = MaterialTheme.colorScheme.primary,
-                            fontWeight = FontWeight.Bold
-                        )
+                    }
 
-                        Text(
-                            text = "Toca los glifos de la matriz (8 arriba y 8 abajo) para construir o modificar tu secuencia de 12 glifos en tiempo real:",
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
+                    // SECCIÓN PORTALES RELACIONADOS EN LA MISMA DIRECCIÓN
+                    Text(
+                        text = "🔗 PORTALES RELACIONADOS EN LA MISMA DIRECCIÓN (${relatedPortals.size})",
+                        style = MaterialTheme.typography.titleMedium,
+                        color = MaterialTheme.colorScheme.primary,
+                        fontWeight = FontWeight.Bold
+                    )
 
-                        // Visualización de la Secuencia Seleccionada
+                    if (relatedPortals.isEmpty()) {
                         Box(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .background(MaterialTheme.colorScheme.surfaceContainerLow, RoundedCornerShape(4.dp))
-                                .border(1.dp, MaterialTheme.colorScheme.primary, RoundedCornerShape(4.dp))
-                                .padding(16.dp)
-                        ) {
-                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                Text(
-                                    text = "SECUENCIA ACTUAL (12 GLIFOS)",
-                                    style = MaterialTheme.typography.labelSmall,
-                                    color = MaterialTheme.colorScheme.primary,
-                                    fontWeight = FontWeight.Bold
+                                .background(
+                                    color = MaterialTheme.colorScheme.surfaceContainer,
+                                    shape = RoundedCornerShape(8.dp)
                                 )
-
-                                Spacer(modifier = Modifier.height(12.dp))
-
-                                GlyphSequence(glyphs = selectedGlyphs, modifier = Modifier.fillMaxWidth())
-                            }
-                        }
-
-                        // MATRIZ DE GLIFOS INTERACTIVA: 2 FILAS DE 8 GLIFOS
-                        Text(
-                            text = "TECLADO MATRIZ DE GLIFOS (8 ARRIBA / 8 ABAJO)",
-                            style = MaterialTheme.typography.labelSmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            fontWeight = FontWeight.Bold
-                        )
-
-                        GlyphKeyboard2x8(
-                            onGlyphClick = { clickedGlyph ->
-                                // Reemplazar cíclicamente o agregar al final
-                                val currentList = selectedGlyphs.toMutableList()
-                                if (currentList.size >= 12) {
-                                    currentList.removeAt(0)
-                                }
-                                currentList.add(clickedGlyph)
-                                selectedGlyphs = currentList
-                                calculatedCoordinate = GalacticCoordinateUtils.parseGlyphsToCoordinate(currentList)
-                            }
-                        )
-
-                        // Resultado de Decodificación
-                        val coord = calculatedCoordinate
-                        Column(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .background(MaterialTheme.colorScheme.surfaceContainerLow, RoundedCornerShape(4.dp))
-                                .border(1.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(4.dp))
                                 .padding(16.dp),
-                            verticalArrangement = Arrangement.spacedBy(12.dp)
+                            contentAlignment = Alignment.Center
                         ) {
                             Text(
-                                text = "DECODIFICACIÓN DE COORDENADAS",
-                                style = MaterialTheme.typography.labelSmall,
+                                text = "No hay otros portales registrados con esta misma dirección de sistema estelar.",
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                    } else {
+                        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                            relatedPortals.forEach { related ->
+                                Card(
+                                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerHigh),
+                                    shape = RoundedCornerShape(8.dp)
+                                ) {
+                                    Row(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(12.dp),
+                                        horizontalArrangement = Arrangement.SpaceBetween,
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        Column(modifier = Modifier.weight(1f)) {
+                                            Text(
+                                                text = related.name,
+                                                style = MaterialTheme.typography.bodyLarge,
+                                                fontWeight = FontWeight.Bold,
+                                                color = MaterialTheme.colorScheme.primary
+                                            )
+                                            Text(
+                                                text = "Galaxia: ${related.galaxy} | Sistema: ${related.systemName}",
+                                                style = MaterialTheme.typography.bodySmall,
+                                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                                            )
+                                        }
+                                        GlyphSequence(glyphs = related.glyphs, iconSize = 18)
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                1 -> {
+                    // =========================================================================
+                    // PESTAÑA 1: CALCULADORA DE GLIFOS (DECODIFICADOR)
+                    // =========================================================================
+                    Text(
+                        text = "🧮 CALCULADORA & DECODIFICADOR DE GLIFOS",
+                        style = MaterialTheme.typography.titleLarge,
+                        color = MaterialTheme.colorScheme.primary,
+                        fontWeight = FontWeight.Bold
+                    )
+
+                    GlyphSelector(
+                        selectedGlyphs = calcGlyphs,
+                        onGlyphsChanged = { calcGlyphs = it }
+                    )
+
+                    Card(
+                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer),
+                        shape = RoundedCornerShape(12.dp)
+                    ) {
+                        Column(
+                            modifier = Modifier.padding(16.dp),
+                            verticalArrangement = Arrangement.spacedBy(10.dp)
+                        ) {
+                            Text(
+                                text = "RESULTADOS DE DECODIFICACIÓN GALÁCTICA",
+                                style = MaterialTheme.typography.titleSmall,
                                 color = MaterialTheme.colorScheme.primary,
                                 fontWeight = FontWeight.Bold
                             )
-
                             Text(
-                                text = "Formato Galáctico: ${coord.formattedString}",
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = MaterialTheme.colorScheme.onSurface,
+                                text = "Coordenada Táctica NMS: ${calcCoordinate.formattedString}",
+                                style = MaterialTheme.typography.bodyLarge,
                                 fontWeight = FontWeight.Bold
                             )
-
                             Text(
-                                text = "Distancia al Centro Galáctico: ${coord.distanceToCoreLightYears} Años Luz",
-                                style = MaterialTheme.typography.bodySmall,
+                                text = "Secuencia Hexadecimal: ${calcCoordinate.glyphHexSequence}",
+                                style = MaterialTheme.typography.bodyMedium,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
-
                             Text(
-                                text = "Tipo de Sistema: ${coord.systemClass} (${coord.regionType})",
+                                text = "Distancia al Centro Galáctico: ${calcCoordinate.distanceToCoreLightYears} AL",
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.secondary,
+                                fontWeight = FontWeight.Bold
+                            )
+                            Text(
+                                text = "Clase de Sistema: ${calcCoordinate.systemClass} (${calcCoordinate.regionType})",
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         }
                     }
                 }
+
+                2 -> {
+                    // =========================================================================
+                    // PESTAÑA 2: RADAR DE TELEPORTS ALEATORIOS
+                    // =========================================================================
+                    Text(
+                        text = "📡 RADAR DE TELEPORTS SALVAJES",
+                        style = MaterialTheme.typography.titleLarge,
+                        color = MaterialTheme.colorScheme.primary,
+                        fontWeight = FontWeight.Bold
+                    )
+
+                    Card(
+                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer),
+                        shape = RoundedCornerShape(12.dp)
+                    ) {
+                        Column(
+                            modifier = Modifier.padding(16.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.spacedBy(16.dp)
+                        ) {
+                            GlyphSequence(glyphs = displayedGlyphs, iconSize = 28)
+
+                            Button(
+                                onClick = {
+                                    if (!isSpinning) {
+                                        isSpinning = true
+                                        randomTeleport = null
+                                        coroutineScope.launch {
+                                            repeat(12) {
+                                                displayedGlyphs = (1..12).map { (1..16).random() }
+                                                delay(80)
+                                            }
+                                            val generated = GalacticCoordinateUtils.generateRandomTeleport()
+                                            randomTeleport = generated
+                                            displayedGlyphs = generated.glyphIndices
+                                            isSpinning = false
+                                        }
+                                    }
+                                },
+                                enabled = !isSpinning,
+                                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
+                                shape = RoundedCornerShape(8.dp)
+                            ) {
+                                Text(
+                                    text = if (isSpinning) "ESCANEAR SECTOR GALÁCTICO..." else "🎲 GENERAR TELEPORT ALEATORIO",
+                                    color = MaterialTheme.colorScheme.onPrimary,
+                                    fontWeight = FontWeight.Bold
+                                )
+                            }
+
+                            randomTeleport?.let { teleport ->
+                                Column(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .background(
+                                            color = MaterialTheme.colorScheme.surfaceContainerLow,
+                                            shape = RoundedCornerShape(8.dp)
+                                        )
+                                        .padding(12.dp),
+                                    verticalArrangement = Arrangement.spacedBy(6.dp)
+                                ) {
+                                    Text(
+                                        text = "📍 TELEPORT DETECTADO EN EL VACÍO",
+                                        style = MaterialTheme.typography.titleSmall,
+                                        color = MaterialTheme.colorScheme.secondary,
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                    Text(text = "Coordenada NMS: ${teleport.formattedString}")
+                                    Text(text = "Distancia al Centro: ${teleport.distanceToCoreLightYears} Años Luz")
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
     }
-}
 
-@Composable
-private fun GlyphKeyboard2x8(
-    onGlyphClick: (glyphIndex: Int) -> Unit
-) {
-    Column(
-        modifier = Modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(6.dp)
-    ) {
-        // FILA 1: Primeros 8 Glifos (1..8)
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(4.dp)
-        ) {
-            (1..8).forEach { index ->
-                val res = getGlyphDrawableResource(index - 1)
-                Box(
-                    modifier = Modifier
-                        .weight(1f)
-                        .aspectRatio(1f)
-                        .clip(RoundedCornerShape(4.dp))
-                        .background(MaterialTheme.colorScheme.surfaceContainerHigh)
-                        .border(1.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(4.dp))
-                        .clickable { onGlyphClick(index) }
-                        .padding(3.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Image(
-                        painter = painterResource(res),
-                        contentDescription = "Glifo $index",
-                        modifier = Modifier.fillMaxSize()
-                    )
-                }
-            }
-        }
-
-        // FILA 2: Segundos 8 Glifos (9..16)
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(4.dp)
-        ) {
-            (9..16).forEach { index ->
-                val res = getGlyphDrawableResource(index - 1)
-                Box(
-                    modifier = Modifier
-                        .weight(1f)
-                        .aspectRatio(1f)
-                        .clip(RoundedCornerShape(4.dp))
-                        .background(MaterialTheme.colorScheme.surfaceContainerHigh)
-                        .border(1.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(4.dp))
-                        .clickable { onGlyphClick(index) }
-                        .padding(3.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Image(
-                        painter = painterResource(res),
-                        contentDescription = "Glifo $index",
-                        modifier = Modifier.fillMaxSize()
-                    )
-                }
-            }
-        }
+    // MODAL DE SELECCIÓN DE GALAXIA (256 GALAXIAS CON BARRA DE BÚSQUEDA)
+    if (showGalaxyModal) {
+        GalaxySelectorModal(
+            selectedGalaxyName = selectedGalaxy.name,
+            onGalaxySelected = { selectedGalaxy = it },
+            onDismiss = { showGalaxyModal = false }
+        )
     }
 }

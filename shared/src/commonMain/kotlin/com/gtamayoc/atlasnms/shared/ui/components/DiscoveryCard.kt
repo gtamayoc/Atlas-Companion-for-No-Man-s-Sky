@@ -58,6 +58,7 @@ fun DiscoveryCard(
         DiscoveryStatus.PENDING -> Triple(RelicGoldHighlight, "PENDING", RelicGoldHighlight)
         DiscoveryStatus.INCOMPLETE -> Triple(RelicGoldHighlight, "INCOMPLETE", RelicGoldHighlight)
         DiscoveryStatus.DRAFT -> Triple(MaterialTheme.colorScheme.outline, "DRAFT", MaterialTheme.colorScheme.surfaceContainerHigh)
+        DiscoveryStatus.VALIDATED -> Triple(RelicGoldHighlight, "VALIDATED", RelicGoldHighlight)
     }
 
     Surface(

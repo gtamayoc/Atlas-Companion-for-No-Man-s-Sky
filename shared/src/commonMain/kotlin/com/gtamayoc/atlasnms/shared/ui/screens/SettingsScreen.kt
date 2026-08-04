@@ -66,22 +66,13 @@ fun SettingsScreen(
     }
 
     AtlasNMSTheme {
-        Scaffold(
-            topBar = {
-                AtlasTopNav(
-                    currentScreen = currentScreen,
-                    onScreenSelected = safeOnScreenSelected
-                )
-            }
-        ) { paddingValues ->
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues)
-                    .verticalScroll(rememberScrollState())
-                    .padding(16.dp),
-                verticalArrangement = Arrangement.spacedBy(20.dp)
-            ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+                .padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(20.dp)
+        ) {
                 // Título de Configuración
                 Text(
                     text = "AJUSTES DE SISTEMA",
@@ -220,7 +211,6 @@ fun SettingsScreen(
                     )
                 }
             }
-        }
 
         // Diálogo de Cambios No Guardados
         if (showUnsavedChangesDialog) {

@@ -55,7 +55,7 @@ object VisionExtractionEngine {
         enhanceContrast: Boolean = true,
         binarizeForOcr: Boolean = true
     ): ExtractionResult {
-        val startTime = System.currentTimeMillis()
+        val startTime = com.gtamayoc.atlasnms.shared.util.currentTimeMillis()
 
         // 1. Preprocesamiento nativo C
         val nativeRes = NativeImageProcessor.processImageBufferC(
@@ -98,6 +98,7 @@ object VisionExtractionEngine {
             DiscoveryType.FAUNA -> listOf("Megafauna Marina Apex", "Giga-Diplo Herbívoro", "Criatura de Cristal")
             DiscoveryType.MULTITOOL -> listOf("Multiherramienta Alienígena S-Class", "Cargador Experimental", "Rifle de Rayos")
             DiscoveryType.BASE -> listOf("Base Central de Indio Activado", "Refugio Orbital Euclid", "Estación de Minería")
+            DiscoveryType.PORTAL -> listOf("Portal Estelar Euclid", "Portal Monolito Ancient", "Portal de Teletransporte")
             DiscoveryType.OTHER -> listOf("Anomalía Espacial", "Fragata Abandonada", "Estación Outlaw")
         }
 
@@ -121,7 +122,7 @@ object VisionExtractionEngine {
               - Secuencia Hexadecimal: ${if (hasGlyphsDetected) glyphsHex else "N/A"}
         """.trimIndent()
 
-        val endTime = System.currentTimeMillis()
+        val endTime = com.gtamayoc.atlasnms.shared.util.currentTimeMillis()
 
         return ExtractionResult(
             rawText = rawText,

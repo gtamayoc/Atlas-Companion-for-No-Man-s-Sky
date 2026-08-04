@@ -4,12 +4,12 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 enum class DiscoveryType {
-    SHIP, PLANET, FAUNA, MULTITOOL, BASE, OTHER
+    SHIP, PLANET, FAUNA, MULTITOOL, BASE, PORTAL, OTHER
 }
 
 @Serializable
 enum class DiscoveryStatus {
-    CONFIRMED, PENDING, DRAFT, INCOMPLETE
+    CONFIRMED, PENDING, DRAFT, INCOMPLETE, VALIDATED
 }
 
 @Serializable

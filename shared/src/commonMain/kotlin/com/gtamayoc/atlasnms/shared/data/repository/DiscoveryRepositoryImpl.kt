@@ -8,7 +8,6 @@ import com.gtamayoc.atlasnms.shared.domain.model.DiscoveryStatus
 import com.gtamayoc.atlasnms.shared.domain.model.DiscoveryType
 import com.gtamayoc.atlasnms.shared.domain.repository.DiscoveryRepository
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
@@ -25,7 +24,7 @@ class DiscoveryRepositoryImpl(
     override fun getAllDiscoveries(): Flow<List<Discovery>> {
         return queries.selectAllDiscoveries()
             .asFlow()
-            .mapToList(Dispatchers.IO)
+            .mapToList(Dispatchers.Default)
             .map { entities ->
                 entities.map { entity ->
                     Discovery(

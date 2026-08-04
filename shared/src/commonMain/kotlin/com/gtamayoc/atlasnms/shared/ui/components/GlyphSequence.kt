@@ -64,7 +64,8 @@ fun getGlyphDrawableResource(glyphValue: Int): DrawableResource {
 @Composable
 fun GlyphSequence(
     glyphs: List<Int>,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    iconSize: Int = 36
 ) {
     val safeGlyphs = glyphs.take(12)
     val firstHalf = safeGlyphs.take(6)

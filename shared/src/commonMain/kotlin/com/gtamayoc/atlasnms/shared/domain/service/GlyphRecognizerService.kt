@@ -23,7 +23,7 @@ object GlyphRecognizerService {
         height: Int,
         nativeResult: NativeImageProcessor.ProcessingResult
     ): GlyphMappingResult {
-        val startTime = System.currentTimeMillis()
+        val startTime = com.gtamayoc.atlasnms.shared.util.currentTimeMillis()
 
         // 1. Definir región de interés (ROI): En NMS, los glifos se ubican en el margen inferior izquierdo (2% a 25% ancho, 90% a 98% alto)
         val roiStartX = (width * 0.02).toInt()
@@ -35,7 +35,7 @@ object GlyphRecognizerService {
         val detectedGlyphIndices = (1..12).map { (1..16).random() }
         val hexSequence = detectedGlyphIndices.joinToString("") { (it - 1).toString(16).uppercase() }
 
-        val endTime = System.currentTimeMillis()
+        val endTime = com.gtamayoc.atlasnms.shared.util.currentTimeMillis()
 
         return GlyphMappingResult(
             glyphIndices = detectedGlyphIndices,

@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>ATLAS_LOGBOOK - Analyze Capture</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:ital,wght@0,100..900;1,100..900&amp;family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&amp;family=Space+Grotesk:wght@300..700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "primary": "#5fd9cc",
+                        "tertiary-container": "#92a48a",
+                        "surface-container-highest": "#333537",
+                        "inverse-primary": "#006a62",
+                        "on-tertiary-fixed": "#101f0d",
+                        "on-error": "#690005",
+                        "tertiary": "#b9ccb0",
+                        "secondary-container": "#802918",
+                        "primary-fixed-dim": "#5fd9cc",
+                        "secondary": "#ffb4a5",
+                        "inverse-on-surface": "#2f3133",
+                        "background": "#121416",
+                        "surface-container-lowest": "#0c0e10",
+                        "surface-container-high": "#282a2c",
+                        "on-error-container": "#ffdad6",
+                        "outline": "#869391",
+                        "on-secondary-container": "#ff9a85",
+                        "surface-variant": "#333537",
+                        "on-secondary": "#611205",
+                        "on-surface-variant": "#bcc9c6",
+                        "on-primary-fixed-variant": "#00504a",
+                        "on-primary-fixed": "#00201d",
+                        "on-tertiary-container": "#2a3a26",
+                        "surface-container": "#1e2022",
+                        "outline-variant": "#3d4947",
+                        "on-surface": "#e2e2e5",
+                        "tertiary-fixed-dim": "#b9ccb0",
+                        "on-primary-container": "#003e39",
+                        "on-primary": "#003733",
+                        "surface-dim": "#121416",
+                        "error-container": "#93000a",
+                        "surface": "#121416",
+                        "tertiary-fixed": "#d5e8cb",
+                        "surface-bright": "#38393c",
+                        "on-background": "#e2e2e5",
+                        "on-secondary-fixed-variant": "#802918",
+                        "secondary-fixed-dim": "#ffb4a5",
+                        "inverse-surface": "#e2e2e5",
+                        "surface-tint": "#5fd9cc",
+                        "secondary-fixed": "#ffdad3",
+                        "primary-container": "#2bb1a5",
+                        "surface-container-low": "#1a1c1e",
+                        "on-tertiary-fixed-variant": "#3b4b36",
+                        "on-tertiary": "#253421",
+                        "error": "#ffb4ab",
+                        "on-secondary-fixed": "#3e0500",
+                        "primary-fixed": "#7ef6e9"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "base": "4px",
+                        "xs": "4px",
+                        "margin": "24px",
+                        "sm": "8px",
+                        "lg": "24px",
+                        "xl": "40px",
+                        "md": "16px",
+                        "gutter": "16px"
+                    },
+                    "fontFamily": {
+                        "display-lg": ["Space Grotesk"],
+                        "title-md": ["Space Grotesk"],
+                        "headline-lg-mobile": ["Space Grotesk"],
+                        "headline-lg": ["Space Grotesk"],
+                        "body-md": ["Hanken Grotesk"],
+                        "label-sm": ["JetBrains Mono"],
+                        "body-lg": ["Hanken Grotesk"]
+                    },
+                    "fontSize": {
+                        "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "title-md": ["20px", { "lineHeight": "28px", "fontWeight": "500" }],
+                        "headline-lg-mobile": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "label-sm": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500" }],
+                        "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style type="text/tailwindcss">
+        @layer utilities {
+            .material-symbols-outlined {
+                font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            }
+            .material-symbols-outlined.fill-icon {
+                font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            }
+            
+            /* Hide scrollbar for step navigation */
+            .no-scrollbar::-webkit-scrollbar {
+                display: none;
+            }
+            .no-scrollbar {
+                -ms-overflow-style: none;  /* IE and Edge */
+                scrollbar-width: none;  /* Firefox */
+            }
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md min-h-screen flex flex-col md:flex-row antialiased">
+<!-- TopNavBar (Mobile Anchor) -->
+<header class="md:hidden flex justify-between items-center w-full px-gutter py-stack-sm max-w-full z-50 bg-surface/80 dark:bg-surface/80 backdrop-blur-xl border-b border-outline-variant/20 shadow-[0_0_15px_rgba(255,180,168,0.1)] docked full-width top-0 sticky"><div class="flex items-center gap-md"><span class="material-symbols-outlined text-on-surface">menu</span><span class="font-headline-lg-mobile text-primary tracking-tighter">ATLAS_LOGBOOK</span></div><div class="flex items-center gap-md"><span class="material-symbols-outlined text-secondary">account_circle</span></div></header>
+<!-- SideNavBar (Desktop Anchor) -->
+<!-- Main Content Canvas -->
+<main class="flex-grow w-full p-gutter md:p-lg lg:p-xl flex flex-col max-w-5xl mx-auto pb-32">
+<!-- Page Header -->
+<div class="flex justify-between items-end mb-lg border-b border-outline-variant/30 pb-md">
+<div>
+<h2 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-secondary uppercase tracking-tight">ANÁLISIS DE CAPTURA NMS</h2>
+<p class="font-body-md text-on-surface-variant mt-sm">Sequential identification protocol initiated.</p>
+</div>
+<button class="hidden md:flex items-center gap-xs bg-surface-container border border-outline-variant px-3 py-2 rounded-DEFAULT font-label-sm text-label-sm text-on-surface hover:bg-surface-variant transition-colors">
+<span class="material-symbols-outlined text-[18px]">build</span>
+                MODO DEV
+            </button>
+</div>
+<!-- Step Indicator (Bento-style row) -->
+<div class="bg-surface-container-low border border-outline-variant/30 p-md rounded-lg mb-xl overflow-x-auto no-scrollbar sticky top-[64px] z-40 bg-surface/95 backdrop-blur-sm border-b">
+<div class="flex items-center min-w-[600px]">
+<!-- Step 1: Active -->
+<div class="flex-shrink-0 flex items-center">
+<div class="bg-secondary text-on-secondary font-label-sm text-label-sm px-4 py-3 rounded-DEFAULT border border-secondary font-bold flex items-center gap-sm">
+<span class="material-symbols-outlined text-[16px]">image</span>
+                        1. Captura
+                    </div>
+<div class="h-[1px] w-8 bg-secondary/50 mx-xs"></div>
+</div>
+<!-- Step 2: Pending -->
+<div class="flex-shrink-0 flex items-center">
+<div class="bg-surface-container text-on-surface-variant font-label-sm text-label-sm px-4 py-3 rounded-DEFAULT border border-outline-variant/50 flex items-center gap-sm">
+<span class="material-symbols-outlined text-[16px]">visibility</span>
+                        2. Visión
+                    </div>
+<div class="h-[1px] w-8 bg-outline-variant/50 mx-xs"></div>
+</div>
+<!-- Step 3: Pending -->
+<div class="flex-shrink-0 flex items-center">
+<div class="bg-surface-container text-on-surface-variant font-label-sm text-label-sm px-4 py-3 rounded-DEFAULT border border-outline-variant/50 flex items-center gap-sm">
+<span class="material-symbols-outlined text-[16px]">group</span>
+                        3. Usuario+Foto
+                    </div>
+<div class="h-[1px] w-8 bg-outline-variant/50 mx-xs"></div>
+</div>
+<!-- Step 4: Pending -->
+<div class="flex-shrink-0 flex items-center">
+<div class="bg-surface-container text-on-surface-variant font-label-sm text-label-sm px-4 py-3 rounded-DEFAULT border border-outline-variant/50 flex items-center gap-sm">
+<span class="material-symbols-outlined text-[16px]">smart_toy</span>
+                        4. IA Vision
+                    </div>
+<div class="h-[1px] w-8 bg-outline-variant/50 mx-xs"></div>
+</div>
+<!-- Step 5: Pending -->
+<div class="flex-shrink-0 flex items-center">
+<div class="bg-surface-container text-on-surface-variant font-label-sm text-label-sm px-4 py-3 rounded-DEFAULT border border-outline-variant/50 flex items-center gap-sm">
+<span class="material-symbols-outlined text-[16px]">flag</span>
+                        5. Fin
+                    </div>
+</div>
+</div>
+</div>
+<!-- Main Workspace Area -->
+<div class="bg-surface-container border border-outline-variant/40 rounded-xl p-gutter md:p-lg flex flex-col gap-lg shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]">
+<!-- Section Header -->
+<div>
+<h3 class="font-title-md text-title-md text-primary tracking-wide">1. SELECCIÓN DE CAPTURA</h3>
+<p class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest mt-xs">(NAVES, PLANETAS, FAUNA, BASES)</p>
+</div>
+<!-- Action Buttons Row -->
+<div class="grid grid-cols-2 gap-md mb-md">
+<button class="bg-secondary-container/80 hover:bg-secondary-container text-on-secondary-container font-title-md text-title-md py-4 rounded-DEFAULT border border-secondary-container flex flex-col items-center justify-center gap-xs transition-colors">
+<span class="material-symbols-outlined text-2xl">photo_library</span>
+<span>GALERÍA DE FOTOS</span>
+</button>
+<button class="bg-surface-container-high hover:bg-surface-variant text-on-surface font-title-md text-title-md py-4 rounded-DEFAULT border border-outline-variant flex flex-col items-center justify-center gap-xs transition-colors">
+<span class="material-symbols-outlined text-2xl">photo_camera</span>
+<span>TOMAR FOTO</span>
+</button>
+</div>
+<!-- Drop Zone / Canvas Placeholder -->
+<div class="relative w-full aspect-video md:aspect-[21/9] bg-surface-container-lowest border-2 border-dashed border-outline-variant/60 rounded-lg flex flex-col items-center justify-center overflow-hidden group cursor-pointer hover:border-primary/50 transition-colors">
+<!-- Background ambient texture -->
+<div class="absolute inset-0 opacity-10 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-primary/20 via-background to-background"></div>
+<span class="material-symbols-outlined text-4xl text-outline-variant group-hover:text-primary transition-colors mb-sm">add_photo_alternate</span>
+<p class="font-label-sm text-label-sm text-outline-variant group-hover:text-primary/80 uppercase tracking-widest text-center px-lg">SELECCIONA UNA CAPTURA REAL DE NO MAN'S SKY</p>
+<input accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" type="file"/>
+</div>
+<!-- Adjustment Toggles -->
+<div class="flex flex-col md:flex-row gap-md justify-between items-start md:items-center bg-surface-container-low p-md rounded-DEFAULT border border-outline-variant/20 mt-sm">
+<label class="flex items-center gap-md cursor-pointer group">
+<div class="relative">
+<input class="sr-only peer" type="checkbox"/>
+<div class="w-12 h-6 bg-surface-variant peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-on-surface after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-secondary"></div>
+</div>
+<span class="font-body-md text-on-surface group-hover:text-white transition-colors">Realce Contraste C.</span>
+</label>
+<label class="flex items-center gap-md cursor-pointer group">
+<div class="relative">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-12 h-6 bg-surface-variant peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-on-surface after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-secondary"></div>
+</div>
+<span class="font-body-md text-on-surface group-hover:text-white transition-colors">Binarización Adaptativa</span>
+</label>
+</div>
+<!-- Primary Action -->
+<div class="fixed bottom-0 left-0 w-full p-gutter bg-surface-container/90 backdrop-blur-md border-t border-outline-variant/30 z-50">
+<button class="w-full bg-surface-variant text-on-surface-variant opacity-50 cursor-not-allowed font-title-md text-title-md py-4 rounded-DEFAULT uppercase tracking-wider flex justify-center items-center gap-sm">
+<span class="material-symbols-outlined">document_scanner</span>
+                    1. ESCANEAR E IDENTIFICAR CAPTURA
+                </button>
+</div>
+</div>
+</main>
+<footer class="md:hidden fixed bottom-0 left-0 w-full bg-surface-container-lowest border-t border-outline-variant/20 flex justify-around items-center py-2 z-40"><div class="flex flex-col items-center text-primary"><span class="material-symbols-outlined">home</span><span class="text-[10px] uppercase font-label-sm">Home</span></div><div class="flex flex-col items-center text-on-surface-variant opacity-60"><span class="material-symbols-outlined">book</span><span class="text-[10px] uppercase font-label-sm">Journal</span></div><div class="flex flex-col items-center text-on-surface-variant opacity-60"><span class="material-symbols-outlined">explore</span><span class="text-[10px] uppercase font-label-sm">Discover</span></div><div class="flex flex-col items-center text-on-surface-variant opacity-60"><span class="material-symbols-outlined">settings</span><span class="text-[10px] uppercase font-label-sm">Settings</span></div></footer></body></html>

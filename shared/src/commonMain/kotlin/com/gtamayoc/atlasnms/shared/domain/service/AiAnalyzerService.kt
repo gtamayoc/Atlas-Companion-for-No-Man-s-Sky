@@ -36,7 +36,7 @@ object AiAnalyzerService {
         verifiedGlyphs: List<Int>,
         nativeResult: NativeImageProcessor.ProcessingResult?
     ): AiAnalysisResult {
-        val startTime = System.currentTimeMillis()
+        val startTime = com.gtamayoc.atlasnms.shared.util.currentTimeMillis()
         
         ScanPipelineDebugger.log(
             stage = PipelineStageSource.AI_PROCESSING,
@@ -104,7 +104,7 @@ object AiAnalyzerService {
                 }
             """.trimIndent()
 
-            val endTime = System.currentTimeMillis()
+            val endTime = com.gtamayoc.atlasnms.shared.util.currentTimeMillis()
             val aiTime = maxOf(1L, endTime - startTime)
 
             val result = AiAnalysisResult(
@@ -144,7 +144,7 @@ object AiAnalyzerService {
         } catch (e: Exception) {
             e.printStackTrace()
 
-            val endTime = System.currentTimeMillis()
+            val endTime = com.gtamayoc.atlasnms.shared.util.currentTimeMillis()
             AiAnalysisResult(
                 detectedType = verifiedType,
                 suggestedName = verifiedName.ifBlank { "Descubrimiento NMS" },

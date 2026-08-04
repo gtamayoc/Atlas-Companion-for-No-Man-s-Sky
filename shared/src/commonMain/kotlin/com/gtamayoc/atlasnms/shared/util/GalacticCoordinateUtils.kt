@@ -50,11 +50,10 @@ object GalacticCoordinateUtils {
     }
 
     /**
-     * Convierte una secuencia de 12 glifos (valores 1..16) en Coordenada Galáctica.
+     * Convierte una lista de números de glifos (1..16) en Coordenada Galáctica.
      */
     fun parseGlyphsToCoordinate(glyphs: List<Int>): GalacticCoordinate {
         val hexString = glyphs.take(12).joinToString("") { glyphValue ->
-            // Glifo 1 -> 0, Glifo 16 -> F
             val hexVal = (glyphValue - 1).coerceIn(0, 15)
             hexVal.toString(16).uppercase()
         }.padEnd(12, '0')
@@ -63,28 +62,34 @@ object GalacticCoordinateUtils {
     }
 
     /**
-     * Parsea un Hexadecimal de 12 caracteres (P SS YY ZZZ XXX) a Coordenada Galáctica.
+     * Parsea un Hexadecimal de 12 caracteres (P SSS YY ZZZ XXX) a Coordenada Galáctica.
+     * Estructura oficial NMS:
+     * - P (1 hex): Índice de Planeta (0x1 a 0x6)
+     * - SSS (3 hex): Índice de Sistema Estelar (0x000 a 0x2FF)
+     * - YY (2 hex): Coordenada Voxel Y (0x00 a 0xFF)
+     * - ZZZ (3 hex): Coordenada Voxel Z (0x000 a 0xFFF)
+     * - XXX (3 hex): Coordenada Voxel X (0x000 a 0xFFF)
      */
     fun parseHexToCoordinate(hex12: String): GalacticCoordinate {
         return try {
             val clean = hex12.replace(":", "").uppercase().padStart(12, '0').take(12)
             val planetHex = clean.substring(0, 1)
-            val systemHex = clean.substring(1, 3)
-            val yHex = clean.substring(3, 5)
-            val zHex = clean.substring(5, 8)
-            val xHex = clean.substring(8, 12)
+            val systemHex = clean.substring(1, 4)
+            val yHex = clean.substring(4, 6)
+            val zHex = clean.substring(6, 9)
+            val xHex = clean.substring(9, 12)
 
             val planet = (planetHex.toIntOrNull(16) ?: 1).coerceIn(1, 6)
-            val system = (systemHex.toIntOrNull(16) ?: 1).coerceIn(0, 255)
+            val system = (systemHex.toIntOrNull(16) ?: 1).coerceIn(0, 4095)
             
-            val yRaw = yHex.toIntOrNull(16) ?: 0x7F
-            val yVoxel = yRaw - 0x7F
+            val yRaw = yHex.toIntOrNull(16) ?: 0x80
+            val yVoxel = yRaw - 0x80
 
-            val zRaw = zHex.toIntOrNull(16) ?: 0x7FF
-            val zVoxel = zRaw - 0x7FF
+            val zRaw = zHex.toIntOrNull(16) ?: 0x800
+            val zVoxel = zRaw - 0x800
 
-            val xRaw = xHex.toIntOrNull(16) ?: 0x7FF
-            val xVoxel = xRaw - 0x7FF
+            val xRaw = xHex.toIntOrNull(16) ?: 0x800
+            val xVoxel = xRaw - 0x800
 
             createFromVoxel(planet, system, xVoxel, yVoxel, zVoxel)
         } catch (e: Exception) {
@@ -93,31 +98,34 @@ object GalacticCoordinateUtils {
     }
 
     private fun createFromVoxel(planet: Int, system: Int, x: Int, y: Int, z: Int): GalacticCoordinate {
-        // Formato NMS de Coordenadas: XXXX:YYYY:ZZZZ:SSSS
-        val xHexStr = (x + 0x7FF).coerceIn(0, 0xFFF).toString(16).uppercase().padStart(4, '0')
-        val yHexStr = (y + 0x7F).coerceIn(0, 0xFF).toString(16).uppercase().padStart(4, '0')
-        val zHexStr = (z + 0x7FF).coerceIn(0, 0xFFF).toString(16).uppercase().padStart(4, '0')
-        val sHexStr = system.coerceIn(0, 0xFF).toString(16).uppercase().padStart(4, '0')
+        // Formato NMS de Coordenadas Tácticas: XXXX:YYYY:ZZZZ:SSSS
+        val xHexStr = (x + 0x800).coerceIn(0, 0xFFF).toString(16).uppercase().padStart(4, '0')
+        val yHexStr = (y + 0x80).coerceIn(0, 0xFF).toString(16).uppercase().padStart(4, '0')
+        val zHexStr = (z + 0x800).coerceIn(0, 0xFFF).toString(16).uppercase().padStart(4, '0')
+        val sHexStr = system.coerceIn(0, 0xFFF).toString(16).uppercase().padStart(4, '0')
 
         val formattedCoord = "$xHexStr:$yHexStr:$zHexStr:$sHexStr"
 
-        // Formato 12 Glifos Hexadecimales NMS: P SS YY ZZZ XXX (P=1 hex, SS=2 hex, YY=2 hex, ZZZ=3 hex, XXX=3 hex = 11 o 12 chars)
-        val pGlyph = planet.toString(16).uppercase()
-        val sGlyph = system.coerceIn(0, 0xFF).toString(16).uppercase().padStart(2, '0')
-        val yGlyph = (y + 0x7F).coerceIn(0, 0xFF).toString(16).uppercase().padStart(2, '0')
-        val zGlyph = (z + 0x7FF).coerceIn(0, 0xFFF).toString(16).uppercase().padStart(3, '0')
-        val xGlyph = (x + 0x7FF).coerceIn(0, 0xFFF).toString(16).uppercase().padStart(3, '0')
+        // Secuencia Hexadecimal 12 Glifos NMS: P SSS YY ZZZ XXX
+        val pGlyph = planet.coerceIn(1, 6).toString(16).uppercase()
+        val sGlyph = system.coerceIn(0, 0xFFF).toString(16).uppercase().padStart(3, '0')
+        val yGlyph = (y + 0x80).coerceIn(0, 0xFF).toString(16).uppercase().padStart(2, '0')
+        val zGlyph = (z + 0x800).coerceIn(0, 0xFFF).toString(16).uppercase().padStart(3, '0')
+        val xGlyph = (x + 0x800).coerceIn(0, 0xFFF).toString(16).uppercase().padStart(3, '0')
 
         val hex12Seq = "$pGlyph$sGlyph$yGlyph$zGlyph$xGlyph".padStart(12, '0')
 
         val glyphIndices = hex12Seq.map { char ->
             val hexInt = char.toString().toIntOrNull(16) ?: 0
-            hexInt + 1 // Glifo 1 a 16
+            hexInt + 1 // Mapeo a glifos (1 a 16)
         }
 
-        // Estimador de distancia al Centro de la Galaxia en Años Luz
+        // Estimador de Distancia al Centro Galáctico en Años Luz
+        // En No Man's Sky, la galaxia es un bloque centrado en (0,0,0) de 4096x256x4096 voxels.
+        // La distancia máxima al núcleo es ~1,160,000 Años Luz (1 voxel = 400 AL).
         val distanceVoxels = sqrt((x.toDouble() * x) + (y.toDouble() * y) + (z.toDouble() * z))
-        val distanceLightYears = (distanceVoxels * 400.0).toLong().coerceAtLeast(3000L)
+        val rawLightYears = (distanceVoxels * 400.0).toLong()
+        val distanceLightYears = rawLightYears.coerceIn(3000L, 1160000L)
 
         val systemClass = SYSTEM_CLASSES[system % SYSTEM_CLASSES.size]
         val regionType = REGION_TYPES[kotlin.math.abs(x + z) % REGION_TYPES.size]

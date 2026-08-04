@@ -1,6 +1,7 @@
 package com.gtamayoc.atlasnms.shared.domain.service
 
 import com.gtamayoc.atlasnms.shared.domain.model.DiscoveryType
+import com.gtamayoc.atlasnms.shared.util.currentTimeMillis
 
 enum class DiscrepancySeverity {
     INFO,
@@ -50,7 +51,7 @@ object PipelineDiscrepancyValidator {
             if (ocrResult.candidateName != userVerifiedName && userVerifiedName.isNotBlank()) {
                 discrepancies.add(
                     ValidationDiscrepancy(
-                        id = "disc_ocr_name_${System.currentTimeMillis()}",
+                        id = "disc_ocr_name_${currentTimeMillis()}",
                         stage = PipelineStageSource.USER_EDIT,
                         severity = DiscrepancySeverity.INFO,
                         title = "Corrección Manual de Nombre",
@@ -68,7 +69,7 @@ object PipelineDiscrepancyValidator {
             if (userVerifiedName.trim().lowercase() != aiResult.suggestedName.trim().lowercase() && userVerifiedName.isNotBlank()) {
                 discrepancies.add(
                     ValidationDiscrepancy(
-                        id = "disc_ai_name_${System.currentTimeMillis()}",
+                        id = "disc_ai_name_${currentTimeMillis()}",
                         stage = PipelineStageSource.AI_PROCESSING,
                         severity = DiscrepancySeverity.WARNING,
                         title = "Ajuste de Nombre por la IA",
@@ -85,7 +86,7 @@ object PipelineDiscrepancyValidator {
             if (userVerifiedGlyphs.isNotEmpty() && userVerifiedGlyphs.size != 12) {
                 discrepancies.add(
                     ValidationDiscrepancy(
-                        id = "disc_glyph_len_${System.currentTimeMillis()}",
+                        id = "disc_glyph_len_${currentTimeMillis()}",
                         stage = PipelineStageSource.DATA_MAPPING,
                         severity = DiscrepancySeverity.HIGH,
                         title = "Secuencia de Glifos Incompleta",

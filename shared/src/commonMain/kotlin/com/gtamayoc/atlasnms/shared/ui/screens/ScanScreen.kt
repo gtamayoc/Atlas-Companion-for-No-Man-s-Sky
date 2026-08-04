@@ -66,13 +66,13 @@ import com.gtamayoc.atlasnms.shared.domain.service.PipelineStageSource
 import com.gtamayoc.atlasnms.shared.domain.service.ScanPipelineDebugger
 import com.gtamayoc.atlasnms.shared.domain.service.ValidationDiscrepancy
 import com.gtamayoc.atlasnms.shared.domain.service.VisionExtractionEngine
-import com.gtamayoc.atlasnms.shared.ui.components.AtlasTopNav
 import com.gtamayoc.atlasnms.shared.ui.components.getGlyphDrawableResource
 import com.gtamayoc.atlasnms.shared.ui.components.rememberImagePickerHandler
 import com.gtamayoc.atlasnms.shared.ui.navigation.AppScreen
 import com.gtamayoc.atlasnms.shared.ui.theme.AmberDustHighlight
 import com.gtamayoc.atlasnms.shared.ui.theme.AtlasNMSTheme
 import com.gtamayoc.atlasnms.shared.ui.theme.WarpFuelOrangeHighlight
+import com.gtamayoc.atlasnms.shared.util.currentTimeMillis
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
 
@@ -98,9 +98,14 @@ fun ScanScreen(
 
     var selectedImageUri by remember { mutableStateOf<String?>(null) }
     var isOcrRunning by remember { mutableStateOf(false) }
+
     var isAiRunning by remember { mutableStateOf(false) }
     var showDevDebugDrawer by remember { mutableStateOf(false) }
     var showPhotoOverlayModal by remember { mutableStateOf(false) }
+
+    Box(
+        modifier = Modifier.fillMaxSize()
+    ) {
 
     var enhanceContrast by remember { mutableStateOf(true) }
     var binarizeForOcr by remember { mutableStateOf(true) }
@@ -111,7 +116,8 @@ fun ScanScreen(
 
     var userVerifiedName by remember { mutableStateOf("") }
     var userVerifiedSystem by remember { mutableStateOf("") }
-    var userVerifiedGalaxy by remember { mutableStateOf("") }
+    var userVerifiedGalaxy by remember { mutableStateOf("Euclid") }
+    var showScanGalaxyModal by remember { mutableStateOf(false) }
     var userVerifiedType by remember { mutableStateOf(DiscoveryType.PLANET) }
     var includeGlyphsInCapture by remember { mutableStateOf(true) }
     var userVerifiedGlyphs by remember { mutableStateOf(listOf(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1)) }
@@ -134,19 +140,9 @@ fun ScanScreen(
         ScanPipelineDebugger.updateTelemetry { it.copy(selectedImageUri = uriPath) }
     }
 
-    AtlasNMSTheme {
-        Scaffold(
-            topBar = {
-                AtlasTopNav(
-                    currentScreen = currentScreen,
-                    onScreenSelected = onScreenSelected
-                )
-            }
-        ) { paddingValues ->
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(paddingValues)
                     .verticalScroll(rememberScrollState())
                     .padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
@@ -419,14 +415,22 @@ fun ScanScreen(
                                     modifier = Modifier.weight(1f),
                                     shape = RoundedCornerShape(4.dp)
                                 )
-                                OutlinedTextField(
-                                    value = userVerifiedGalaxy,
-                                    onValueChange = { userVerifiedGalaxy = it },
-                                    label = { Text("Galaxia") },
-                                    singleLine = true,
-                                    modifier = Modifier.weight(1f),
-                                    shape = RoundedCornerShape(4.dp)
-                                )
+                                Box(
+                                    modifier = Modifier
+                                        .weight(1f)
+                                        .clickable { showScanGalaxyModal = true }
+                                ) {
+                                    OutlinedTextField(
+                                        value = userVerifiedGalaxy.ifBlank { "Euclid" },
+                                        onValueChange = {},
+                                        label = { Text("Galaxia (256) 🔍") },
+                                        singleLine = true,
+                                        readOnly = true,
+                                        enabled = false,
+                                        modifier = Modifier.fillMaxWidth(),
+                                        shape = RoundedCornerShape(4.dp)
+                                    )
+                                }
                             }
 
                             Row(
@@ -491,14 +495,14 @@ fun ScanScreen(
                                     onClick = {
                                         coroutineScope.launch {
                                             val newDiscovery = Discovery(
-                                                id = "scan_${System.currentTimeMillis()}",
+                                                id = "scan_${currentTimeMillis()}",
                                                 type = userVerifiedType,
                                                 name = userVerifiedName.ifBlank { "Hallazgo NMS" },
                                                 galaxy = userVerifiedGalaxy.ifBlank { "Euclid" },
                                                 systemName = userVerifiedSystem.ifBlank { "Sistema Desconocido" },
                                                 glyphs = if (includeGlyphsInCapture) userVerifiedGlyphs else emptyList(),
                                                 imageUrl = selectedImageUri,
-                                                timestamp = System.currentTimeMillis(),
+                                                timestamp = currentTimeMillis(),
                                                 status = DiscoveryStatus.CONFIRMED,
                                                 confidence = 1.0
                                             )
@@ -591,14 +595,14 @@ fun ScanScreen(
                                 onClick = {
                                     coroutineScope.launch {
                                         val newDiscovery = Discovery(
-                                            id = "scan_${System.currentTimeMillis()}",
+                                            id = "scan_${currentTimeMillis()}",
                                             type = aiResult!!.detectedType,
                                             name = aiResult!!.suggestedName,
                                             galaxy = aiResult!!.galaxyName,
                                             systemName = aiResult!!.systemName,
                                             glyphs = if (includeGlyphsInCapture) userVerifiedGlyphs else emptyList(),
                                             imageUrl = selectedImageUri,
-                                            timestamp = System.currentTimeMillis(),
+                                            timestamp = currentTimeMillis(),
                                             status = DiscoveryStatus.CONFIRMED,
                                             confidence = 1.0
                                         )
@@ -648,9 +652,18 @@ fun ScanScreen(
                     }
                 }
             }
+
+            if (showScanGalaxyModal) {
+                com.gtamayoc.atlasnms.shared.ui.components.GalaxySelectorModal(
+                    selectedGalaxyName = userVerifiedGalaxy,
+                    onGalaxySelected = { galaxy ->
+                        userVerifiedGalaxy = galaxy.name
+                    },
+                    onDismiss = { showScanGalaxyModal = false }
+                )
+            }
         }
     }
-}
 
 @Composable
 fun PipelineStepper(currentStage: AnalysisStage) {

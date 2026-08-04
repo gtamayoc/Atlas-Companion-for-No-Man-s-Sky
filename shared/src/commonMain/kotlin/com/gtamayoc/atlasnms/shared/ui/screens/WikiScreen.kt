@@ -3,7 +3,6 @@ package com.gtamayoc.atlasnms.shared.ui.screens
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -14,7 +13,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -26,11 +24,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.gtamayoc.atlasnms.shared.ui.components.AtlasBottomNav
 import com.gtamayoc.atlasnms.shared.ui.components.AtlasWebView
-import com.gtamayoc.atlasnms.shared.ui.components.ScanFab
 import com.gtamayoc.atlasnms.shared.ui.navigation.AppScreen
-import com.gtamayoc.atlasnms.shared.ui.theme.AtlasNMSTheme
 
 @Composable
 fun WikiScreen(
@@ -47,76 +42,65 @@ fun WikiScreen(
         label = "WikiProgress"
     )
 
-    AtlasNMSTheme {
-        Scaffold(
-            topBar = {
-                com.gtamayoc.atlasnms.shared.ui.components.AtlasTopNav(
-                    currentScreen = currentScreen,
-                    onScreenSelected = onScreenSelected
-                )
-            }
-        ) { paddingValues ->
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
+    ) {
+        // Header oficial alineado al diseño Grounded Material de la app
+        Surface(
+            color = MaterialTheme.colorScheme.surfaceContainerLow,
+            modifier = Modifier.fillMaxWidth(),
+            border = androidx.compose.foundation.BorderStroke(
+                1.dp,
+                MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.2f)
+            )
+        ) {
             Column(
                 modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues)
-                    .background(MaterialTheme.colorScheme.background)
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 12.dp)
             ) {
-                // Header oficial alineado al diseño Grounded Material de la app (Sin colores neón)
-                Surface(
-                    color = MaterialTheme.colorScheme.surfaceContainerLow,
-                    modifier = Modifier.fillMaxWidth(),
-                    border = androidx.compose.foundation.BorderStroke(
-                        1.dp,
-                        MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.2f)
-                    )
-                ) {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 16.dp, vertical = 12.dp)
-                    ) {
-                        Text(
-                            text = "WIKI & NMS HUB",
-                            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
-                            color = MaterialTheme.colorScheme.primary
-                        )
+                Text(
+                    text = "WIKI & NMS HUB",
+                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                    color = MaterialTheme.colorScheme.primary
+                )
 
-                        Spacer(modifier = Modifier.height(2.dp))
+                Spacer(modifier = Modifier.height(2.dp))
 
-                        Text(
-                            text = if (loadProgress >= 100) "Página cargada correctamente" else "Cargando Wiki de No Man's Sky... $loadProgress%",
-                            style = MaterialTheme.typography.labelSmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
+                Text(
+                    text = if (loadProgress >= 100) "Página cargada correctamente" else "Cargando Wiki de No Man's Sky... $loadProgress%",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
 
-                        Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(8.dp))
 
-                        // Barra de progreso sutil
-                        LinearProgressIndicator(
-                            progress = { animatedProgress },
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(3.dp)
-                                .clip(RoundedCornerShape(2.dp)),
-                            color = MaterialTheme.colorScheme.primary,
-                            trackColor = MaterialTheme.colorScheme.surfaceContainerHigh
-                        )
-                    }
-                }
-
-                // Visor Web WebView optimizado online
-                Box(modifier = Modifier.fillMaxSize()) {
-                    AtlasWebView(
-                        url = defaultWikiUrl,
-                        onProgressChanged = { newProgress -> loadProgress = newProgress },
-                        modifier = Modifier.fillMaxSize()
-                    )
-                }
+                // Barra de progreso sutil
+                LinearProgressIndicator(
+                    progress = { animatedProgress },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(3.dp)
+                        .clip(RoundedCornerShape(2.dp)),
+                    color = MaterialTheme.colorScheme.primary,
+                    trackColor = MaterialTheme.colorScheme.surfaceContainerHigh
+                )
             }
+        }
+
+        // Visor Web WebView optimizado online
+        Box(modifier = Modifier.fillMaxSize()) {
+            AtlasWebView(
+                url = defaultWikiUrl,
+                onProgressChanged = { newProgress -> loadProgress = newProgress },
+                modifier = Modifier.fillMaxSize()
+            )
         }
     }
 }
+
 
 
 

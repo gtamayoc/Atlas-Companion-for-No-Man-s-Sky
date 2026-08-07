@@ -58,20 +58,20 @@ fun AtlasBottomNav(
             horizontalArrangement = Arrangement.SpaceAround,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Home / Discoveries
+            // Bitácora / Discoveries
             BottomNavItem(
-                label = "BITÁCORA",
+                label = AppScreen.DISCOVERIES.label,
                 icon = Icons.Default.Home,
                 isSelected = currentScreen == AppScreen.DISCOVERIES,
                 onClick = { onScreenSelected(AppScreen.DISCOVERIES) }
             )
 
-            // Wiki
+            // Radar / Explore
             BottomNavItem(
-                label = "WIKI",
-                icon = Icons.Default.Info,
-                isSelected = currentScreen == AppScreen.WIKI,
-                onClick = { onScreenSelected(AppScreen.WIKI) }
+                label = AppScreen.EXPLORE.label,
+                icon = Icons.Default.Search,
+                isSelected = currentScreen == AppScreen.EXPLORE,
+                onClick = { onScreenSelected(AppScreen.EXPLORE) }
             )
 
             // Botón central de Acción: Analizar Captura
@@ -92,17 +92,17 @@ fun AtlasBottomNav(
                 )
             }
 
-            // Radar / Explore
+            // Wiki
             BottomNavItem(
-                label = "RADAR",
-                icon = Icons.Default.Search,
-                isSelected = currentScreen == AppScreen.EXPLORE,
-                onClick = { onScreenSelected(AppScreen.EXPLORE) }
+                label = AppScreen.WIKI.label,
+                icon = Icons.Default.Info,
+                isSelected = currentScreen == AppScreen.WIKI,
+                onClick = { onScreenSelected(AppScreen.WIKI) }
             )
 
             // Settings
             BottomNavItem(
-                label = "AJUSTES",
+                label = AppScreen.SETTINGS.label,
                 icon = Icons.Default.Settings,
                 isSelected = currentScreen == AppScreen.SETTINGS,
                 onClick = { onScreenSelected(AppScreen.SETTINGS) }

@@ -20,6 +20,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -52,21 +53,23 @@ fun AtlasTopNav(
             horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            AppScreen.entries.forEach { screen ->
-                val iconSymbol = when (screen) {
-                    AppScreen.DISCOVERIES -> "📋"
-                    AppScreen.EXPLORE -> "📡"
-                    AppScreen.WIKI -> "📚"
-                    AppScreen.SETTINGS -> "⚙️"
-                    AppScreen.SCAN -> "📷"
-                }
+            for (screen in AppScreen.entries) {
+                key(screen.name) {
+                    val iconSymbol = when (screen) {
+                        AppScreen.DISCOVERIES -> "📋"
+                        AppScreen.EXPLORE -> "📡"
+                        AppScreen.WIKI -> "📚"
+                        AppScreen.SETTINGS -> "⚙️"
+                        AppScreen.SCAN -> "📷"
+                    }
 
-                TopNavItem(
-                    label = screen.label,
-                    iconSymbol = iconSymbol,
-                    isSelected = currentScreen == screen,
-                    onClick = { onScreenSelected(screen) }
-                )
+                    TopNavItem(
+                        label = screen.label,
+                        iconSymbol = iconSymbol,
+                        isSelected = currentScreen == screen,
+                        onClick = { onScreenSelected(screen) }
+                    )
+                }
             }
         }
     }

@@ -171,7 +171,7 @@ class GalacticCalculatorViewModel(
             confidence = 1.0
         )
 
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(Dispatchers.Default) {
             repository.saveDiscovery(newDiscovery)
             _portalName.value = ""
             onSuccess()
@@ -196,7 +196,7 @@ class GalacticCalculatorViewModel(
             confidence = 1.0
         )
 
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(Dispatchers.Default) {
             repository.saveDiscovery(newDiscovery)
             _teleportName.value = ""
             _randomTeleport.value = null
@@ -205,7 +205,7 @@ class GalacticCalculatorViewModel(
     }
 
     fun deleteDiscovery(id: String) {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(Dispatchers.Default) {
             repository.deleteDiscovery(id)
         }
     }

@@ -38,6 +38,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -337,17 +338,19 @@ fun ScanScreen(
                                 horizontalArrangement = Arrangement.spacedBy(6.dp),
                                 verticalArrangement = Arrangement.spacedBy(6.dp)
                             ) {
-                                DiscoveryType.entries.forEach { type ->
-                                    FilterChip(
-                                        selected = userVerifiedType == type,
-                                        onClick = { viewModel.setUserVerifiedType(type) },
-                                        label = { Text(type.name, fontSize = 11.sp) },
-                                        shape = RoundedCornerShape(0.dp),
-                                        colors = FilterChipDefaults.filterChipColors(
-                                            selectedContainerColor = AmberDustHighlight,
-                                            selectedLabelColor = Color.Black
+                                for (type in DiscoveryType.entries) {
+                                    key(type.name) {
+                                        FilterChip(
+                                            selected = userVerifiedType == type,
+                                            onClick = { viewModel.setUserVerifiedType(type) },
+                                            label = { Text(type.name, fontSize = 11.sp) },
+                                            shape = RoundedCornerShape(0.dp),
+                                            colors = FilterChipDefaults.filterChipColors(
+                                                selectedContainerColor = AmberDustHighlight,
+                                                selectedLabelColor = Color.Black
+                                            )
                                         )
-                                    )
+                                    }
                                 }
                             }
 
@@ -586,36 +589,39 @@ fun PipelineStepper(currentStage: AnalysisStage) {
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        stages.forEachIndexed { index, name ->
-            val isActive = index <= currentIndex
-            val isCurrent = index == currentIndex
+        for (index in stages.indices) {
+            val name = stages[index]
+            key(index) {
+                val isActive = index <= currentIndex
+                val isCurrent = index == currentIndex
 
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Box(
-                    modifier = Modifier
-                        .size(20.dp)
-                        .clip(RoundedCornerShape(2.dp))
-                        .background(
-                            if (isCurrent) AmberDustHighlight
-                            else if (isActive) MaterialTheme.colorScheme.primaryContainer
-                            else MaterialTheme.colorScheme.surfaceContainerHigh
-                        ),
-                    contentAlignment = Alignment.Center
-                ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Box(
+                        modifier = Modifier
+                            .size(20.dp)
+                            .clip(RoundedCornerShape(2.dp))
+                            .background(
+                                if (isCurrent) AmberDustHighlight
+                                else if (isActive) MaterialTheme.colorScheme.primaryContainer
+                                else MaterialTheme.colorScheme.surfaceContainerHigh
+                            ),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = "${index + 1}",
+                            fontSize = 10.sp,
+                            color = if (isCurrent) Color.Black else MaterialTheme.colorScheme.onSurfaceVariant,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+                    Spacer(modifier = Modifier.width(4.dp))
                     Text(
-                        text = "${index + 1}",
+                        text = name,
                         fontSize = 10.sp,
-                        color = if (isCurrent) Color.Black else MaterialTheme.colorScheme.onSurfaceVariant,
-                        fontWeight = FontWeight.Bold
+                        color = if (isActive) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.outline,
+                        fontWeight = if (isCurrent) FontWeight.Bold else FontWeight.Normal
                     )
                 }
-                Spacer(modifier = Modifier.width(4.dp))
-                Text(
-                    text = name,
-                    fontSize = 10.sp,
-                    color = if (isActive) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.outline,
-                    fontWeight = if (isCurrent) FontWeight.Bold else FontWeight.Normal
-                )
             }
         }
     }
@@ -668,15 +674,17 @@ fun InteractiveGlyphSequenceEditor(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(4.dp)
         ) {
-            (0..11).forEach { index ->
-                val gVal = glyphs.getOrNull(index)
-                GlyphSlotBox(
-                    slotIndex = index,
-                    glyphVal = gVal,
-                    isSelected = activeSlotIndex == index,
-                    onClick = { onSlotClick(index) },
-                    modifier = Modifier.weight(1f)
-                )
+            for (index in 0..11) {
+                key(index) {
+                    val gVal = glyphs.getOrNull(index)
+                    GlyphSlotBox(
+                        slotIndex = index,
+                        glyphVal = gVal,
+                        isSelected = activeSlotIndex == index,
+                        onClick = { onSlotClick(index) },
+                        modifier = Modifier.weight(1f)
+                    )
+                }
             }
         }
 
@@ -740,24 +748,26 @@ fun GlyphKeyboardPicker2x8(onGlyphSelected: (Int) -> Unit) {
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(4.dp)
         ) {
-            (1..8).forEach { glyphValue ->
-                val res = getGlyphDrawableResource(glyphValue)
-                Box(
-                    modifier = Modifier
-                        .weight(1f)
-                        .aspectRatio(1f)
-                        .clip(RoundedCornerShape(0.dp))
-                        .background(MaterialTheme.colorScheme.surfaceContainerHigh)
-                        .border(1.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(0.dp))
-                        .clickable { onGlyphSelected(glyphValue) }
-                        .padding(4.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Image(
-                        painter = painterResource(res),
-                        contentDescription = "Glifo $glyphValue",
-                        modifier = Modifier.fillMaxSize()
-                    )
+            for (glyphValue in 1..8) {
+                key(glyphValue) {
+                    val res = getGlyphDrawableResource(glyphValue)
+                    Box(
+                        modifier = Modifier
+                            .weight(1f)
+                            .aspectRatio(1f)
+                            .clip(RoundedCornerShape(0.dp))
+                            .background(MaterialTheme.colorScheme.surfaceContainerHigh)
+                            .border(1.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(0.dp))
+                            .clickable { onGlyphSelected(glyphValue) }
+                            .padding(4.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Image(
+                            painter = painterResource(res),
+                            contentDescription = "Glifo $glyphValue",
+                            modifier = Modifier.fillMaxSize()
+                        )
+                    }
                 }
             }
         }
@@ -766,24 +776,26 @@ fun GlyphKeyboardPicker2x8(onGlyphSelected: (Int) -> Unit) {
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(4.dp)
         ) {
-            (9..16).forEach { glyphValue ->
-                val res = getGlyphDrawableResource(glyphValue)
-                Box(
-                    modifier = Modifier
-                        .weight(1f)
-                        .aspectRatio(1f)
-                        .clip(RoundedCornerShape(0.dp))
-                        .background(MaterialTheme.colorScheme.surfaceContainerHigh)
-                        .border(1.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(0.dp))
-                        .clickable { onGlyphSelected(glyphValue) }
-                        .padding(4.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Image(
-                        painter = painterResource(res),
-                        contentDescription = "Glifo $glyphValue",
-                        modifier = Modifier.fillMaxSize()
-                    )
+            for (glyphValue in 9..16) {
+                key(glyphValue) {
+                    val res = getGlyphDrawableResource(glyphValue)
+                    Box(
+                        modifier = Modifier
+                            .weight(1f)
+                            .aspectRatio(1f)
+                            .clip(RoundedCornerShape(0.dp))
+                            .background(MaterialTheme.colorScheme.surfaceContainerHigh)
+                            .border(1.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(0.dp))
+                            .clickable { onGlyphSelected(glyphValue) }
+                            .padding(4.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Image(
+                            painter = painterResource(res),
+                            contentDescription = "Glifo $glyphValue",
+                            modifier = Modifier.fillMaxSize()
+                        )
+                    }
                 }
             }
         }

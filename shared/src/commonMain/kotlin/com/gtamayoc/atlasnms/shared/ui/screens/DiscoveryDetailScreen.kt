@@ -1,7 +1,6 @@
 package com.gtamayoc.atlasnms.shared.ui.screens
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -148,7 +147,10 @@ fun DiscoveryDetailScreen(
                             DetailRow(label = "SISTEMA ESTELAR", value = discovery.systemName)
                             DetailRow(label = "GALAXIA", value = discovery.galaxy)
                             DetailRow(label = "ESTADO", value = discovery.status.name)
-                            DetailRow(label = "CONFIANZA", value = "${(discovery.confidence * 100).toInt()}%")
+                            DetailRow(
+                                label = "CONFIANZA",
+                                value = "${(discovery.confidence * 100).toInt()}%"
+                            )
                         }
                     }
 

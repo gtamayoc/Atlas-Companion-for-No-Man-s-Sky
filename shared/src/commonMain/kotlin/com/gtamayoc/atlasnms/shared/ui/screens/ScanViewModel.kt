@@ -176,7 +176,7 @@ class ScanViewModel(
             confidence = _aiResult.value?.confidence ?: 0.95
         )
 
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(Dispatchers.Default) {
             repository.saveDiscovery(discovery)
             withContext(Dispatchers.Main) {
                 _currentStage.value = AnalysisStage.STAGE_5_COMPLETED

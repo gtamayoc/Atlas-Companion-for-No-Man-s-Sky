@@ -34,6 +34,7 @@ import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -104,25 +105,27 @@ fun AtlasNavigationDrawer(
                 Column(
                     verticalArrangement = Arrangement.spacedBy(6.dp)
                 ) {
-                    AppScreen.entries.forEach { screen ->
-                        val (icon, subtitle) = when (screen) {
-                            AppScreen.DISCOVERIES -> Pair(Icons.Default.Home, "Bitácora personal de hallazgos")
-                            AppScreen.EXPLORE -> Pair(Icons.Default.Search, "Calculadora galáctica y radar")
-                            AppScreen.WIKI -> Pair(Icons.Default.Info, "Enciclopedia y recetas NMS")
-                            AppScreen.SETTINGS -> Pair(Icons.Default.Settings, "Configuración del Sistema")
-                            AppScreen.SCAN -> Pair(Icons.Default.Add, "Escáner OCR e IA de capturas")
-                        }
-
-                        DrawerMenuItem(
-                            label = screen.label,
-                            subtitle = subtitle,
-                            icon = icon,
-                            isSelected = currentScreen == screen,
-                            onClick = {
-                                onScreenSelected(screen)
-                                onCloseDrawer()
+                    for (screen in AppScreen.entries) {
+                        key(screen.name) {
+                            val (icon, subtitle) = when (screen) {
+                                AppScreen.DISCOVERIES -> Pair(Icons.Default.Home, "Bitácora personal de hallazgos")
+                                AppScreen.EXPLORE -> Pair(Icons.Default.Search, "Calculadora galáctica y radar")
+                                AppScreen.WIKI -> Pair(Icons.Default.Info, "Enciclopedia y recetas NMS")
+                                AppScreen.SETTINGS -> Pair(Icons.Default.Settings, "Configuración del Sistema")
+                                AppScreen.SCAN -> Pair(Icons.Default.Add, "Escáner OCR e IA de capturas")
                             }
-                        )
+
+                            DrawerMenuItem(
+                                label = screen.label,
+                                subtitle = subtitle,
+                                icon = icon,
+                                isSelected = currentScreen == screen,
+                                onClick = {
+                                    onScreenSelected(screen)
+                                    onCloseDrawer()
+                                }
+                            )
+                        }
                     }
                 }
             }

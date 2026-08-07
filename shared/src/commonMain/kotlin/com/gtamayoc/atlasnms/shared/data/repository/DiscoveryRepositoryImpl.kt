@@ -21,7 +21,7 @@ class DiscoveryRepositoryImpl(
     private val queries = database.atlasDatabaseQueries
 
     init {
-        CoroutineScope(Dispatchers.IO).launch {
+        CoroutineScope(Dispatchers.Default).launch {
             com.gtamayoc.atlasnms.shared.domain.service.SettingsManager.initialize(database)
         }
     }
@@ -49,11 +49,11 @@ class DiscoveryRepositoryImpl(
             }
     }
 
-    override suspend fun getDiscoveryById(id: String): Discovery? = withContext(Dispatchers.IO) {
+    override suspend fun getDiscoveryById(id: String): Discovery? = withContext(Dispatchers.Default) {
         null
     }
 
-    override suspend fun saveDiscovery(discovery: Discovery) = withContext(Dispatchers.IO) {
+    override suspend fun saveDiscovery(discovery: Discovery) = withContext(Dispatchers.Default) {
         queries.insertDiscovery(
             id = discovery.id,
             type = discovery.type.name,
@@ -68,7 +68,7 @@ class DiscoveryRepositoryImpl(
         )
     }
 
-    override suspend fun deleteDiscovery(id: String) = withContext(Dispatchers.IO) {
+    override suspend fun deleteDiscovery(id: String) = withContext(Dispatchers.Default) {
         queries.deleteDiscovery(id)
     }
 

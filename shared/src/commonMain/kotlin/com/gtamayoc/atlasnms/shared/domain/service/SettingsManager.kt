@@ -22,7 +22,7 @@ object SettingsManager {
     val deepSeekBaseUrlFlow: StateFlow<String> = _deepSeekBaseUrl.asStateFlow()
     val deepSeekBaseUrl: String get() = _deepSeekBaseUrl.value
 
-    suspend fun initialize(db: AtlasDatabase) = withContext(Dispatchers.IO) {
+    suspend fun initialize(db: AtlasDatabase) = withContext(Dispatchers.Default) {
         database = db
         try {
             val queries = db.atlasDatabaseQueries
@@ -41,7 +41,7 @@ object SettingsManager {
     /**
      * Guarda la configuración de forma atómica en SQLite sin provocar escrituras constantes por tecla.
      */
-    suspend fun saveAllSettings(newApiKey: String, newModel: String, newBaseUrl: String) = withContext(Dispatchers.IO) {
+    suspend fun saveAllSettings(newApiKey: String, newModel: String, newBaseUrl: String) = withContext(Dispatchers.Default) {
         _deepSeekApiKey.value = newApiKey
         _deepSeekModel.value = newModel
         _deepSeekBaseUrl.value = newBaseUrl

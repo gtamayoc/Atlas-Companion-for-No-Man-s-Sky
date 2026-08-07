@@ -26,14 +26,14 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.PrimaryTabRow
 import androidx.compose.material3.SecondaryScrollableTabRow
 import androidx.compose.material3.Tab
-import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -109,12 +109,13 @@ fun GalacticCalculatorScreen(
         modifier = Modifier.fillMaxSize()
     ) {
         // PESTAÑAS PRINCIPALES DEL MÓDULO RADAR
-        TabRow(
+        PrimaryTabRow(
             selectedTabIndex = selectedTabIndex,
             containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
             contentColor = MaterialTheme.colorScheme.primary
         ) {
-            tabs.forEachIndexed { index, title ->
+            for (index in tabs.indices) {
+                val title = tabs[index]
                 Tab(
                     selected = selectedTabIndex == index,
                     onClick = { viewModel.setSelectedTabIndex(index) },
@@ -444,7 +445,7 @@ fun GalacticCalculatorScreen(
                                     color = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
 
-                                Divider(color = MaterialTheme.colorScheme.outlineVariant)
+                                HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
 
                                 // NOMBRE PERSONALIZADO DEL TELEPORT
                                 OutlinedTextField(

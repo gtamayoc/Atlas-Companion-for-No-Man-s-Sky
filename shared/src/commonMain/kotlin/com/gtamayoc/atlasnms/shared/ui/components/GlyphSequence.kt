@@ -80,7 +80,7 @@ fun GlyphSequence(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(4.dp, Alignment.CenterHorizontally)
         ) {
-            firstHalf.forEach { glyphVal ->
+            for (glyphVal in firstHalf) {
                 val drawableRes = getGlyphDrawableResource(glyphVal)
                 Box(
                     modifier = Modifier
@@ -106,7 +106,7 @@ fun GlyphSequence(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(4.dp, Alignment.CenterHorizontally)
             ) {
-                secondHalf.forEach { glyphVal ->
+                for (glyphVal in secondHalf) {
                     val drawableRes = getGlyphDrawableResource(glyphVal)
                     Box(
                         modifier = Modifier

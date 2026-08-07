@@ -32,6 +32,7 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -205,16 +206,18 @@ fun HomeScreen(
                                             selectedLabelColor = MaterialTheme.colorScheme.onPrimaryContainer
                                         )
                                     )
-                                    DiscoveryType.entries.forEach { type ->
-                                        FilterChip(
-                                            selected = state.selectedType == type,
-                                            onClick = { viewModel.setTypeFilter(type) },
-                                            label = { Text(type.name) },
-                                            colors = FilterChipDefaults.filterChipColors(
-                                                selectedContainerColor = MaterialTheme.colorScheme.primaryContainer,
-                                                selectedLabelColor = MaterialTheme.colorScheme.onPrimaryContainer
+                                    for (type in DiscoveryType.entries) {
+                                        key(type.name) {
+                                            FilterChip(
+                                                selected = state.selectedType == type,
+                                                onClick = { viewModel.setTypeFilter(type) },
+                                                label = { Text(type.name) },
+                                                colors = FilterChipDefaults.filterChipColors(
+                                                    selectedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+                                                    selectedLabelColor = MaterialTheme.colorScheme.onPrimaryContainer
+                                                )
                                             )
-                                        )
+                                        }
                                     }
                                 }
 

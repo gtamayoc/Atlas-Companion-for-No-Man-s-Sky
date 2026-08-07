@@ -9,12 +9,9 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -33,6 +30,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
 
 @Composable
@@ -41,9 +39,31 @@ fun GlyphSelector(
     onGlyphsChanged: (List<Int>) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    // Ranura activa en la secuencia de 12 glifos (0..11)
-    var activeSlotIndex by remember(selectedGlyphs.size) {
-        mutableIntStateOf(if (selectedGlyphs.isEmpty()) 0 else (selectedGlyphs.size - 1).coerceIn(0, 11))
+    // Ranura activa en la secuencia de 12 glifos (0..11) - inicia SIEMPRE en la primera posición (0)
+    var activeSlotIndex by remember { mutableIntStateOf(0) }
+
+    // Pre-cachea el mapa de recursos de los 16 glifos para renderizado ultra-rápido a 60 FPS
+    val glyphResources = remember {
+        (1..16).associateWith { getGlyphDrawableResource(it) }
+    }
+
+    val handleGlyphClick: (Int) -> Unit = remember(selectedGlyphs, activeSlotIndex, onGlyphsChanged) {
+        { glyphIndex ->
+            val currentList = if (selectedGlyphs.size == 12) {
+                selectedGlyphs.toMutableList()
+            } else {
+                val list = selectedGlyphs.toMutableList()
+                while (list.size < 12) list.add(1)
+                list
+            }
+            if (activeSlotIndex in 0..11) {
+                currentList[activeSlotIndex] = glyphIndex
+            }
+            onGlyphsChanged(currentList)
+            if (activeSlotIndex < 11) {
+                activeSlotIndex++
+            }
+        }
     }
 
     Column(
@@ -80,16 +100,21 @@ fun GlyphSelector(
                         val slot1 = pairIndex * 2
                         val slot2 = pairIndex * 2 + 1
 
+                        val g1 = selectedGlyphs.getOrNull(slot1)
+                        val g2 = selectedGlyphs.getOrNull(slot2)
+
                         GlyphSlotCard(
                             slotIndex = slot1,
-                            glyphId = selectedGlyphs.getOrNull(slot1),
+                            glyphId = g1,
+                            drawableRes = g1?.let { glyphResources[it] },
                             isActive = activeSlotIndex == slot1,
                             onClick = { activeSlotIndex = slot1 },
                             modifier = Modifier.weight(1f)
                         )
                         GlyphSlotCard(
                             slotIndex = slot2,
-                            glyphId = selectedGlyphs.getOrNull(slot2),
+                            glyphId = g2,
+                            drawableRes = g2?.let { glyphResources[it] },
                             isActive = activeSlotIndex == slot2,
                             onClick = { activeSlotIndex = slot2 },
                             modifier = Modifier.weight(1f)
@@ -112,16 +137,21 @@ fun GlyphSelector(
                         val slot1 = pairIndex * 2
                         val slot2 = pairIndex * 2 + 1
 
+                        val g1 = selectedGlyphs.getOrNull(slot1)
+                        val g2 = selectedGlyphs.getOrNull(slot2)
+
                         GlyphSlotCard(
                             slotIndex = slot1,
-                            glyphId = selectedGlyphs.getOrNull(slot1),
+                            glyphId = g1,
+                            drawableRes = g1?.let { glyphResources[it] },
                             isActive = activeSlotIndex == slot1,
                             onClick = { activeSlotIndex = slot1 },
                             modifier = Modifier.weight(1f)
                         )
                         GlyphSlotCard(
                             slotIndex = slot2,
-                            glyphId = selectedGlyphs.getOrNull(slot2),
+                            glyphId = g2,
+                            drawableRes = g2?.let { glyphResources[it] },
                             isActive = activeSlotIndex == slot2,
                             onClick = { activeSlotIndex = slot2 },
                             modifier = Modifier.weight(1f)
@@ -151,14 +181,17 @@ fun GlyphSelector(
                 OutlinedButton(
                     onClick = {
                         if (selectedGlyphs.isNotEmpty()) {
-                            val newList = selectedGlyphs.toMutableList()
-                            if (activeSlotIndex < newList.size) {
-                                newList.removeAt(activeSlotIndex)
-                            } else {
-                                newList.removeLast()
+                            val currentList = selectedGlyphs.toMutableList()
+                            while (currentList.size < 12) {
+                                currentList.add(1)
                             }
-                            onGlyphsChanged(newList)
-                            activeSlotIndex = maxOf(0, activeSlotIndex - 1)
+                            if (activeSlotIndex in 0..11) {
+                                currentList[activeSlotIndex] = 1
+                            }
+                            onGlyphsChanged(currentList)
+                            if (activeSlotIndex > 0) {
+                                activeSlotIndex--
+                            }
                         }
                     },
                     enabled = selectedGlyphs.isNotEmpty(),
@@ -176,7 +209,7 @@ fun GlyphSelector(
 
                 Button(
                     onClick = {
-                        onGlyphsChanged(emptyList())
+                        onGlyphsChanged(listOf(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1))
                         activeSlotIndex = 0
                     },
                     enabled = selectedGlyphs.isNotEmpty(),
@@ -207,21 +240,12 @@ fun GlyphSelector(
                 horizontalArrangement = Arrangement.spacedBy(4.dp)
             ) {
                 for (i in 1..8) {
+                    val res = glyphResources[i]
                     GlyphButton(
                         glyphIndex = i,
+                        drawableRes = res,
                         modifier = Modifier.weight(1f),
-                        onClick = {
-                            val currentList = selectedGlyphs.toMutableList()
-                            if (activeSlotIndex < currentList.size) {
-                                currentList[activeSlotIndex] = i
-                            } else if (currentList.size < 12) {
-                                currentList.add(i)
-                            }
-                            onGlyphsChanged(currentList)
-                            if (activeSlotIndex < 11) {
-                                activeSlotIndex++
-                            }
-                        }
+                        onClick = { handleGlyphClick(i) }
                     )
                 }
             }
@@ -232,21 +256,12 @@ fun GlyphSelector(
                 horizontalArrangement = Arrangement.spacedBy(4.dp)
             ) {
                 for (i in 9..16) {
+                    val res = glyphResources[i]
                     GlyphButton(
                         glyphIndex = i,
+                        drawableRes = res,
                         modifier = Modifier.weight(1f),
-                        onClick = {
-                            val currentList = selectedGlyphs.toMutableList()
-                            if (activeSlotIndex < currentList.size) {
-                                currentList[activeSlotIndex] = i
-                            } else if (currentList.size < 12) {
-                                currentList.add(i)
-                            }
-                            onGlyphsChanged(currentList)
-                            if (activeSlotIndex < 11) {
-                                activeSlotIndex++
-                            }
-                        }
+                        onClick = { handleGlyphClick(i) }
                     )
                 }
             }
@@ -258,6 +273,7 @@ fun GlyphSelector(
 private fun GlyphSlotCard(
     slotIndex: Int,
     glyphId: Int?,
+    drawableRes: DrawableResource?,
     isActive: Boolean,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
@@ -288,9 +304,9 @@ private fun GlyphSlotCard(
             .padding(2.dp),
         contentAlignment = Alignment.Center
     ) {
-        if (glyphId != null) {
+        if (drawableRes != null) {
             Image(
-                painter = painterResource(getGlyphDrawableResource(glyphId)),
+                painter = painterResource(drawableRes),
                 contentDescription = "Glifo en posición ${slotIndex + 1}",
                 modifier = Modifier.padding(2.dp)
             )
@@ -308,6 +324,7 @@ private fun GlyphSlotCard(
 @Composable
 private fun GlyphButton(
     glyphIndex: Int,
+    drawableRes: DrawableResource?,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -324,11 +341,13 @@ private fun GlyphButton(
             modifier = Modifier.padding(3.dp),
             contentAlignment = Alignment.Center
         ) {
-            Image(
-                painter = painterResource(getGlyphDrawableResource(glyphIndex)),
-                contentDescription = "Glifo $glyphIndex",
-                modifier = Modifier.fillMaxWidth()
-            )
+            if (drawableRes != null) {
+                Image(
+                    painter = painterResource(drawableRes),
+                    contentDescription = "Glifo $glyphIndex",
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
         }
     }
 }

@@ -7,9 +7,12 @@ import com.gtamayoc.atlasnms.shared.domain.model.Discovery
 import com.gtamayoc.atlasnms.shared.domain.model.DiscoveryStatus
 import com.gtamayoc.atlasnms.shared.domain.model.DiscoveryType
 import com.gtamayoc.atlasnms.shared.domain.repository.DiscoveryRepository
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class DiscoveryRepositoryImpl(
     private val database: AtlasDatabase
@@ -18,7 +21,9 @@ class DiscoveryRepositoryImpl(
     private val queries = database.atlasDatabaseQueries
 
     init {
-        com.gtamayoc.atlasnms.shared.domain.service.SettingsManager.initialize(database)
+        CoroutineScope(Dispatchers.IO).launch {
+            com.gtamayoc.atlasnms.shared.domain.service.SettingsManager.initialize(database)
+        }
     }
 
     override fun getAllDiscoveries(): Flow<List<Discovery>> {
@@ -27,13 +32,14 @@ class DiscoveryRepositoryImpl(
             .mapToList(Dispatchers.Default)
             .map { entities ->
                 entities.map { entity ->
+                    val parsedGlyphs = if (entity.glyphs.isBlank()) emptyList() else entity.glyphs.split(",").mapNotNull { it.toIntOrNull() }
                     Discovery(
                         id = entity.id,
                         type = DiscoveryType.valueOf(entity.type),
                         name = entity.name,
                         galaxy = entity.galaxy,
                         systemName = entity.systemName,
-                        glyphs = entity.glyphs.split(",").mapNotNull { it.toIntOrNull() },
+                        glyphs = parsedGlyphs,
                         imageUrl = entity.imageUrl,
                         timestamp = entity.timestamp,
                         status = DiscoveryStatus.valueOf(entity.status),
@@ -43,12 +49,11 @@ class DiscoveryRepositoryImpl(
             }
     }
 
-    override suspend fun getDiscoveryById(id: String): Discovery? {
-        // Not implemented in queries yet, but standard implementation goes here
-        return null 
+    override suspend fun getDiscoveryById(id: String): Discovery? = withContext(Dispatchers.IO) {
+        null
     }
 
-    override suspend fun saveDiscovery(discovery: Discovery) {
+    override suspend fun saveDiscovery(discovery: Discovery) = withContext(Dispatchers.IO) {
         queries.insertDiscovery(
             id = discovery.id,
             type = discovery.type.name,
@@ -63,7 +68,7 @@ class DiscoveryRepositoryImpl(
         )
     }
 
-    override suspend fun deleteDiscovery(id: String) {
+    override suspend fun deleteDiscovery(id: String) = withContext(Dispatchers.IO) {
         queries.deleteDiscovery(id)
     }
 

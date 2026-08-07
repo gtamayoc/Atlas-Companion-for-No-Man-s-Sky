@@ -36,6 +36,8 @@ import com.gtamayoc.atlasnms.shared.domain.service.SettingsManager
 import com.gtamayoc.atlasnms.shared.ui.components.AtlasTopNav
 import com.gtamayoc.atlasnms.shared.ui.navigation.AppScreen
 import com.gtamayoc.atlasnms.shared.ui.theme.AtlasNMSTheme
+import androidx.compose.runtime.rememberCoroutineScope
+import kotlinx.coroutines.launch
 
 @Composable
 fun SettingsScreen(
@@ -43,6 +45,7 @@ fun SettingsScreen(
     onScreenSelected: (AppScreen) -> Unit,
     onFabClick: () -> Unit
 ) {
+    val coroutineScope = rememberCoroutineScope()
     var apiKeyInput by remember { mutableStateOf(SettingsManager.deepSeekApiKey) }
     var modelInput by remember { mutableStateOf(SettingsManager.deepSeekModel) }
     var baseUrlInput by remember { mutableStateOf(SettingsManager.deepSeekBaseUrl) }
@@ -128,7 +131,9 @@ fun SettingsScreen(
                     // Botón para Guardar Configuración
                     Button(
                         onClick = {
-                            SettingsManager.saveAllSettings(apiKeyInput, modelInput, baseUrlInput)
+                            coroutineScope.launch {
+                                SettingsManager.saveAllSettings(apiKeyInput, modelInput, baseUrlInput)
+                            }
                         },
                         modifier = Modifier.fillMaxWidth(),
                         enabled = hasUnsavedChanges,
@@ -233,7 +238,9 @@ fun SettingsScreen(
                 confirmButton = {
                     Button(
                         onClick = {
-                            SettingsManager.saveAllSettings(apiKeyInput, modelInput, baseUrlInput)
+                            coroutineScope.launch {
+                                SettingsManager.saveAllSettings(apiKeyInput, modelInput, baseUrlInput)
+                            }
                             showUnsavedChangesDialog = false
                             pendingScreenSelection?.let { onScreenSelected(it) }
                         },

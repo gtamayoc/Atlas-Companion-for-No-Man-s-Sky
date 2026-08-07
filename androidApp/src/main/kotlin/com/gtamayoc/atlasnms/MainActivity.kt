@@ -11,14 +11,16 @@ import com.gtamayoc.atlasnms.shared.cache.AtlasDatabase
 import com.gtamayoc.atlasnms.shared.data.repository.DiscoveryRepositoryImpl
 
 class MainActivity : ComponentActivity() {
+
+    private val repository by lazy {
+        val driver = AndroidSqliteDriver(AtlasDatabase.Schema, applicationContext, "atlasnms.db")
+        val database = AtlasDatabase(driver)
+        DiscoveryRepositoryImpl(database)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
-
-        // Inicializamos el Driver de SQLDelight específico de Android
-        val driver = AndroidSqliteDriver(AtlasDatabase.Schema, applicationContext, "atlasnms.db")
-        val database = AtlasDatabase(driver)
-        val repository = DiscoveryRepositoryImpl(database)
 
         setContent {
             App(repository)

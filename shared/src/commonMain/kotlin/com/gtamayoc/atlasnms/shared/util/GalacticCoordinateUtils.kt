@@ -13,7 +13,8 @@ data class GalacticCoordinate(
     val glyphIndices: List<Int>, // 12 numbers (1..16) matching portal glyphs
     val distanceToCoreLightYears: Long,
     val systemClass: String,
-    val regionType: String
+    val regionType: String,
+    val isLocationCorrupted: Boolean = false
 )
 
 object GalacticCoordinateUtils {
@@ -91,13 +92,24 @@ object GalacticCoordinateUtils {
             val xRaw = xHex.toIntOrNull(16) ?: 0x800
             val xVoxel = xRaw - 0x800
 
-            createFromVoxel(planet, system, xVoxel, yVoxel, zVoxel)
+            // Caso especial NMS: 12 Sunsets (000000000000) o direcciones nulas/invalidas
+            // En NMS el motor redirige por "Ubicación Corrupta" al sistema más cercano al Núcleo (~5,000 AL)
+            val isCorrupted = clean == "000000000000" || (system == 0 && xVoxel == -2048 && zVoxel == -2048)
+
+            createFromVoxel(planet, system, xVoxel, yVoxel, zVoxel, isCorrupted)
         } catch (e: Exception) {
-            createFromVoxel(1, 1, 0, 0, 0)
+            createFromVoxel(1, 1, 0, 0, 0, false)
         }
     }
 
-    private fun createFromVoxel(planet: Int, system: Int, x: Int, y: Int, z: Int): GalacticCoordinate {
+    private fun createFromVoxel(
+        planet: Int, 
+        system: Int, 
+        x: Int, 
+        y: Int, 
+        z: Int,
+        isCorrupted: Boolean = false
+    ): GalacticCoordinate {
         // Formato NMS de Coordenadas Tácticas: XXXX:YYYY:ZZZZ:SSSS
         val xHexStr = (x + 0x800).coerceIn(0, 0xFFF).toString(16).uppercase().padStart(4, '0')
         val yHexStr = (y + 0x80).coerceIn(0, 0xFF).toString(16).uppercase().padStart(4, '0')
@@ -113,7 +125,7 @@ object GalacticCoordinateUtils {
         val zGlyph = (z + 0x800).coerceIn(0, 0xFFF).toString(16).uppercase().padStart(3, '0')
         val xGlyph = (x + 0x800).coerceIn(0, 0xFFF).toString(16).uppercase().padStart(3, '0')
 
-        val hex12Seq = "$pGlyph$sGlyph$yGlyph$zGlyph$xGlyph".padStart(12, '0')
+        val hex12Seq = if (isCorrupted && (system == 0 && x == -2048)) "000000000000" else "$pGlyph$sGlyph$yGlyph$zGlyph$xGlyph".padStart(12, '0')
 
         val glyphIndices = hex12Seq.map { char ->
             val hexInt = char.toString().toIntOrNull(16) ?: 0
@@ -122,13 +134,21 @@ object GalacticCoordinateUtils {
 
         // Estimador de Distancia al Centro Galáctico en Años Luz
         // En No Man's Sky, la galaxia es un bloque centrado en (0,0,0) de 4096x256x4096 voxels.
-        // La distancia máxima al núcleo es ~1,160,000 Años Luz (1 voxel = 400 AL).
-        val distanceVoxels = sqrt((x.toDouble() * x) + (y.toDouble() * y) + (z.toDouble() * z))
-        val rawLightYears = (distanceVoxels * 400.0).toLong()
-        val distanceLightYears = rawLightYears.coerceIn(3000L, 1160000L)
+        // Si es una ubicación corrupta (p. ej. 12 Sunsets), el juego te teletransporta a ~5,000 Años Luz del Núcleo.
+        val distanceLightYears = if (isCorrupted) {
+            5000L
+        } else {
+            val distanceVoxels = sqrt((x.toDouble() * x) + (y.toDouble() * y) + (z.toDouble() * z))
+            val rawLightYears = (distanceVoxels * 400.0).toLong()
+            rawLightYears.coerceIn(3000L, 1160000L)
+        }
 
         val systemClass = SYSTEM_CLASSES[system % SYSTEM_CLASSES.size]
-        val regionType = REGION_TYPES[kotlin.math.abs(x + z) % REGION_TYPES.size]
+        val regionType = if (isCorrupted) {
+            "Núcleo Galáctico (Atajo 12 Sunsets - Redirección Corrupta)"
+        } else {
+            REGION_TYPES[kotlin.math.abs(x + z) % REGION_TYPES.size]
+        }
 
         return GalacticCoordinate(
             planetIndex = planet,
@@ -141,7 +161,8 @@ object GalacticCoordinateUtils {
             glyphIndices = glyphIndices,
             distanceToCoreLightYears = distanceLightYears,
             systemClass = systemClass,
-            regionType = regionType
+            regionType = regionType,
+            isLocationCorrupted = isCorrupted
         )
     }
 }

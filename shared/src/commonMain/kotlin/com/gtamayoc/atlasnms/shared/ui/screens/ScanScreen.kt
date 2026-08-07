@@ -87,66 +87,47 @@ enum class AnalysisStage {
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun ScanScreen(
-    repository: DiscoveryRepository,
+    viewModel: ScanViewModel,
     currentScreen: AppScreen,
     onScreenSelected: (AppScreen) -> Unit,
     onDiscoverySaved: () -> Unit
 ) {
-    val coroutineScope = rememberCoroutineScope()
+    val currentStage by viewModel.currentStage.collectAsState()
+    val selectedImageUri by viewModel.selectedImageUri.collectAsState()
+    val isOcrRunning by viewModel.isOcrRunning.collectAsState()
+    val isAiRunning by viewModel.isAiRunning.collectAsState()
 
-    var currentStage by remember { mutableStateOf(AnalysisStage.STAGE_1_CAPTURE) }
-
-    var selectedImageUri by remember { mutableStateOf<String?>(null) }
-    var isOcrRunning by remember { mutableStateOf(false) }
-
-    var isAiRunning by remember { mutableStateOf(false) }
     var showDevDebugDrawer by remember { mutableStateOf(false) }
     var showPhotoOverlayModal by remember { mutableStateOf(false) }
+
+    val enhanceContrast by viewModel.enhanceContrast.collectAsState()
+    val binarizeForOcr by viewModel.binarizeForOcr.collectAsState()
+    val extractionResult by viewModel.extractionResult.collectAsState()
+    val aiResult by viewModel.aiResult.collectAsState()
+    val validationDiscrepancies by viewModel.validationDiscrepancies.collectAsState()
+
+    val userVerifiedName by viewModel.userVerifiedName.collectAsState()
+    val userVerifiedSystem by viewModel.userVerifiedSystem.collectAsState()
+    val userVerifiedGalaxy by viewModel.userVerifiedGalaxy.collectAsState()
+    var showScanGalaxyModal by remember { mutableStateOf(false) }
+    val userVerifiedType by viewModel.userVerifiedType.collectAsState()
+    val includeGlyphsInCapture by viewModel.includeGlyphsInCapture.collectAsState()
+    val userVerifiedGlyphs by viewModel.userVerifiedGlyphs.collectAsState()
+    val activeGlyphSlotIndex by viewModel.activeGlyphSlotIndex.collectAsState()
+    val pickerHandler = rememberImagePickerHandler { uriPath ->
+        viewModel.onImageSelected(uriPath)
+    }
 
     Box(
         modifier = Modifier.fillMaxSize()
     ) {
-
-    var enhanceContrast by remember { mutableStateOf(true) }
-    var binarizeForOcr by remember { mutableStateOf(true) }
-
-    var extractionResult by remember { mutableStateOf<ExtractionResult?>(null) }
-    var aiResult by remember { mutableStateOf<AiAnalysisResult?>(null) }
-    var validationDiscrepancies by remember { mutableStateOf<List<ValidationDiscrepancy>>(emptyList()) }
-
-    var userVerifiedName by remember { mutableStateOf("") }
-    var userVerifiedSystem by remember { mutableStateOf("") }
-    var userVerifiedGalaxy by remember { mutableStateOf("Euclid") }
-    var showScanGalaxyModal by remember { mutableStateOf(false) }
-    var userVerifiedType by remember { mutableStateOf(DiscoveryType.PLANET) }
-    var includeGlyphsInCapture by remember { mutableStateOf(true) }
-    var userVerifiedGlyphs by remember { mutableStateOf(listOf(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1)) }
-    var activeGlyphSlotIndex by remember { mutableStateOf(0) }
-
-    val pickerHandler = rememberImagePickerHandler { uriPath ->
-        selectedImageUri = uriPath
-        currentStage = AnalysisStage.STAGE_1_CAPTURE
-        extractionResult = null
-        aiResult = null
-        validationDiscrepancies = emptyList()
-        activeGlyphSlotIndex = 0
-        ScanPipelineDebugger.reset()
-        ScanPipelineDebugger.log(
-            stage = PipelineStageSource.OCR_EXTRACTION,
-            level = "INFO",
-            summary = "Nueva captura seleccionada",
-            details = "URI: $uriPath"
-        )
-        ScanPipelineDebugger.updateTelemetry { it.copy(selectedImageUri = uriPath) }
-    }
-
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .verticalScroll(rememberScrollState())
-                    .padding(16.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+                .padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
                 // Header & Stepper (DESIGN.md: 4px Soft-Industrial geometry)
                 Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
                     Row(
@@ -267,7 +248,7 @@ fun ScanScreen(
                             Row(verticalAlignment = Alignment.CenterVertically) {
                                 Switch(
                                     checked = enhanceContrast,
-                                    onCheckedChange = { enhanceContrast = it },
+                                    onCheckedChange = { viewModel.setEnhanceContrast(it) },
                                     colors = SwitchDefaults.colors(checkedThumbColor = AmberDustHighlight)
                                 )
                                 Spacer(modifier = Modifier.width(6.dp))
@@ -277,7 +258,7 @@ fun ScanScreen(
                             Row(verticalAlignment = Alignment.CenterVertically) {
                                 Switch(
                                     checked = binarizeForOcr,
-                                    onCheckedChange = { binarizeForOcr = it },
+                                    onCheckedChange = { viewModel.setBinarizeForOcr(it) },
                                     colors = SwitchDefaults.colors(checkedThumbColor = AmberDustHighlight)
                                 )
                                 Spacer(modifier = Modifier.width(6.dp))
@@ -287,31 +268,7 @@ fun ScanScreen(
 
                         Button(
                             onClick = {
-                                val uri = selectedImageUri ?: return@Button
-                                coroutineScope.launch {
-                                    isOcrRunning = true
-                                    val dummyPixels = IntArray(600 * 400) { (0xFF shl 24) or ((it % 255) shl 16) or ((it % 255) shl 8) or (it % 255) }
-                                    val extRes = VisionExtractionEngine.extractHybridData(
-                                        imageUriOrPath = uri,
-                                        rawPixels = dummyPixels,
-                                        width = 600,
-                                        height = 400,
-                                        enhanceContrast = enhanceContrast,
-                                        binarizeForOcr = binarizeForOcr
-                                    )
-
-                                    extractionResult = extRes
-                                    userVerifiedName = extRes.candidateName
-                                    userVerifiedSystem = extRes.candidateSystem
-                                    userVerifiedGalaxy = extRes.candidateGalaxy
-                                    userVerifiedType = extRes.candidateType
-                                    includeGlyphsInCapture = extRes.hasGlyphs
-                                    userVerifiedGlyphs = if (extRes.hasGlyphs) extRes.matchedGlyphsIndices else emptyList()
-                                    activeGlyphSlotIndex = 0
-
-                                    isOcrRunning = false
-                                    currentStage = AnalysisStage.STAGE_3_USER_REVIEW
-                                }
+                                viewModel.runOcrProcessing()
                             },
                             modifier = Modifier.fillMaxWidth(),
                             enabled = selectedImageUri != null && !isOcrRunning && !isAiRunning,
@@ -349,7 +306,7 @@ fun ScanScreen(
                                     onClick = { showPhotoOverlayModal = true },
                                     shape = RoundedCornerShape(4.dp)
                                 ) {
-                                    Text("🔎 OVERLAY FOTO", fontSize = 11.sp, fontWeight = FontWeight.Bold)
+                                    Text("👁️ VER CAPTURA")
                                 }
                             }
 
@@ -370,8 +327,8 @@ fun ScanScreen(
                             }
 
                             Text(
-                                text = "Categoría:",
-                                style = MaterialTheme.typography.labelMedium,
+                                text = "CATEGORÍA DEL HALLAZGO",
+                                style = MaterialTheme.typography.labelSmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
 
@@ -383,7 +340,7 @@ fun ScanScreen(
                                 DiscoveryType.entries.forEach { type ->
                                     FilterChip(
                                         selected = userVerifiedType == type,
-                                        onClick = { userVerifiedType = type },
+                                        onClick = { viewModel.setUserVerifiedType(type) },
                                         label = { Text(type.name, fontSize = 11.sp) },
                                         shape = RoundedCornerShape(0.dp),
                                         colors = FilterChipDefaults.filterChipColors(
@@ -396,7 +353,7 @@ fun ScanScreen(
 
                             OutlinedTextField(
                                 value = userVerifiedName,
-                                onValueChange = { userVerifiedName = it },
+                                onValueChange = { viewModel.setUserVerifiedName(it) },
                                 label = { Text("Nombre del Hallazgo") },
                                 singleLine = true,
                                 modifier = Modifier.fillMaxWidth(),
@@ -409,7 +366,7 @@ fun ScanScreen(
                             ) {
                                 OutlinedTextField(
                                     value = userVerifiedSystem,
-                                    onValueChange = { userVerifiedSystem = it },
+                                    onValueChange = { viewModel.setUserVerifiedSystem(it) },
                                     label = { Text("Sistema Solar") },
                                     singleLine = true,
                                     modifier = Modifier.weight(1f),
@@ -446,11 +403,11 @@ fun ScanScreen(
                                 Switch(
                                     checked = includeGlyphsInCapture,
                                     onCheckedChange = { checked ->
-                                        includeGlyphsInCapture = checked
+                                        viewModel.setIncludeGlyphsInCapture(checked)
                                         if (checked && userVerifiedGlyphs.isEmpty()) {
-                                            userVerifiedGlyphs = listOf(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1)
+                                            viewModel.setUserVerifiedGlyphs(listOf(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1))
                                         } else if (!checked) {
-                                            userVerifiedGlyphs = emptyList()
+                                            viewModel.setUserVerifiedGlyphs(emptyList())
                                         }
                                     },
                                     colors = SwitchDefaults.colors(checkedThumbColor = AmberDustHighlight)
@@ -462,27 +419,27 @@ fun ScanScreen(
                                 InteractiveGlyphSequenceEditor(
                                     glyphs = userVerifiedGlyphs,
                                     activeSlotIndex = activeGlyphSlotIndex,
-                                    onSlotClick = { activeGlyphSlotIndex = it },
+                                    onSlotClick = { viewModel.setActiveGlyphSlotIndex(it) },
                                     onGlyphSelected = { clickedGlyph ->
                                         val currentList = userVerifiedGlyphs.toMutableList()
                                         while (currentList.size < 12) currentList.add(1)
                                         val slotToReplace = activeGlyphSlotIndex.coerceIn(0, 11)
                                         currentList[slotToReplace] = clickedGlyph
-                                        userVerifiedGlyphs = currentList
-                                        activeGlyphSlotIndex = (slotToReplace + 1) % 12
+                                        viewModel.setUserVerifiedGlyphs(currentList)
+                                        viewModel.setActiveGlyphSlotIndex((slotToReplace + 1) % 12)
                                     },
                                     onDeleteSingle = {
                                         val currentList = userVerifiedGlyphs.toMutableList()
                                         if (currentList.isNotEmpty()) {
                                             val slotToClear = activeGlyphSlotIndex.coerceIn(0, currentList.size - 1)
                                             currentList.removeAt(slotToClear)
-                                            userVerifiedGlyphs = currentList
-                                            activeGlyphSlotIndex = maxOf(0, slotToClear - 1)
+                                            viewModel.setUserVerifiedGlyphs(currentList)
+                                            viewModel.setActiveGlyphSlotIndex(maxOf(0, slotToClear - 1))
                                         }
                                     },
                                     onClearAll = {
-                                        userVerifiedGlyphs = emptyList()
-                                        activeGlyphSlotIndex = 0
+                                        viewModel.setUserVerifiedGlyphs(emptyList())
+                                        viewModel.setActiveGlyphSlotIndex(0)
                                     }
                                 )
                             }
@@ -493,22 +450,7 @@ fun ScanScreen(
                             ) {
                                 OutlinedButton(
                                     onClick = {
-                                        coroutineScope.launch {
-                                            val newDiscovery = Discovery(
-                                                id = "scan_${currentTimeMillis()}",
-                                                type = userVerifiedType,
-                                                name = userVerifiedName.ifBlank { "Hallazgo NMS" },
-                                                galaxy = userVerifiedGalaxy.ifBlank { "Euclid" },
-                                                systemName = userVerifiedSystem.ifBlank { "Sistema Desconocido" },
-                                                glyphs = if (includeGlyphsInCapture) userVerifiedGlyphs else emptyList(),
-                                                imageUrl = selectedImageUri,
-                                                timestamp = currentTimeMillis(),
-                                                status = DiscoveryStatus.CONFIRMED,
-                                                confidence = 1.0
-                                            )
-                                            repository.saveDiscovery(newDiscovery)
-                                            onDiscoverySaved()
-                                        }
+                                        viewModel.saveFinalDiscovery(onDiscoverySaved)
                                     },
                                     modifier = Modifier.weight(1f),
                                     shape = RoundedCornerShape(4.dp)
@@ -518,32 +460,7 @@ fun ScanScreen(
 
                                 Button(
                                     onClick = {
-                                        val uri = selectedImageUri ?: return@Button
-                                        coroutineScope.launch {
-                                            isAiRunning = true
-                                            val finalGlyphsList = if (includeGlyphsInCapture) userVerifiedGlyphs else emptyList()
-                                            val aiRes = AiAnalyzerService.analyzeScreenshotWithVerifiedText(
-                                                imageUriOrPath = uri,
-                                                verifiedName = userVerifiedName,
-                                                verifiedSystem = userVerifiedSystem,
-                                                verifiedGalaxy = userVerifiedGalaxy,
-                                                verifiedType = userVerifiedType,
-                                                verifiedGlyphs = finalGlyphsList,
-                                                nativeResult = extractionResult?.nativeCMetrics
-                                            )
-                                            aiResult = aiRes
-                                            validationDiscrepancies = PipelineDiscrepancyValidator.validatePipeline(
-                                                ocrResult = null,
-                                                userVerifiedName = userVerifiedName,
-                                                userVerifiedSystem = userVerifiedSystem,
-                                                userVerifiedGalaxy = userVerifiedGalaxy,
-                                                userVerifiedType = userVerifiedType,
-                                                userVerifiedGlyphs = finalGlyphsList,
-                                                aiResult = aiRes
-                                            )
-                                            isAiRunning = false
-                                            currentStage = AnalysisStage.STAGE_5_COMPLETED
-                                        }
+                                        viewModel.runAiAnalysis()
                                     },
                                     modifier = Modifier.weight(1.3f),
                                     enabled = !isAiRunning,
@@ -593,22 +510,7 @@ fun ScanScreen(
 
                             Button(
                                 onClick = {
-                                    coroutineScope.launch {
-                                        val newDiscovery = Discovery(
-                                            id = "scan_${currentTimeMillis()}",
-                                            type = aiResult!!.detectedType,
-                                            name = aiResult!!.suggestedName,
-                                            galaxy = aiResult!!.galaxyName,
-                                            systemName = aiResult!!.systemName,
-                                            glyphs = if (includeGlyphsInCapture) userVerifiedGlyphs else emptyList(),
-                                            imageUrl = selectedImageUri,
-                                            timestamp = currentTimeMillis(),
-                                            status = DiscoveryStatus.CONFIRMED,
-                                            confidence = 1.0
-                                        )
-                                        repository.saveDiscovery(newDiscovery)
-                                        onDiscoverySaved()
-                                    }
+                                    viewModel.saveFinalDiscovery(onDiscoverySaved)
                                 },
                                 modifier = Modifier.fillMaxWidth(),
                                 colors = ButtonDefaults.buttonColors(containerColor = AmberDustHighlight),
@@ -657,7 +559,7 @@ fun ScanScreen(
                 com.gtamayoc.atlasnms.shared.ui.components.GalaxySelectorModal(
                     selectedGalaxyName = userVerifiedGalaxy,
                     onGalaxySelected = { galaxy ->
-                        userVerifiedGalaxy = galaxy.name
+                        viewModel.setUserVerifiedGalaxy(galaxy.name)
                     },
                     onDismiss = { showScanGalaxyModal = false }
                 )

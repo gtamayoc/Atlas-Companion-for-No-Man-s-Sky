@@ -40,9 +40,14 @@ import com.gtamayoc.atlasnms.shared.ui.screens.WikiScreen
 import com.gtamayoc.atlasnms.shared.ui.theme.AtlasNMSTheme
 import kotlinx.coroutines.launch
 
+import com.gtamayoc.atlasnms.shared.ui.screens.GalacticCalculatorViewModel
+import com.gtamayoc.atlasnms.shared.ui.screens.ScanViewModel
+
 @Composable
 fun App(repository: DiscoveryRepository = remember { com.gtamayoc.atlasnms.shared.data.repository.InMemoryDiscoveryRepository() }) {
-    val viewModel: HomeViewModel = viewModel { HomeViewModel(repository) }
+    val homeViewModel: HomeViewModel = viewModel { HomeViewModel(repository) }
+    val galacticViewModel: GalacticCalculatorViewModel = viewModel { GalacticCalculatorViewModel(repository) }
+    val scanViewModel: ScanViewModel = viewModel { ScanViewModel(repository) }
     
     // Estado global de navegación
     var currentScreen by remember { mutableStateOf(AppScreen.DISCOVERIES) }
@@ -113,7 +118,7 @@ fun App(repository: DiscoveryRepository = remember { com.gtamayoc.atlasnms.share
                             when (targetScreen) {
                                 AppScreen.DISCOVERIES -> {
                                     HomeScreen(
-                                        viewModel = viewModel,
+                                        viewModel = homeViewModel,
                                         currentScreen = targetScreen,
                                         onScreenSelected = { newScreen -> currentScreen = newScreen },
                                         onFabClick = { currentScreen = AppScreen.SCAN },
@@ -122,7 +127,7 @@ fun App(repository: DiscoveryRepository = remember { com.gtamayoc.atlasnms.share
                                 }
                                 AppScreen.EXPLORE -> {
                                     GalacticCalculatorScreen(
-                                        repository = repository,
+                                        viewModel = galacticViewModel,
                                         currentScreen = targetScreen,
                                         onScreenSelected = { newScreen -> currentScreen = newScreen },
                                         onDiscoverySaved = {
@@ -146,7 +151,7 @@ fun App(repository: DiscoveryRepository = remember { com.gtamayoc.atlasnms.share
                                 }
                                 AppScreen.SCAN -> {
                                     ScanScreen(
-                                        repository = repository,
+                                        viewModel = scanViewModel,
                                         currentScreen = targetScreen,
                                         onScreenSelected = { newScreen -> currentScreen = newScreen },
                                         onDiscoverySaved = {

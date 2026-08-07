@@ -29,32 +29,40 @@ object NativeImageProcessor {
         binarizeForOcr: Boolean = true
     ): ProcessingResult {
         val startTime = currentTimestampMs()
-        val resultPixels = IntArray(rawPixels.size)
+        val size = rawPixels.size
+        val resultPixels = IntArray(size)
 
-        var totalLuminance = 0L
+        if (size == 0) {
+            return ProcessingResult(width, height, resultPixels, 1L, 0.85)
+        }
 
-        // Fase 1: Escala de Grises C-style por desplazamiento de bits
-        for (i in rawPixels.indices) {
+        // Muestreo rápido de luminancia promedio (cada 16 píxeles) para evitar doble recorrido completo
+        var sampleSum = 0L
+        var sampleCount = 0
+        var step = maxOf(1, size shr 8) // ~256 muestras representativas
+        var sampleIdx = 0
+        while (sampleIdx < size) {
+            val pixel = rawPixels[sampleIdx]
+            val r = (pixel shr 16) and 0xFF
+            val g = (pixel shr 8) and 0xFF
+            val b = pixel and 0xFF
+            sampleSum += (r * 299 + g * 587 + b * 114) / 1000
+            sampleCount++
+            sampleIdx += step
+        }
+        val averageLuminance = if (sampleCount > 0) (sampleSum / sampleCount).toInt() else 128
+        val threshold = (averageLuminance * 90) / 100
+
+        // Bucle único de alto rendimiento C-style
+        for (i in 0 until size) {
             val pixel = rawPixels[i]
             val r = (pixel shr 16) and 0xFF
             val g = (pixel shr 8) and 0xFF
             val b = pixel and 0xFF
 
-            // Cálculo entero rápido: (299*R + 587*G + 114*B) / 1000
-            val gray = (r * 299 + g * 587 + b * 114) / 1000
-            totalLuminance += gray
-            
-            resultPixels[i] = gray
-        }
-
-        val averageLuminance = if (rawPixels.isNotEmpty()) (totalLuminance / rawPixels.size).toInt() else 128
-
-        // Fase 2: Realce de contraste y binarización nativa
-        for (i in resultPixels.indices) {
-            var gray = resultPixels[i]
+            var gray = (r * 299 + g * 587 + b * 114) / 1000
 
             if (enhanceContrast) {
-                // Realce de contraste en C: expandir rango dinámico alrededor de la luminancia media
                 gray = if (gray > averageLuminance) {
                     minOf(255, gray + ((gray - averageLuminance) shr 1))
                 } else {
@@ -63,13 +71,11 @@ object NativeImageProcessor {
             }
 
             val finalColor = if (binarizeForOcr) {
-                // Umbralización binaria optimizada para texto en No Man's Sky (blanco/negro estricto)
-                if (gray > (averageLuminance * 90 / 100)) 255 else 0
+                if (gray > threshold) 255 else 0
             } else {
                 gray
             }
 
-            // Empacar de nuevo a formato ARGB_8888 (Alpha = 255)
             resultPixels[i] = (0xFF shl 24) or (finalColor shl 16) or (finalColor shl 8) or finalColor
         }
 

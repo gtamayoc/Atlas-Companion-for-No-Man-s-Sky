@@ -1,23 +1,28 @@
 package com.gtamayoc.atlasnms.shared.domain.service
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import com.gtamayoc.atlasnms.shared.cache.AtlasDatabase
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.withContext
 
 object SettingsManager {
     private var database: AtlasDatabase? = null
 
-    var deepSeekApiKey by mutableStateOf("")
-        private set
+    private val _deepSeekApiKey = MutableStateFlow("")
+    val deepSeekApiKeyFlow: StateFlow<String> = _deepSeekApiKey.asStateFlow()
+    val deepSeekApiKey: String get() = _deepSeekApiKey.value
 
-    var deepSeekModel by mutableStateOf("deepseek-chat")
-        private set
+    private val _deepSeekModel = MutableStateFlow("deepseek-chat")
+    val deepSeekModelFlow: StateFlow<String> = _deepSeekModel.asStateFlow()
+    val deepSeekModel: String get() = _deepSeekModel.value
 
-    var deepSeekBaseUrl by mutableStateOf("https://api.deepseek.com")
-        private set
+    private val _deepSeekBaseUrl = MutableStateFlow("https://api.deepseek.com")
+    val deepSeekBaseUrlFlow: StateFlow<String> = _deepSeekBaseUrl.asStateFlow()
+    val deepSeekBaseUrl: String get() = _deepSeekBaseUrl.value
 
-    fun initialize(db: AtlasDatabase) {
+    suspend fun initialize(db: AtlasDatabase) = withContext(Dispatchers.IO) {
         database = db
         try {
             val queries = db.atlasDatabaseQueries
@@ -25,9 +30,9 @@ object SettingsManager {
             val savedModel = queries.selectSetting("deepseek_model").executeAsOneOrNull()
             val savedUrl = queries.selectSetting("deepseek_base_url").executeAsOneOrNull()
 
-            if (savedKey != null) deepSeekApiKey = savedKey
-            if (savedModel != null) deepSeekModel = savedModel
-            if (savedUrl != null) deepSeekBaseUrl = savedUrl
+            if (savedKey != null) _deepSeekApiKey.value = savedKey
+            if (savedModel != null) _deepSeekModel.value = savedModel
+            if (savedUrl != null) _deepSeekBaseUrl.value = savedUrl
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -36,12 +41,12 @@ object SettingsManager {
     /**
      * Guarda la configuración de forma atómica en SQLite sin provocar escrituras constantes por tecla.
      */
-    fun saveAllSettings(newApiKey: String, newModel: String, newBaseUrl: String) {
-        deepSeekApiKey = newApiKey
-        deepSeekModel = newModel
-        deepSeekBaseUrl = newBaseUrl
+    suspend fun saveAllSettings(newApiKey: String, newModel: String, newBaseUrl: String) = withContext(Dispatchers.IO) {
+        _deepSeekApiKey.value = newApiKey
+        _deepSeekModel.value = newModel
+        _deepSeekBaseUrl.value = newBaseUrl
 
-        val db = database ?: return
+        val db = database ?: return@withContext
         try {
             val queries = db.atlasDatabaseQueries
             queries.insertSetting("deepseek_api_key", newApiKey)

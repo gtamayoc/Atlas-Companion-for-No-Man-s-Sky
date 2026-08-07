@@ -28,7 +28,7 @@ import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import com.gtamayoc.atlasnms.shared.domain.model.Discovery
 import com.gtamayoc.atlasnms.shared.domain.model.DiscoveryStatus
-import com.gtamayoc.atlasnms.shared.ui.theme.AtlasRedHighlight
+import com.gtamayoc.atlasnms.shared.domain.model.DiscoveryType
 import com.gtamayoc.atlasnms.shared.ui.theme.RelicGoldHighlight
 import com.gtamayoc.atlasnms.shared.ui.theme.WarpFuelOrangeHighlight
 
@@ -43,16 +43,12 @@ fun DiscoveryCard(
         Brush.verticalGradient(
             colors = listOf(
                 Color.Transparent,
-                surfaceColor.copy(alpha = 0.5f),
-                surfaceColor
+                surfaceColor.copy(alpha = 0.4f),
+                surfaceColor.copy(alpha = 0.85f)
             )
         )
     }
 
-    // DESIGN.md Status Colors:
-    // Confirmed: Warp-Fuel Orange
-    // Incomplete / Pending: Relic Gold
-    // Draft: Neutral Silver-Grey
     val (accentBarColor, statusText, statusBg) = when (discovery.status) {
         DiscoveryStatus.CONFIRMED -> Triple(WarpFuelOrangeHighlight, "CONFIRMED", WarpFuelOrangeHighlight)
         DiscoveryStatus.PENDING -> Triple(RelicGoldHighlight, "PENDING", RelicGoldHighlight)
@@ -71,11 +67,18 @@ fun DiscoveryCard(
         onClick = onClick
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
-            discovery.imageUrl?.let { url ->
+            if (!discovery.imageUrl.isNullOrBlank()) {
                 AsyncImage(
-                    model = url,
+                    model = discovery.imageUrl,
                     contentDescription = discovery.name,
                     contentScale = ContentScale.Crop,
+                    modifier = Modifier.fillMaxSize()
+                )
+            } else if (discovery.type == DiscoveryType.PORTAL || discovery.glyphs.isNotEmpty()) {
+                // Fondo cósmico místico (Mantra Pattern) único para portales y teleports en la Pantalla Principal
+                MantraPatternBackground(
+                    glyphs = discovery.glyphs,
+                    seed = discovery.id,
                     modifier = Modifier.fillMaxSize()
                 )
             }
@@ -87,7 +90,7 @@ fun DiscoveryCard(
                     .background(gradientBrush)
             )
 
-            // DESIGN.md: Vertical accent bar on the left edge
+            // Vertical accent bar on left edge
             Box(
                 modifier = Modifier
                     .width(4.dp)

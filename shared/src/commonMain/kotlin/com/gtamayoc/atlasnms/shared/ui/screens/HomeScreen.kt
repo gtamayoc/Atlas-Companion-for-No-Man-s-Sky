@@ -63,22 +63,11 @@ fun HomeScreen(
     val isFilterActive = currentState is HomeUiState.Success && 
         (currentState.selectedType != null || currentState.searchQuery.isNotBlank())
 
-    Scaffold(
-        floatingActionButton = {
-            DualFabGroup(
-                onAnalyzeClick = onFabClick,
-                onFilterClick = { showFilterSheet = true },
-                isFilterActive = isFilterActive
-            )
-        }
-    ) { paddingValues ->
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-        ) {
-            when (val state = uiState) {
-                is HomeUiState.Loading -> {
+    Box(
+        modifier = Modifier.fillMaxSize()
+    ) {
+        when (val state = uiState) {
+            is HomeUiState.Loading -> {
                     CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
                 }
                 is HomeUiState.Error -> {
@@ -246,8 +235,19 @@ fun HomeScreen(
                             }
                         }
                     }
-                }
             }
+        }
+
+        Box(
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .padding(16.dp)
+        ) {
+            DualFabGroup(
+                onAnalyzeClick = onFabClick,
+                onFilterClick = { showFilterSheet = true },
+                isFilterActive = isFilterActive
+            )
         }
     }
 }

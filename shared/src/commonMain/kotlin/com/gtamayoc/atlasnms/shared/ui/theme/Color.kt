@@ -7,40 +7,40 @@ import androidx.compose.ui.graphics.Color
 // Style: Muted Tonal, Utilitarian, Slate & Sage Palette (Legibility Focused)
 // =============================================================================
 
-// --- DARK THEME COLOR TOKENS (Neutral Slate Base #111417) ---
-val DarkPrimary = Color(0xFF8BB5C4)            // Slate Muted Cyan-Blue
-val DarkOnPrimary = Color(0xFF003543)
-val DarkPrimaryContainer = Color(0xFF004D60)
-val DarkOnPrimaryContainer = Color(0xFFBCEBFC)
+// --- DARK THEME COLOR TOKENS (Grounded Sci-Fi Base #19120C) ---
+val DarkPrimary = Color(0xFFFFB876)            // Símbolos de Atlas, acentos dorados
+val DarkOnPrimary = Color(0xFF2A1600)
+val DarkPrimaryContainer = Color(0xFFE59038)   // Botones de acción principal
+val DarkOnPrimaryContainer = Color(0xFFFFDCC0)
 
-val DarkSecondary = Color(0xFFA5CFA9)          // Sage Muted Green
-val DarkOnSecondary = Color(0xFF11371C)
-val DarkSecondaryContainer = Color(0xFF284E31)
-val DarkOnSecondaryContainer = Color(0xFFC0EBC4)
+val DarkSecondary = Color(0xFFFFB276)
+val DarkOnSecondary = Color(0xFF291700)
+val DarkSecondaryContainer = Color(0xFFFF7F1C) // Avisos de advertencia, señal de pulso
+val DarkOnSecondaryContainer = Color(0xFFFFDBC8)
 
-val DarkTertiary = Color(0xFFC3C3EA)           // Muted Lavender Slate
-val DarkOnTertiary = Color(0xFF2D2D4D)
-val DarkTertiaryContainer = Color(0xFF434365)
-val DarkOnTertiaryContainer = Color(0xFFE2E0FF)
+val DarkTertiary = Color(0xFFE3C4A5)
+val DarkOnTertiary = Color(0xFF2F1D0A)
+val DarkTertiaryContainer = Color(0xFF48321B)
+val DarkOnTertiaryContainer = Color(0xFFFFDCC1)
 
-val DarkSurface = Color(0xFF111417)            // Neutral Dark Slate Surface
-val DarkSurfaceDim = Color(0xFF111417)
-val DarkSurfaceBright = Color(0xFF37393D)
-val DarkSurfaceContainerLowest = Color(0xFF0C0E11)
-val DarkSurfaceContainerLow = Color(0xFF191C1F)
-val DarkSurfaceContainer = Color(0xFF1D2024)
-val DarkSurfaceContainerHigh = Color(0xFF282A2E)
-val DarkSurfaceContainerHighest = Color(0xFF32353A)
+val DarkSurface = Color(0xFF19120C)            // Fondo principal profundo (Vacío espacial)
+val DarkSurfaceDim = Color(0xFF19120C)
+val DarkSurfaceBright = Color(0xFF40362F)
+val DarkSurfaceContainerLowest = Color(0xFF120B07)
+val DarkSurfaceContainerLow = Color(0xFF221A14)  // Tarjetas de descubrimiento
+val DarkSurfaceContainer = Color(0xFF261E18)     // Paneles interactivos
+val DarkSurfaceContainerHigh = Color(0xFF332922)
+val DarkSurfaceContainerHighest = Color(0xFF3F342C)
 
-val DarkOnSurface = Color(0xFFE1E2E6)
-val DarkOnSurfaceVariant = Color(0xFFC1C7CE)
-val DarkOutline = Color(0xFF8B9198)
-val DarkOutlineVariant = Color(0xFF41474D)
+val DarkOnSurface = Color(0xFFEFE0D5)          // Texto principal de lectura en pantalla
+val DarkOnSurfaceVariant = Color(0xFFBBA594)   // Texto secundario, subtítulos
+val DarkOutline = Color(0xFFA18D7D)            // Bordes metálicos, separadores
+val DarkOutlineVariant = Color(0xFF56473B)
 
-val DarkError = Color(0xFFFFB4AB)
-val DarkOnError = Color(0xFF690005)
-val DarkErrorContainer = Color(0xFF93000A)
-val DarkOnErrorContainer = Color(0xFFFFDAD6)
+val DarkError = Color(0xFFCF6679)              // Estados de fallo del sistema
+val DarkOnError = Color(0xFF370013)
+val DarkErrorContainer = Color(0xFF930026)
+val DarkOnErrorContainer = Color(0xFFFFD9DF)
 
 // --- LIGHT THEME COLOR TOKENS ---
 val LightPrimary = Color(0xFF1A6577)

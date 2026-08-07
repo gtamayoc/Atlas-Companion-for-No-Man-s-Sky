@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
@@ -49,7 +50,8 @@ fun AtlasBottomNav(
             .fillMaxWidth()
             .background(MaterialTheme.colorScheme.surfaceContainerLowest.copy(alpha = 0.98f))
             .border(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.25f))
-            .padding(vertical = 6.dp, horizontal = 8.dp)
+            .navigationBarsPadding()
+            .padding(top = 8.dp, bottom = 12.dp, start = 8.dp, end = 8.dp)
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),

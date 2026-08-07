@@ -232,37 +232,25 @@ fun GlyphSelector(
         // 3. TECLADO MATRIZ DE 16 GLIFOS (2 FILAS DE 8)
         Column(
             modifier = Modifier.fillMaxWidth(),
-            verticalArrangement = Arrangement.spacedBy(6.dp)
+            verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
-            // Fila 1: Glifos 1 a 8
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(4.dp)
-            ) {
-                for (i in 1..8) {
-                    val res = glyphResources[i]
-                    GlyphButton(
-                        glyphIndex = i,
-                        drawableRes = res,
-                        modifier = Modifier.weight(1f),
-                        onClick = { handleGlyphClick(i) }
-                    )
-                }
-            }
-
-            // Fila 2: Glifos 9 a 16
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(4.dp)
-            ) {
-                for (i in 9..16) {
-                    val res = glyphResources[i]
-                    GlyphButton(
-                        glyphIndex = i,
-                        drawableRes = res,
-                        modifier = Modifier.weight(1f),
-                        onClick = { handleGlyphClick(i) }
-                    )
+            val glyphListItems = (1..16).toList()
+            glyphListItems.chunked(8).forEach { rowItems ->
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(4.dp)
+                ) {
+                    rowItems.forEach { i ->
+                        val res = glyphResources[i]
+                        GlyphButton(
+                            glyphIndex = i,
+                            drawableRes = res,
+                            modifier = Modifier
+                                .weight(1f)
+                                .aspectRatio(1f),
+                            onClick = { handleGlyphClick(i) }
+                        )
+                    }
                 }
             }
         }

@@ -3,6 +3,7 @@ package com.gtamayoc.atlasnms
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.SizeTransform
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
@@ -110,8 +111,9 @@ fun App(repository: DiscoveryRepository = remember { com.gtamayoc.atlasnms.share
                         AnimatedContent(
                             targetState = currentScreen,
                             transitionSpec = {
-                                fadeIn(animationSpec = tween(durationMillis = 350, easing = FastOutSlowInEasing)) togetherWith
-                                fadeOut(animationSpec = tween(durationMillis = 350, easing = FastOutSlowInEasing))
+                                (fadeIn(animationSpec = tween(durationMillis = 160, easing = FastOutSlowInEasing)) togetherWith
+                                fadeOut(animationSpec = tween(durationMillis = 140, easing = FastOutSlowInEasing)))
+                                    .using(SizeTransform(clip = false))
                             },
                             label = "ScreenTransition"
                         ) { targetScreen ->

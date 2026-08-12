@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>ATLAS_LOGBOOK - Discoveries</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&amp;family=Hanken+Grotesk:wght@400;500;600&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "primary": "#5fd9cc",
+                        "tertiary-container": "#92a48a",
+                        "surface-container-highest": "#333537",
+                        "inverse-primary": "#006a62",
+                        "on-tertiary-fixed": "#101f0d",
+                        "on-error": "#690005",
+                        "tertiary": "#b9ccb0",
+                        "secondary-container": "#802918",
+                        "primary-fixed-dim": "#5fd9cc",
+                        "secondary": "#ffb4a5",
+                        "inverse-on-surface": "#2f3133",
+                        "background": "#121416",
+                        "surface-container-lowest": "#0c0e10",
+                        "surface-container-high": "#282a2c",
+                        "on-error-container": "#ffdad6",
+                        "outline": "#869391",
+                        "on-secondary-container": "#ff9a85",
+                        "surface-variant": "#333537",
+                        "on-secondary": "#611205",
+                        "on-surface-variant": "#bcc9c6",
+                        "on-primary-fixed-variant": "#00504a",
+                        "on-primary-fixed": "#00201d",
+                        "on-tertiary-container": "#2a3a26",
+                        "surface-container": "#1e2022",
+                        "outline-variant": "#3d4947",
+                        "on-surface": "#e2e2e5",
+                        "tertiary-fixed-dim": "#b9ccb0",
+                        "on-primary-container": "#003e39",
+                        "on-primary": "#003733",
+                        "surface-dim": "#121416",
+                        "error-container": "#93000a",
+                        "surface": "#121416",
+                        "tertiary-fixed": "#d5e8cb",
+                        "surface-bright": "#38393c",
+                        "on-background": "#e2e2e5",
+                        "on-secondary-fixed-variant": "#802918",
+                        "secondary-fixed-dim": "#ffb4a5",
+                        "inverse-surface": "#e2e2e5",
+                        "surface-tint": "#5fd9cc",
+                        "secondary-fixed": "#ffdad3",
+                        "primary-container": "#2bb1a5",
+                        "surface-container-low": "#1a1c1e",
+                        "on-tertiary-fixed-variant": "#3b4b36",
+                        "on-tertiary": "#253421",
+                        "error": "#ffb4ab",
+                        "on-secondary-fixed": "#3e0500",
+                        "primary-fixed": "#7ef6e9"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "base": "4px",
+                        "xs": "4px",
+                        "margin": "24px",
+                        "sm": "8px",
+                        "lg": "24px",
+                        "xl": "40px",
+                        "md": "16px",
+                        "gutter": "16px"
+                    },
+                    "fontFamily": {
+                        "display-lg": ["Space Grotesk"],
+                        "title-md": ["Space Grotesk"],
+                        "headline-lg-mobile": ["Space Grotesk"],
+                        "headline-lg": ["Space Grotesk"],
+                        "body-md": ["Hanken Grotesk"],
+                        "label-sm": ["JetBrains Mono"],
+                        "body-lg": ["Hanken Grotesk"]
+                    },
+                    "fontSize": {
+                        "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "title-md": ["20px", { "lineHeight": "28px", "fontWeight": "500" }],
+                        "headline-lg-mobile": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "label-sm": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500" }],
+                        "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { background-color: #121416; color: #e2e2e5; }
+        .glyph-box {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            border: 1px solid #3d4947;
+            background-color: #1a1c1e;
+            border-radius: 0.125rem;
+            color: #5fd9cc;
+        }
+        .glyph-box:hover {
+            border-color: #5fd9cc;
+            background-color: rgba(95, 217, 204, 0.1);
+        }
+    </style>
+</head>
+<body class="flex flex-col md:flex-row min-h-screen bg-background font-body-lg antialiased selection:bg-primary selection:text-on-primary">
+<!-- SideNavBar (Hidden on Mobile) -->
+<nav class="hidden md:flex flex-col h-full fixed left-0 top-0 z-40 bg-surface dark:bg-surface docked left-0 h-screen w-64 bg-surface-container-low backdrop-blur-md border-r border-outline-variant/10">
+<div class="p-lg border-b border-outline-variant/20">
+<h1 class="font-display-lg text-primary tracking-widest text-title-md">ATLAS</h1>
+<div class="mt-md flex items-center gap-sm">
+<div class="w-8 h-8 rounded-full bg-surface-variant flex items-center justify-center border border-outline-variant">
+<span class="material-symbols-outlined text-on-surface-variant text-sm">person</span>
+</div>
+<div>
+<p class="font-label-sm text-label-sm text-on-surface">INTERLOPER_01</p>
+<p class="font-label-sm text-label-sm text-on-surface-variant opacity-60">16-16-16-16</p>
+</div>
+</div>
+</div>
+<div class="flex-1 overflow-y-auto py-md flex flex-col gap-xs px-sm">
+<a class="flex items-center gap-stack-sm text-on-surface-variant px-4 py-3 opacity-60 hover:bg-surface-variant/30 hover:opacity-100 transition-all rounded" href="#">
+<span class="material-symbols-outlined">home</span>
+<span class="font-label-sm text-label-sm">Home</span>
+</a>
+<a class="flex items-center gap-stack-sm text-on-surface-variant px-4 py-3 opacity-60 hover:bg-surface-variant/30 hover:opacity-100 transition-all rounded" href="#">
+<span class="material-symbols-outlined">book</span>
+<span class="font-label-sm text-label-sm">Journal</span>
+</a>
+<a class="flex items-center gap-stack-sm bg-primary-container/20 text-secondary border-l-4 border-secondary px-4 py-3 rounded" href="#">
+<span class="material-symbols-outlined text-secondary">explore</span>
+<span class="font-label-sm text-label-sm text-secondary">Discoveries</span>
+</a>
+<a class="flex items-center gap-stack-sm text-on-surface-variant px-4 py-3 opacity-60 hover:bg-surface-variant/30 hover:opacity-100 transition-all rounded" href="#">
+<span class="material-symbols-outlined">inventory_2</span>
+<span class="font-label-sm text-label-sm">Library</span>
+</a>
+<a class="flex items-center gap-stack-sm text-on-surface-variant px-4 py-3 opacity-60 hover:bg-surface-variant/30 hover:opacity-100 transition-all rounded" href="#">
+<span class="material-symbols-outlined">build</span>
+<span class="font-label-sm text-label-sm">Tools</span>
+</a>
+<a class="flex items-center gap-stack-sm text-on-surface-variant px-4 py-3 opacity-60 hover:bg-surface-variant/30 hover:opacity-100 transition-all rounded" href="#">
+<span class="material-symbols-outlined">leaderboard</span>
+<span class="font-label-sm text-label-sm">Stats</span>
+</a>
+<a class="flex items-center gap-stack-sm text-on-surface-variant px-4 py-3 opacity-60 hover:bg-surface-variant/30 hover:opacity-100 transition-all rounded mt-auto" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-label-sm text-label-sm">Settings</span>
+</a>
+</div>
+</nav>
+<!-- Main Content Area -->
+<main class="flex-1 flex flex-col md:ml-64 relative min-h-screen">
+<!-- TopNavBar (Visible on all, adapted for mobile) -->
+<header class="bg-surface/80 dark:bg-surface/80 backdrop-blur-xl docked full-width top-0 sticky border-b border-outline-variant/20 shadow-[0_0_15px_rgba(255,180,168,0.1)] flex justify-between items-center w-full px-gutter py-stack-sm max-w-full z-50">
+<div class="flex items-center gap-md">
+<span class="md:hidden font-headline-lg-mobile text-headline-lg-mobile font-bold tracking-tighter text-primary dark:text-primary">ATLAS_LOGBOOK</span>
+<div class="hidden md:flex bg-surface-container-low border border-outline-variant rounded px-sm py-xs items-center gap-xs focus-within:border-primary transition-colors">
+<span class="material-symbols-outlined text-on-surface-variant text-sm">search</span>
+<input class="bg-transparent border-none text-body-sm text-on-surface focus:ring-0 placeholder:text-on-surface-variant/50 w-64 p-0" placeholder="Search discoveries..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-sm">
+<button class="md:hidden text-secondary hover:bg-primary/10 transition-colors duration-200 p-xs rounded">
+<span class="material-symbols-outlined">search</span>
+</button>
+<button class="text-secondary hover:bg-primary/10 transition-colors duration-200 p-xs rounded">
+<span class="material-symbols-outlined">account_circle</span>
+</button>
+</div>
+</header>
+<!-- Page Header & Filters -->
+<div class="px-gutter md:px-lg py-lg border-b border-outline-variant/10">
+<div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-md">
+<div>
+<h2 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-surface mb-xs">Discoveries Log</h2>
+<p class="font-body-md text-body-md text-on-surface-variant">Archived planetary and equipment data signatures.</p>
+</div>
+<div class="flex gap-sm w-full md:w-auto overflow-x-auto pb-xs md:pb-0 scrollbar-hide">
+<button class="px-md py-xs rounded border border-secondary text-secondary font-label-sm text-label-sm bg-secondary/10 whitespace-nowrap">
+<span class="material-symbols-outlined text-sm align-middle mr-xs">description</span> DESCUBRIMIENTOS
+                    </button>
+<button class="px-md py-xs rounded border border-outline-variant text-on-surface-variant font-label-sm text-label-sm hover:border-primary hover:text-primary transition-colors whitespace-nowrap">
+<span class="material-symbols-outlined text-sm align-middle mr-xs">satellite_alt</span> EXPLORAR
+                    </button>
+<button class="px-md py-xs rounded border border-outline-variant text-on-surface-variant font-label-sm text-label-sm hover:border-primary hover:text-primary transition-colors whitespace-nowrap">
+<span class="material-symbols-outlined text-sm align-middle mr-xs">menu_book</span> WIKI
+                    </button>
+</div>
+</div>
+</div>
+<!-- Discoveries Grid/List -->
+<div class="p-gutter md:p-lg flex flex-col gap-lg pb-32">
+<!-- Discovery Card 1 (Image Background) -->
+<article class="relative rounded-lg border border-outline-variant/50 bg-[#1C1F22] overflow-hidden group">
+<!-- Background Image Layer -->
+<div class="absolute inset-0 z-0 opacity-40 group-hover:opacity-50 transition-opacity duration-500">
+<div class="bg-cover bg-center w-full h-full" data-alt="A gritty, high-contrast close-up of a sci-fi multitool weapon resting on dusty red martian soil. The lighting is harsh, directional sunlight casting deep shadows, emphasizing the metallic textures and utilitarian design of the equipment. The overall mood is rugged, desolate, and grounded in a realistic, tactical aesthetic, dominated by rusty oranges, dark grays, and subtle teal reflections on the metal." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAyOD_4nzuEd95jcnVvrXfMDOW2JCZ8Gn9ZTewU9x21SOgXKJYuTRvGR6oLAtoJkQ7FLGfrBN5jkLVgvUuOd0syBOB4c_0DXM0c3seZXxmO8AoMiK5ci1vQjJzP6aqTSHF_G81geTIMV0sx5lLkBExzzKxSuy83TysYbaV9TduwoHWlig7yrOC4gJF48nCY-eP7f98kLt6YQkWCNtvSItt5mLxdJ6A1hOAP1tmdpkWM0A1Wr0HJ-OBg8g')"></div>
+<div class="absolute inset-0 bg-gradient-to-t from-[#1C1F22] via-[#1C1F22]/80 to-transparent"></div>
+</div>
+<div class="relative z-10 p-md md:p-lg flex flex-col gap-md">
+<div class="flex justify-between items-start">
+<div class="flex items-center gap-sm">
+<span class="px-sm py-1 bg-secondary-container/30 text-secondary border border-secondary/50 rounded font-label-sm text-label-sm uppercase tracking-wider">MULTITOOL</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant font-mono">REF: scan_1785714160982</span>
+</div>
+</div>
+<div>
+<h3 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-surface font-bold drop-shadow-md">Multiherramienta</h3>
+<p class="font-label-sm text-label-sm text-primary font-mono mt-xs drop-shadow-sm">Euclid Hub Alpha // Euclid</p>
+</div>
+<div class="mt-sm">
+<p class="font-label-sm text-label-sm text-on-surface-variant mb-sm uppercase tracking-widest opacity-70">Signature Glyphs</p>
+<div class="flex flex-wrap gap-xs max-w-md">
+<!-- Placeholder glyphs using material icons to simulate the symbols -->
+<div class="glyph-box" title="Sunset"><span class="material-symbols-outlined text-[20px]">wb_twilight</span></div>
+<div class="glyph-box" title="Bird"><span class="material-symbols-outlined text-[20px]">flutter_dash</span></div>
+<div class="glyph-box" title="Face"><span class="material-symbols-outlined text-[20px]">face</span></div>
+<div class="glyph-box" title="Eclipse"><span class="material-symbols-outlined text-[20px]">brightness_3</span></div>
+<div class="glyph-box" title="Hexagon"><span class="material-symbols-outlined text-[20px]">hexagon</span></div>
+<div class="glyph-box" title="Tent"><span class="material-symbols-outlined text-[20px]">holiday_village</span></div>
+<div class="glyph-box" title="Ship"><span class="material-symbols-outlined text-[20px]">sailing</span></div>
+<div class="glyph-box" title="Tree"><span class="material-symbols-outlined text-[20px]">park</span></div>
+<div class="glyph-box" title="Triangle"><span class="material-symbols-outlined text-[20px]">change_history</span></div>
+<div class="glyph-box" title="Bug"><span class="material-symbols-outlined text-[20px]">bug_report</span></div>
+<div class="glyph-box" title="Galaxy"><span class="material-symbols-outlined text-[20px]">cyclone</span></div>
+<div class="glyph-box" title="Fish"><span class="material-symbols-outlined text-[20px]">set_meal</span></div>
+</div>
+</div>
+</div>
+</article>
+<!-- Discovery Card 2 (Standard Matte) -->
+<article class="rounded-lg border border-outline-variant bg-[#1C1F22] p-md md:p-lg flex flex-col gap-md hover:border-primary/50 transition-colors">
+<div class="flex justify-between items-start">
+<div class="flex items-center gap-sm">
+<span class="px-sm py-1 bg-secondary-container/20 text-secondary border border-secondary/30 rounded font-label-sm text-label-sm uppercase tracking-wider">PLANET</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant font-mono">REF: pending_1785713000742</span>
+</div>
+</div>
+<div>
+<h3 class="font-headline-lg-mobile md:font-title-md text-headline-lg-mobile md:text-title-md text-on-surface font-semibold">Portal Inexplorado 000D</h3>
+<p class="font-label-sm text-label-sm text-on-surface-variant font-mono mt-xs">Sistema 000D // Euclid</p>
+</div>
+<div class="mt-xs border-t border-outline-variant/30 pt-md">
+<div class="flex flex-wrap gap-xs">
+<div class="glyph-box"><span class="material-symbols-outlined text-[20px]">waves</span></div>
+<div class="glyph-box"><span class="material-symbols-outlined text-[20px]">pets</span></div>
+<div class="glyph-box"><span class="material-symbols-outlined text-[20px]">wb_sunny</span></div>
+<div class="glyph-box"><span class="material-symbols-outlined text-[20px]">rocket_launch</span></div>
+<div class="glyph-box"><span class="material-symbols-outlined text-[20px]">bug_report</span></div>
+<div class="glyph-box"><span class="material-symbols-outlined text-[20px]">location_on</span></div>
+<div class="glyph-box"><span class="material-symbols-outlined text-[20px]">dark_mode</span></div>
+<div class="glyph-box"><span class="material-symbols-outlined text-[20px]">water</span></div>
+<div class="glyph-box"><span class="material-symbols-outlined text-[20px]">hexagon</span></div>
+<div class="glyph-box"><span class="material-symbols-outlined text-[20px]">radar</span></div>
+<div class="glyph-box"><span class="material-symbols-outlined text-[20px]">architecture</span></div>
+<div class="glyph-box"><span class="material-symbols-outlined text-[20px]">pest_control</span></div>
+</div>
+</div>
+</article>
+<!-- Discovery Card 3 (Standard Matte) -->
+<article class="rounded-lg border border-outline-variant bg-[#1C1F22] p-md md:p-lg flex flex-col gap-md hover:border-primary/50 transition-colors">
+<div class="flex justify-between items-start">
+<div class="flex items-center gap-sm">
+<span class="px-sm py-1 bg-secondary-container/20 text-secondary border border-secondary/30 rounded font-label-sm text-label-sm uppercase tracking-wider">PLANET</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant font-mono">REF: pending_1785712981232</span>
+</div>
+</div>
+<div>
+<h3 class="font-headline-lg-mobile md:font-title-md text-headline-lg-mobile md:text-title-md text-on-surface font-semibold">Portal Inexplorado 004A</h3>
+<p class="font-label-sm text-label-sm text-on-surface-variant font-mono mt-xs">Sistema 004A // Euclid</p>
+</div>
+<div class="mt-xs border-t border-outline-variant/30 pt-md">
+<div class="flex flex-wrap gap-xs">
+<div class="glyph-box"><span class="material-symbols-outlined text-[20px]">waves</span></div>
+<div class="glyph-box"><span class="material-symbols-outlined text-[20px]">pets</span></div>
+<div class="glyph-box"><span class="material-symbols-outlined text-[20px]">dark_mode</span></div>
+<div class="glyph-box"><span class="material-symbols-outlined text-[20px]">hexagon</span></div>
+<div class="glyph-box"><span class="material-symbols-outlined text-[20px]">location_on</span></div>
+<div class="glyph-box"><span class="material-symbols-outlined text-[20px]">flutter_dash</span></div>
+<div class="glyph-box"><span class="material-symbols-outlined text-[20px]">pets</span></div>
+<!-- Incomplete sequence for visual variety -->
+</div>
+</div>
+</article>
+</div>
+<!-- Floating Action Button (FAB) -->
+<div class="fixed bottom-lg right-lg md:right-xl z-50">
+<button class="bg-secondary text-secondary-container font-label-sm text-label-sm px-lg py-md rounded-xl flex items-center gap-sm shadow-[0_4px_24px_rgba(255,180,168,0.2)] hover:brightness-110 transition-all border border-[#fff]/10">
+<span class="tracking-widest font-semibold uppercase">ANALIZAR NUEVA CAPTURA</span>
+<span class="material-symbols-outlined text-lg">add</span>
+</button>
+</div>
+</main>
+</body></html>

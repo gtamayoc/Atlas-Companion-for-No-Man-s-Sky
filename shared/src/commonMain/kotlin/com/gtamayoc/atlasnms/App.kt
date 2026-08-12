@@ -1,47 +1,175 @@
 package com.gtamayoc.atlasnms
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Column
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.SizeTransform
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.safeContentPadding
-import androidx.compose.material3.Button
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
-import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.DrawerValue
+import androidx.compose.material3.ModalNavigationDrawer
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.rememberDrawerState
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import org.jetbrains.compose.resources.painterResource
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.gtamayoc.atlasnms.shared.domain.model.Discovery
+import com.gtamayoc.atlasnms.shared.domain.repository.DiscoveryRepository
+import com.gtamayoc.atlasnms.shared.ui.components.AtlasBackHandler
+import com.gtamayoc.atlasnms.shared.ui.components.AtlasBottomNav
+import com.gtamayoc.atlasnms.shared.ui.components.AtlasNavigationDrawer
+import com.gtamayoc.atlasnms.shared.ui.components.AtlasTopHeader
+import com.gtamayoc.atlasnms.shared.ui.navigation.AppScreen
+import com.gtamayoc.atlasnms.shared.ui.screens.DiscoveryDetailScreen
+import com.gtamayoc.atlasnms.shared.ui.screens.GalacticCalculatorScreen
+import com.gtamayoc.atlasnms.shared.ui.screens.HomeScreen
+import com.gtamayoc.atlasnms.shared.ui.screens.HomeViewModel
+import com.gtamayoc.atlasnms.shared.ui.screens.ScanScreen
+import com.gtamayoc.atlasnms.shared.ui.screens.SettingsScreen
+import com.gtamayoc.atlasnms.shared.ui.screens.WikiScreen
+import com.gtamayoc.atlasnms.shared.ui.theme.AtlasNMSTheme
+import kotlinx.coroutines.launch
 
-import atlasnms.shared.generated.resources.Res
-import atlasnms.shared.generated.resources.compose_multiplatform
+import com.gtamayoc.atlasnms.shared.ui.screens.GalacticCalculatorViewModel
+import com.gtamayoc.atlasnms.shared.ui.screens.ScanViewModel
+
+import androidx.compose.animation.core.LinearOutSlowInEasing
+import androidx.compose.runtime.saveable.rememberSaveableStateHolder
 
 @Composable
-@Preview
-fun App() {
-    MaterialTheme {
-        var showContent by remember { mutableStateOf(false) }
-        Column(
-            modifier = Modifier
-                .background(MaterialTheme.colorScheme.primaryContainer)
-                .safeContentPadding()
-                .fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            Button(onClick = { showContent = !showContent }) {
-                Text("Click me!")
+fun App(repository: DiscoveryRepository = remember { com.gtamayoc.atlasnms.shared.data.repository.InMemoryDiscoveryRepository() }) {
+    val homeViewModel: HomeViewModel = viewModel { HomeViewModel(repository) }
+    val galacticViewModel: GalacticCalculatorViewModel = viewModel { GalacticCalculatorViewModel(repository) }
+    val scanViewModel: ScanViewModel = viewModel { ScanViewModel(repository) }
+    
+    // Estado global de navegación
+    var currentScreen by remember { mutableStateOf(AppScreen.DISCOVERIES) }
+    var selectedDiscovery by remember { mutableStateOf<Discovery?>(null) }
+
+    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+    val coroutineScope = rememberCoroutineScope()
+    val saveableStateHolder = rememberSaveableStateHolder()
+
+    // Manejo del botón de retroceso (BackHandler)
+    AtlasBackHandler(
+        enabled = selectedDiscovery != null || drawerState.isOpen || currentScreen != AppScreen.DISCOVERIES,
+        onBack = {
+            if (selectedDiscovery != null) {
+                selectedDiscovery = null
+            } else if (drawerState.isOpen) {
+                coroutineScope.launch { drawerState.close() }
+            } else if (currentScreen != AppScreen.DISCOVERIES) {
+                currentScreen = AppScreen.DISCOVERIES
             }
-            AnimatedVisibility(showContent) {
-                val greeting = remember { Greeting().greet() }
-                Column(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                ) {
-                    Image(painterResource(Res.drawable.compose_multiplatform), null)
-                    Text("Compose: $greeting")
+        }
+    )
+
+    AtlasNMSTheme {
+        if (selectedDiscovery != null) {
+            DiscoveryDetailScreen(
+                discovery = selectedDiscovery!!,
+                onBack = { selectedDiscovery = null }
+            )
+        } else {
+            ModalNavigationDrawer(
+                drawerState = drawerState,
+                drawerContent = {
+                    AtlasNavigationDrawer(
+                        currentScreen = currentScreen,
+                        onScreenSelected = { newScreen -> currentScreen = newScreen },
+                        onCloseDrawer = { coroutineScope.launch { drawerState.close() } }
+                    )
+                }
+            ) {
+                Scaffold(
+                    topBar = {
+                        AtlasTopHeader(
+                            onOpenDrawer = { coroutineScope.launch { drawerState.open() } },
+                            currentScreen = currentScreen
+                        )
+                    },
+                    bottomBar = {
+                        AtlasBottomNav(
+                            currentScreen = currentScreen,
+                            onScreenSelected = { newScreen -> currentScreen = newScreen },
+                            onFabClick = { currentScreen = AppScreen.SCAN }
+                        )
+                    }
+                ) { paddingValues ->
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(paddingValues)
+                    ) {
+                        AnimatedContent(
+                            targetState = currentScreen,
+                            transitionSpec = {
+                                (fadeIn(animationSpec = tween(durationMillis = 50, easing = LinearOutSlowInEasing)) togetherWith
+                                fadeOut(animationSpec = tween(durationMillis = 40, easing = LinearOutSlowInEasing)))
+                                    .using(SizeTransform(clip = false))
+                            },
+                            label = "ScreenTransition"
+                        ) { targetScreen ->
+                            saveableStateHolder.SaveableStateProvider(key = targetScreen) {
+                                when (targetScreen) {
+                                    AppScreen.DISCOVERIES -> {
+                                        HomeScreen(
+                                            viewModel = homeViewModel,
+                                            currentScreen = targetScreen,
+                                            onScreenSelected = { newScreen -> currentScreen = newScreen },
+                                            onFabClick = { currentScreen = AppScreen.SCAN },
+                                            onDiscoveryClick = { discovery -> selectedDiscovery = discovery }
+                                        )
+                                    }
+                                    AppScreen.EXPLORE -> {
+                                        GalacticCalculatorScreen(
+                                            viewModel = galacticViewModel,
+                                            currentScreen = targetScreen,
+                                            onScreenSelected = { newScreen -> currentScreen = newScreen },
+                                            onDiscoverySaved = {
+                                                currentScreen = AppScreen.DISCOVERIES
+                                            }
+                                        )
+                                    }
+                                    AppScreen.WIKI -> {
+                                        WikiScreen(
+                                            currentScreen = targetScreen,
+                                            onScreenSelected = { newScreen -> currentScreen = newScreen },
+                                            onFabClick = { currentScreen = AppScreen.SCAN }
+                                        )
+                                    }
+                                    AppScreen.SETTINGS -> {
+                                        SettingsScreen(
+                                            currentScreen = targetScreen,
+                                            onScreenSelected = { newScreen -> currentScreen = newScreen },
+                                            onFabClick = { currentScreen = AppScreen.SCAN }
+                                        )
+                                    }
+                                    AppScreen.SCAN -> {
+                                        ScanScreen(
+                                            viewModel = scanViewModel,
+                                            currentScreen = targetScreen,
+                                            onScreenSelected = { newScreen -> currentScreen = newScreen },
+                                            onDiscoverySaved = {
+                                                currentScreen = AppScreen.DISCOVERIES
+                                            }
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }

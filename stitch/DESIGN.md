@@ -1,92 +1,87 @@
 ---
-name: Atlas NMS Explorer
+name: Atlas NMS Explorer Interface
 colors:
-  surface: '#121416'
-  surface-dim: '#121416'
-  surface-bright: '#38393c'
-  surface-container-lowest: '#0c0e10'
-  surface-container-low: '#1a1c1e'
-  surface-container: '#1e2022'
-  surface-container-high: '#282a2c'
-  surface-container-highest: '#333537'
-  on-surface: '#e2e2e5'
-  on-surface-variant: '#bcc9c6'
-  inverse-surface: '#e2e2e5'
-  inverse-on-surface: '#2f3133'
-  outline: '#869391'
-  outline-variant: '#3d4947'
-  surface-tint: '#5fd9cc'
-  primary: '#5fd9cc'
-  on-primary: '#003733'
-  primary-container: '#2bb1a5'
-  on-primary-container: '#003e39'
-  inverse-primary: '#006a62'
-  secondary: '#ffb4a5'
-  on-secondary: '#611205'
-  secondary-container: '#802918'
-  on-secondary-container: '#ff9a85'
-  tertiary: '#b9ccb0'
-  on-tertiary: '#253421'
-  tertiary-container: '#92a48a'
-  on-tertiary-container: '#2a3a26'
+  surface: '#19120c'
+  surface-dim: '#19120c'
+  surface-bright: '#413730'
+  surface-container-lowest: '#130d07'
+  surface-container-low: '#221a14'
+  surface-container: '#261e18'
+  surface-container-high: '#312822'
+  surface-container-highest: '#3c332c'
+  on-surface: '#efe0d5'
+  on-surface-variant: '#d9c2b1'
+  inverse-surface: '#efe0d5'
+  inverse-on-surface: '#372f28'
+  outline: '#a18d7d'
+  outline-variant: '#534437'
+  surface-tint: '#ffb876'
+  primary: '#ffb876'
+  on-primary: '#4b2800'
+  primary-container: '#e59038'
+  on-primary-container: '#593000'
+  inverse-primary: '#8d4f00'
+  secondary: '#ffb68b'
+  on-secondary: '#522300'
+  secondary-container: '#ff7f1c'
+  on-secondary-container: '#602a00'
+  tertiary: '#f7be24'
+  on-tertiary: '#3f2e00'
+  tertiary-container: '#ce9c00'
+  on-tertiary-container: '#4b3700'
   error: '#ffb4ab'
   on-error: '#690005'
   error-container: '#93000a'
   on-error-container: '#ffdad6'
-  primary-fixed: '#7ef6e9'
-  primary-fixed-dim: '#5fd9cc'
-  on-primary-fixed: '#00201d'
-  on-primary-fixed-variant: '#00504a'
-  secondary-fixed: '#ffdad3'
-  secondary-fixed-dim: '#ffb4a5'
-  on-secondary-fixed: '#3e0500'
-  on-secondary-fixed-variant: '#802918'
-  tertiary-fixed: '#d5e8cb'
-  tertiary-fixed-dim: '#b9ccb0'
-  on-tertiary-fixed: '#101f0d'
-  on-tertiary-fixed-variant: '#3b4b36'
-  background: '#121416'
-  on-background: '#e2e2e5'
-  surface-variant: '#333537'
+  primary-fixed: '#ffdcc0'
+  primary-fixed-dim: '#ffb876'
+  on-primary-fixed: '#2d1600'
+  on-primary-fixed-variant: '#6b3b00'
+  secondary-fixed: '#ffdbc8'
+  secondary-fixed-dim: '#ffb68b'
+  on-secondary-fixed: '#321200'
+  on-secondary-fixed-variant: '#753400'
+  tertiary-fixed: '#ffdf9d'
+  tertiary-fixed-dim: '#f7be24'
+  on-tertiary-fixed: '#251a00'
+  on-tertiary-fixed-variant: '#5b4300'
+  background: '#19120c'
+  on-background: '#efe0d5'
+  surface-variant: '#3c332c'
 typography:
   display-lg:
     fontFamily: Space Grotesk
     fontSize: 48px
     fontWeight: '700'
-    lineHeight: 56px
+    lineHeight: '1.1'
     letterSpacing: -0.02em
   headline-lg:
     fontFamily: Space Grotesk
     fontSize: 32px
     fontWeight: '600'
-    lineHeight: 40px
-    letterSpacing: -0.01em
+    lineHeight: '1.2'
   headline-lg-mobile:
     fontFamily: Space Grotesk
     fontSize: 24px
     fontWeight: '600'
-    lineHeight: 32px
-  title-md:
-    fontFamily: Space Grotesk
-    fontSize: 20px
-    fontWeight: '500'
-    lineHeight: 28px
-  body-lg:
-    fontFamily: Hanken Grotesk
+    lineHeight: '1.2'
+  body-md:
+    fontFamily: Inter
     fontSize: 16px
     fontWeight: '400'
-    lineHeight: 24px
-  body-md:
-    fontFamily: Hanken Grotesk
-    fontSize: 14px
-    fontWeight: '400'
-    lineHeight: 20px
-  label-sm:
-    fontFamily: JetBrains Mono
+    lineHeight: '1.6'
+  code-sm:
+    fontFamily: Space Mono
     fontSize: 12px
-    fontWeight: '500'
-    lineHeight: 16px
+    fontWeight: '400'
+    lineHeight: '1.4'
     letterSpacing: 0.05em
+  label-caps:
+    fontFamily: Space Mono
+    fontSize: 10px
+    fontWeight: '700'
+    lineHeight: '1'
+    letterSpacing: 0.1em
 rounded:
   sm: 0.125rem
   DEFAULT: 0.25rem
@@ -95,76 +90,77 @@ rounded:
   xl: 0.75rem
   full: 9999px
 spacing:
-  base: 4px
-  xs: 4px
-  sm: 8px
-  md: 16px
-  lg: 24px
-  xl: 40px
-  gutter: 16px
-  margin: 24px
+  unit: 4px
+  container-margin: 16px
+  gutter: 12px
+  stack-sm: 8px
+  stack-md: 20px
+  stack-lg: 40px
 ---
 
 ## Brand & Style
-The design system adopts a **Grounded Material** aesthetic, pivoting away from sci-fi tropes toward a utilitarian, high-precision instrument feel. It is designed for researchers and analysts who require clarity over spectacle.
+The design system is engineered to evoke the feeling of an advanced ship-board computer or an exosuit HUD. It is a **futuristic, technical** interface tailored for the "No Man's Sky" enthusiast. The aesthetic leans heavily into **Glassmorphism** and **Technical Minimalism**, utilizing deep layering to simulate holographic depth. 
 
-The personality is professional, reliable, and "matte." It emphasizes structural integrity through deliberate information density and structural alignment. By utilizing a "Tactile-Technical" approach, the interface moves from a digital fantasy to a functional dashboard, prioritizing long-form readability and data integrity.
-
-**Design Principles:**
-- **Matte over Gloss:** No transparency, blurs, or light-leak effects.
-- **Utilitarian Precision:** Every element serves a functional purpose; decoration is replaced by structural logic.
-- **Atmospheric Professionalism:** A sophisticated palette that evokes deep-space observation without relying on neon cliches.
+The emotional response should be one of precision, discovery, and immersion. The UI feels like an extension of the game’s lore—utilizing technical grid overlays, scanning lines, and subtle "glow" states to signal data activity. It avoids organic shapes in favor of sharp, engineered geometry and high-contrast status signaling.
 
 ## Colors
-The color system moves from high-intensity saturation to a sophisticated, earthy palette. The background uses a deep charcoal base to reduce eye strain, while accents are pulled from natural, mineral-inspired tones.
+The palette is rooted in the void of space. The background uses a tiered system of **Deep Space Navy** for the primary canvas and **Charcoal** for elevated containers.
 
-- **Primary (Teal):** A muted, professional teal used for primary actions and data highlights.
-- **Secondary (Terracotta):** A desaturated clay-red for alerts, critical warnings, and significant markers.
-- **Tertiary (Sage):** A soft olive-grey used for secondary data streams and environmental metadata.
-- **Neutral (Charcoal & Stone):** The foundation of the UI, using tonal shifts to define hierarchy rather than shadows.
-
-All color combinations must pass WCAG AA standards for contrast (4.5:1 for normal text).
+- **Amber-Dust (#e59038):** The primary color, used for main structural elements and primary navigation triggers.
+- **Warp-Fuel Orange (#ff7a00):** The primary functional accent. Used for interactive elements, active states, and propulsion system readouts.
+- **Relic Gold (#e2ab03):** Reserved for rare milestones, exotic planet classifications, and "S-Class" status indicators.
+- **Atlas Red (#ff0000):** Used sparingly for critical system errors and high-priority destructive actions.
+- **Status Colors:** 
+    - *Confirmed:* Warp-Fuel Orange.
+    - *Draft:* Neutral Silver-Grey.
+    - *Incomplete:* Relic Gold.
 
 ## Typography
-Typography is treated as a technical spec. **Space Grotesk** provides a modern, geometric structure for headlines but is kept at a tighter tracking to feel authoritative. **Hanken Grotesk** handles the body text for its exceptional legibility in dense data environments. **JetBrains Mono** is introduced for metadata and coordinates to emphasize the "Explorer" nature of the interface.
+This design system utilizes a three-font hierarchy to balance futuristic personality with legibility.
 
-- **Headlines:** Use sentence case. High weight for emphasis, never all-caps.
-- **Technical Labels:** Use all-caps with increased letter-spacing in monospaced font for small data points.
-- **Scalability:** Large displays are reduced for mobile to maintain a single-column reading rhythm.
+- **Space Grotesk** is used for headlines and primary data points, providing a technical yet modern geometric feel.
+- **Inter** handles all body copy and long-form logs to ensure high readability during extended sessions.
+- **Space Mono** is the "Technical" layer. It is used exclusively for coordinates (Glyphs), ship stats, unit costs, and metadata labels. 
+
+All labels should be uppercase with wide tracking to mimic a diagnostic readout.
 
 ## Layout & Spacing
-The layout follows a rigid 4px baseline grid. This ensures that every element feels locked into a technical schematic.
+The layout follows a **Fluid Grid** model with a heavy emphasis on vertical stacks for mobile-first Android usage. A technical grid overlay (10% opacity orange lines) should be visible in the background of primary views to reinforce the "HUD" aesthetic.
 
-- **Grid:** A 12-column fluid grid for desktop, transitioning to 4-column for mobile.
-- **Rhythm:** Use "MD" (16px) for standard gaps between logical groups and "SM" (8px) for elements within a group.
-- **Sectioning:** Content is separated by background tonal shifts (e.g., a slightly lighter charcoal for a sidebar) and 1px borders rather than white space alone.
+- **Navigation:** A slim Navigation Rail is preferred for large-screen tablets, while a bottom-anchored persistent menu is used for mobile.
+- **Padding:** Containers use tight internal padding (12px) to maximize screen real estate for data-heavy planet logs.
+- **Safe Areas:** Ensure a 16px horizontal margin is maintained on all mobile screens to prevent content from hitting the device edge.
 
 ## Elevation & Depth
-Depth is communicated through **Tonal Layering** and **Subtle Outlines**. In this design system, higher elevation means a lighter background color, not a bigger shadow.
+Depth is not achieved through traditional drop shadows but through **Tonal Layering** and **Backdrop Blurs**.
 
-- **Surface Levels:** 
-  - Level 0 (Background): `#121416`
-  - Level 1 (Cards/Containers): `#1C1F22`
-  - Level 2 (Modals/Popovers): `#262A2E`
-- **Borders:** 1px solid `#31363B` is the primary separator for all interactive elements.
-- **Shadows:** Only used for top-level modals to separate them from the interface. Use a 24px blur, 0% offset, and 40% opacity of the background color (nearly invisible, purely for edge definition).
+- **Level 0 (Base):** Deep Space Navy (#210e0b).
+- **Level 1 (Cards/Panels):** Semi-transparent Charcoal with a 12px Backdrop Blur. 
+- **Level 2 (Modals/Popovers):** Higher opacity surface with a subtle 1px inner stroke in Orange (#ff7a00) at 20% opacity.
+- **Glow Effects:** Active elements (like the 'Analyze Capture' button) should have an outer glow (box-shadow: 0 0 15px) using their respective accent color to simulate light emission.
 
 ## Shapes
-Shapes are "Soft" but disciplined. The 0.25rem (4px) corner radius provides a hint of approachability while maintaining the professional feel of a precision instrument.
+The shape language is "Soft-Industrial." While the grid is rigid, elements have a slight 0.25rem corner radius to avoid the harshness of 90-degree angles, ensuring the UI feels modern and premium. 
 
-- **Standard Elements:** 4px radius (Buttons, Inputs, Cards).
-- **Secondary Elements:** 0px radius (Large panel dividers, screen-edge containers) to emphasize a "built-in" structural feel.
-- **Icons:** Use a 2px stroke width with squared-off ends to match the typographic terminals of Space Grotesk.
+**Special Case:** Glyph icons and Ship Class chips should use 0px (sharp) corners or a 45-degree "clipped" corner (beveled) to emphasize the sci-fi aesthetic.
 
 ## Components
-Consistent component styling reinforces the grounded, utilitarian nature of the design system.
 
-- **Buttons:**
-  - **Primary:** Solid teal background, dark charcoal text. No gradients.
-  - **Secondary:** Transparent background with a 1px teal border.
-  - **States:** Hover should be a simple 10% brightness increase. No "glow" or outer shadows.
-- **Input Fields:** 1px border with a slightly darker inset background. Focus states use a 2px interior border of the primary teal color.
-- **Cards:** No shadows. Use Level 1 background (`#1C1F22`) and a 1px border. Title areas within cards should have a subtle background header strip.
-- **Chips/Status:** Use the Secondary (Terracotta) or Tertiary (Sage) colors as small, circular indicators or low-saturation background pills.
-- **Lists:** Use subtle 1px horizontal dividers. Ensure high contrast between the list item title (Headline font) and metadata (Monospace font).
-- **Data Visualizations:** Use flat fills. Lines should be 1.5px thick. Replace glowing line charts with solid, high-contrast paths.
+### Buttons
+- **Primary (Analyze Capture):** High-contrast Amber-Dust background with black text. On hover/active, it triggers a "pulsing" outer glow.
+- **Secondary:** Transparent background with a 1px Orange border.
+- **Ghost:** No border, Space Mono text with a trailing `>_` character.
+
+### Structured Cards (Planets/Ships)
+Cards feature a technical header with a vertical accent bar on the left (Red for Atlas, Gold for Exotic). Use a background grid texture and display coordinates in the `code-sm` font style at the bottom-right of the card.
+
+### Status Chips
+- **Confirmed:** Solid Warp-Fuel Orange with black `label-caps` text.
+- **Draft:** Ghost-style with a dashed white border.
+- **Incomplete:** Solid Relic Gold with black `label-caps` text.
+
+### Input Fields
+Inputs are bottom-border only (2px thick). When focused, the border glows Amber-Dust and a small technical "Scanning..." label appears in the top-right corner of the field.
+
+### Navigation Rail
+A narrow vertical bar on the left (or bottom for mobile) using glyph-style icons. The active state is indicated by a vertical Orange light-bar and a slight increase in icon opacity.

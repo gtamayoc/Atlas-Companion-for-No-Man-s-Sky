@@ -1,0 +1,41 @@
+CREATE TABLE DiscoveryEntity (
+    id TEXT NOT NULL PRIMARY KEY,
+    type TEXT NOT NULL,
+    name TEXT NOT NULL,
+    galaxy TEXT NOT NULL,
+    systemName TEXT NOT NULL,
+    glyphs TEXT NOT NULL,
+    imageUrl TEXT,
+    timestamp INTEGER NOT NULL,
+    status TEXT NOT NULL,
+    confidence REAL NOT NULL
+);
+
+CREATE TABLE AppSettingsEntity (
+    key TEXT NOT NULL PRIMARY KEY,
+    value TEXT NOT NULL
+);
+
+insertDiscovery:
+INSERT OR REPLACE INTO DiscoveryEntity(id, type, name, galaxy, systemName, glyphs, imageUrl, timestamp, status, confidence)
+VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+
+selectAllDiscoveries:
+SELECT * FROM DiscoveryEntity ORDER BY timestamp DESC;
+
+selectDiscoveriesByType:
+SELECT * FROM DiscoveryEntity WHERE type = ? ORDER BY timestamp DESC;
+
+deleteDiscovery:
+DELETE FROM DiscoveryEntity WHERE id = ?;
+
+deleteAll:
+DELETE FROM DiscoveryEntity;
+
+insertSetting:
+INSERT OR REPLACE INTO AppSettingsEntity(key, value)
+VALUES(?, ?);
+
+selectSetting:
+SELECT value FROM AppSettingsEntity WHERE key = ?;
+

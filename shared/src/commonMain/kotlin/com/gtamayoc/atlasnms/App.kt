@@ -44,6 +44,9 @@ import kotlinx.coroutines.launch
 import com.gtamayoc.atlasnms.shared.ui.screens.GalacticCalculatorViewModel
 import com.gtamayoc.atlasnms.shared.ui.screens.ScanViewModel
 
+import androidx.compose.animation.core.LinearOutSlowInEasing
+import androidx.compose.runtime.saveable.rememberSaveableStateHolder
+
 @Composable
 fun App(repository: DiscoveryRepository = remember { com.gtamayoc.atlasnms.shared.data.repository.InMemoryDiscoveryRepository() }) {
     val homeViewModel: HomeViewModel = viewModel { HomeViewModel(repository) }
@@ -56,6 +59,7 @@ fun App(repository: DiscoveryRepository = remember { com.gtamayoc.atlasnms.share
 
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val coroutineScope = rememberCoroutineScope()
+    val saveableStateHolder = rememberSaveableStateHolder()
 
     // Manejo del botón de retroceso (BackHandler)
     AtlasBackHandler(
@@ -111,55 +115,57 @@ fun App(repository: DiscoveryRepository = remember { com.gtamayoc.atlasnms.share
                         AnimatedContent(
                             targetState = currentScreen,
                             transitionSpec = {
-                                (fadeIn(animationSpec = tween(durationMillis = 160, easing = FastOutSlowInEasing)) togetherWith
-                                fadeOut(animationSpec = tween(durationMillis = 140, easing = FastOutSlowInEasing)))
+                                (fadeIn(animationSpec = tween(durationMillis = 50, easing = LinearOutSlowInEasing)) togetherWith
+                                fadeOut(animationSpec = tween(durationMillis = 40, easing = LinearOutSlowInEasing)))
                                     .using(SizeTransform(clip = false))
                             },
                             label = "ScreenTransition"
                         ) { targetScreen ->
-                            when (targetScreen) {
-                                AppScreen.DISCOVERIES -> {
-                                    HomeScreen(
-                                        viewModel = homeViewModel,
-                                        currentScreen = targetScreen,
-                                        onScreenSelected = { newScreen -> currentScreen = newScreen },
-                                        onFabClick = { currentScreen = AppScreen.SCAN },
-                                        onDiscoveryClick = { discovery -> selectedDiscovery = discovery }
-                                    )
-                                }
-                                AppScreen.EXPLORE -> {
-                                    GalacticCalculatorScreen(
-                                        viewModel = galacticViewModel,
-                                        currentScreen = targetScreen,
-                                        onScreenSelected = { newScreen -> currentScreen = newScreen },
-                                        onDiscoverySaved = {
-                                            currentScreen = AppScreen.DISCOVERIES
-                                        }
-                                    )
-                                }
-                                AppScreen.WIKI -> {
-                                    WikiScreen(
-                                        currentScreen = targetScreen,
-                                        onScreenSelected = { newScreen -> currentScreen = newScreen },
-                                        onFabClick = { currentScreen = AppScreen.SCAN }
-                                    )
-                                }
-                                AppScreen.SETTINGS -> {
-                                    SettingsScreen(
-                                        currentScreen = targetScreen,
-                                        onScreenSelected = { newScreen -> currentScreen = newScreen },
-                                        onFabClick = { currentScreen = AppScreen.SCAN }
-                                    )
-                                }
-                                AppScreen.SCAN -> {
-                                    ScanScreen(
-                                        viewModel = scanViewModel,
-                                        currentScreen = targetScreen,
-                                        onScreenSelected = { newScreen -> currentScreen = newScreen },
-                                        onDiscoverySaved = {
-                                            currentScreen = AppScreen.DISCOVERIES
-                                        }
-                                    )
+                            saveableStateHolder.SaveableStateProvider(key = targetScreen) {
+                                when (targetScreen) {
+                                    AppScreen.DISCOVERIES -> {
+                                        HomeScreen(
+                                            viewModel = homeViewModel,
+                                            currentScreen = targetScreen,
+                                            onScreenSelected = { newScreen -> currentScreen = newScreen },
+                                            onFabClick = { currentScreen = AppScreen.SCAN },
+                                            onDiscoveryClick = { discovery -> selectedDiscovery = discovery }
+                                        )
+                                    }
+                                    AppScreen.EXPLORE -> {
+                                        GalacticCalculatorScreen(
+                                            viewModel = galacticViewModel,
+                                            currentScreen = targetScreen,
+                                            onScreenSelected = { newScreen -> currentScreen = newScreen },
+                                            onDiscoverySaved = {
+                                                currentScreen = AppScreen.DISCOVERIES
+                                            }
+                                        )
+                                    }
+                                    AppScreen.WIKI -> {
+                                        WikiScreen(
+                                            currentScreen = targetScreen,
+                                            onScreenSelected = { newScreen -> currentScreen = newScreen },
+                                            onFabClick = { currentScreen = AppScreen.SCAN }
+                                        )
+                                    }
+                                    AppScreen.SETTINGS -> {
+                                        SettingsScreen(
+                                            currentScreen = targetScreen,
+                                            onScreenSelected = { newScreen -> currentScreen = newScreen },
+                                            onFabClick = { currentScreen = AppScreen.SCAN }
+                                        )
+                                    }
+                                    AppScreen.SCAN -> {
+                                        ScanScreen(
+                                            viewModel = scanViewModel,
+                                            currentScreen = targetScreen,
+                                            onScreenSelected = { newScreen -> currentScreen = newScreen },
+                                            onDiscoverySaved = {
+                                                currentScreen = AppScreen.DISCOVERIES
+                                            }
+                                        )
+                                    }
                                 }
                             }
                         }

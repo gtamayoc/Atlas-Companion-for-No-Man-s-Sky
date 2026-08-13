@@ -32,6 +32,8 @@ import com.gtamayoc.atlasnms.shared.domain.model.DiscoveryType
 import com.gtamayoc.atlasnms.shared.ui.theme.RelicGoldHighlight
 import com.gtamayoc.atlasnms.shared.ui.theme.WarpFuelOrangeHighlight
 
+import com.gtamayoc.atlasnms.shared.ui.theme.AtlasDimensions
+
 private val CardShape = RoundedCornerShape(4.dp)
 private val ChipShape = RoundedCornerShape(2.dp)
 
@@ -41,6 +43,7 @@ fun DiscoveryCard(
     modifier: Modifier = Modifier,
     onClick: () -> Unit = {}
 ) {
+    val spacing = AtlasDimensions.spacing
     val surfaceColor = MaterialTheme.colorScheme.surface
     val outlineVariant = MaterialTheme.colorScheme.outlineVariant
     val surfaceContainerHigh = MaterialTheme.colorScheme.surfaceContainerHigh
@@ -108,7 +111,7 @@ fun DiscoveryCard(
             Column(
                 modifier = Modifier
                     .align(Alignment.BottomStart)
-                    .padding(start = 16.dp, end = 16.dp, top = 12.dp, bottom = 12.dp)
+                    .padding(start = spacing.lg, end = spacing.lg, top = spacing.md, bottom = spacing.md)
             ) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
@@ -120,10 +123,10 @@ fun DiscoveryCard(
                         color = MaterialTheme.colorScheme.onPrimaryContainer,
                         modifier = Modifier
                             .background(MaterialTheme.colorScheme.primaryContainer, ChipShape)
-                            .padding(horizontal = 6.dp, vertical = 2.dp)
+                            .padding(horizontal = spacing.xs + spacing.xxs, vertical = spacing.xxs)
                     )
 
-                    Spacer(modifier = Modifier.width(8.dp))
+                    Spacer(modifier = Modifier.width(spacing.sm))
 
                     Text(
                         text = statusText,
@@ -131,7 +134,7 @@ fun DiscoveryCard(
                         color = if (discovery.status == DiscoveryStatus.DRAFT) MaterialTheme.colorScheme.onSurface else Color.Black,
                         modifier = Modifier
                             .background(statusBg, ChipShape)
-                            .padding(horizontal = 6.dp, vertical = 2.dp)
+                            .padding(horizontal = spacing.xs + spacing.xxs, vertical = spacing.xxs)
                     )
 
                     Spacer(modifier = Modifier.weight(1f))
@@ -144,7 +147,7 @@ fun DiscoveryCard(
                     )
                 }
 
-                Spacer(modifier = Modifier.height(6.dp))
+                Spacer(modifier = Modifier.height(spacing.xs + spacing.xxs))
 
                 Text(
                     text = discovery.name,
@@ -153,7 +156,7 @@ fun DiscoveryCard(
                     maxLines = 1
                 )
 
-                Spacer(modifier = Modifier.height(2.dp))
+                Spacer(modifier = Modifier.height(spacing.xxs))
 
                 Text(
                     text = "${discovery.systemName} // ${discovery.galaxy}",
@@ -162,7 +165,7 @@ fun DiscoveryCard(
                     maxLines = 1
                 )
 
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(spacing.sm))
 
                 if (discovery.glyphs.isNotEmpty()) {
                     GlyphSequence(

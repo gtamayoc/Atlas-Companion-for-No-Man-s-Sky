@@ -47,6 +47,8 @@ import com.gtamayoc.atlasnms.shared.ui.components.DiscoveryCard
 import com.gtamayoc.atlasnms.shared.ui.components.DualFabGroup
 import com.gtamayoc.atlasnms.shared.ui.navigation.AppScreen
 
+import com.gtamayoc.atlasnms.shared.ui.theme.AtlasDimensions
+
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
 fun HomeScreen(
@@ -58,6 +60,7 @@ fun HomeScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     var showFilterSheet by remember { mutableStateOf(false) }
+    val spacing = AtlasDimensions.spacing
 
     val currentState = uiState
     val isFilterActive = remember(currentState) {
@@ -82,12 +85,12 @@ fun HomeScreen(
                 is HomeUiState.Success -> {
                     if (state.discoveries.isEmpty()) {
                         Box(
-                            modifier = Modifier.fillMaxSize().padding(32.dp),
+                            modifier = Modifier.fillMaxSize().padding(spacing.xxl),
                             contentAlignment = Alignment.Center
                         ) {
                             Column(
                                 horizontalAlignment = Alignment.CenterHorizontally,
-                                verticalArrangement = Arrangement.spacedBy(12.dp)
+                                verticalArrangement = Arrangement.spacedBy(spacing.md)
                             ) {
                                 Text(
                                     text = "BITÁCORA VACÍA",
@@ -105,12 +108,12 @@ fun HomeScreen(
                         }
                     } else if (state.filteredDiscoveries.isEmpty()) {
                         Box(
-                            modifier = Modifier.fillMaxSize().padding(32.dp),
+                            modifier = Modifier.fillMaxSize().padding(spacing.xxl),
                             contentAlignment = Alignment.Center
                         ) {
                             Column(
                                 horizontalAlignment = Alignment.CenterHorizontally,
-                                verticalArrangement = Arrangement.spacedBy(12.dp)
+                                verticalArrangement = Arrangement.spacedBy(spacing.md)
                             ) {
                                 Text(
                                     text = "SIN RESULTADOS CON EL FILTRO ACTUAL",
@@ -120,7 +123,7 @@ fun HomeScreen(
                                 )
                                 OutlinedButton(
                                     onClick = { viewModel.clearFilters() },
-                                    shape = RoundedCornerShape(8.dp)
+                                    shape = RoundedCornerShape(AtlasDimensions.corners.small)
                                 ) {
                                     Text("LIMPIAR FILTROS")
                                 }
@@ -128,8 +131,8 @@ fun HomeScreen(
                         }
                     } else {
                         LazyColumn(
-                            contentPadding = PaddingValues(16.dp),
-                            verticalArrangement = Arrangement.spacedBy(16.dp),
+                            contentPadding = PaddingValues(spacing.lg),
+                            verticalArrangement = Arrangement.spacedBy(spacing.lg),
                             modifier = Modifier.fillMaxSize()
                         ) {
                             items(
@@ -158,8 +161,8 @@ fun HomeScreen(
                             Column(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .padding(20.dp),
-                                verticalArrangement = Arrangement.spacedBy(16.dp)
+                                    .padding(spacing.xl),
+                                verticalArrangement = Arrangement.spacedBy(spacing.lg)
                             ) {
                                 Text(
                                     text = "⚡ FILTRAR BITÁCORA",
@@ -187,8 +190,8 @@ fun HomeScreen(
                                 )
 
                                 FlowRow(
-                                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                                    horizontalArrangement = Arrangement.spacedBy(spacing.sm),
+                                    verticalArrangement = Arrangement.spacedBy(spacing.sm),
                                     modifier = Modifier.fillMaxWidth()
                                 ) {
                                     FilterChip(
@@ -224,15 +227,15 @@ fun HomeScreen(
                                             viewModel.clearFilters()
                                             showFilterSheet = false
                                         },
-                                        shape = RoundedCornerShape(8.dp)
+                                        shape = RoundedCornerShape(AtlasDimensions.corners.small)
                                     ) {
                                         Text("RESETEAR")
                                     }
-                                    Spacer(modifier = Modifier.width(12.dp))
+                                    Spacer(modifier = Modifier.width(spacing.md))
                                     Button(
                                         onClick = { showFilterSheet = false },
                                         colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
-                                        shape = RoundedCornerShape(8.dp)
+                                        shape = RoundedCornerShape(AtlasDimensions.corners.small)
                                     ) {
                                         Text("APLICAR", color = MaterialTheme.colorScheme.onPrimary)
                                     }
@@ -246,7 +249,7 @@ fun HomeScreen(
         Box(
             modifier = Modifier
                 .align(Alignment.BottomEnd)
-                .padding(16.dp)
+                .padding(spacing.lg)
         ) {
             DualFabGroup(
                 onAnalyzeClick = onFabClick,

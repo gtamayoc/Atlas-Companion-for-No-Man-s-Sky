@@ -86,9 +86,15 @@ fun AtlasNMSTheme(
 ) {
     val colorScheme = if (darkTheme) DarkColorScheme else LightColorScheme
 
-    MaterialTheme(
-        colorScheme = colorScheme,
-        typography = AtlasTypography,
-        content = content
-    )
+    androidx.compose.runtime.CompositionLocalProvider(
+        LocalSpacing provides SpacingTokens(),
+        LocalCorners provides CornerTokens(),
+        LocalComponentSizes provides ComponentSizeTokens()
+    ) {
+        MaterialTheme(
+            colorScheme = colorScheme,
+            typography = AtlasTypography,
+            content = content
+        )
+    }
 }

@@ -42,6 +42,7 @@ import com.gtamayoc.atlasnms.shared.ui.components.AtlasBottomNav
 import com.gtamayoc.atlasnms.shared.ui.components.DiscoveryCard
 import com.gtamayoc.atlasnms.shared.ui.components.ScanFab
 import com.gtamayoc.atlasnms.shared.ui.navigation.AppScreen
+import com.gtamayoc.atlasnms.shared.ui.theme.AtlasDimensions
 import com.gtamayoc.atlasnms.shared.ui.theme.AtlasNMSTheme
 
 @Composable
@@ -207,16 +208,19 @@ private fun ExploreHeaderStats(
     shipCount: Int,
     planetCount: Int
 ) {
+    val spacing = AtlasDimensions.spacing
+    val corners = AtlasDimensions.corners
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(16.dp)
+            .padding(spacing.lg)
             .background(
                 color = MaterialTheme.colorScheme.surfaceContainerLow,
-                shape = RoundedCornerShape(4.dp)
+                shape = RoundedCornerShape(corners.extraSmall)
             )
-            .border(1.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(4.dp))
-            .padding(12.dp),
+            .border(1.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(corners.extraSmall))
+            .padding(spacing.md),
         horizontalArrangement = Arrangement.SpaceAround,
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -248,17 +252,19 @@ private fun FilterChip(
     isSelected: Boolean,
     onClick: () -> Unit
 ) {
+    val spacing = AtlasDimensions.spacing
+    val corners = AtlasDimensions.corners
     val bgColor = if (isSelected) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceContainerHigh
     val textColor = if (isSelected) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurfaceVariant
     val borderColor = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outlineVariant
 
     Box(
         modifier = Modifier
-            .clip(RoundedCornerShape(4.dp))
+            .clip(RoundedCornerShape(corners.extraSmall))
             .background(bgColor)
-            .border(1.dp, borderColor, RoundedCornerShape(4.dp))
+            .border(1.dp, borderColor, RoundedCornerShape(corners.extraSmall))
             .clickable { onClick() }
-            .padding(horizontal = 12.dp, vertical = 6.dp)
+            .padding(horizontal = spacing.md, vertical = spacing.xs + spacing.xxs)
     ) {
         Text(
             text = label,

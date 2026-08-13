@@ -26,7 +26,12 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Calculate
+import androidx.compose.material.icons.filled.Place
+import androidx.compose.material.icons.filled.Radar
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
@@ -80,7 +85,13 @@ fun GalacticCalculatorScreen(
     onDiscoverySaved: () -> Unit
 ) {
     val selectedTabIndex by viewModel.selectedTabIndex.collectAsState()
-    val tabs = listOf("🌌 REGISTRO PORTAL", "🧮 CALCULADORA GLIFOS", "📡 RADAR TELEPORTS")
+    val tabs = remember {
+        listOf(
+            Pair("PORTAL", androidx.compose.material.icons.Icons.Default.Place),
+            Pair("CALCULADORA", androidx.compose.material.icons.Icons.Default.Calculate),
+            Pair("TELEPORTS", androidx.compose.material.icons.Icons.Default.Radar)
+        )
+    }
 
     // --- ESTADO 1: REGISTRO DE PORTAL ---
     val portalName by viewModel.portalName.collectAsState()
@@ -111,20 +122,35 @@ fun GalacticCalculatorScreen(
         // PESTAÑAS PRINCIPALES DEL MÓDULO RADAR
         PrimaryTabRow(
             selectedTabIndex = selectedTabIndex,
-            containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+            containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
             contentColor = MaterialTheme.colorScheme.primary
         ) {
             for (index in tabs.indices) {
-                val title = tabs[index]
+                val (title, icon) = tabs[index]
+                val isSelected = selectedTabIndex == index
                 val onTabClick = remember(index) { { viewModel.setSelectedTabIndex(index) } }
                 Tab(
-                    selected = selectedTabIndex == index,
+                    selected = isSelected,
                     onClick = onTabClick,
+                    icon = {
+                        Icon(
+                            imageVector = icon,
+                            contentDescription = title,
+                            tint = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.65f),
+                            modifier = Modifier.size(18.dp)
+                        )
+                    },
                     text = {
                         Text(
                             text = title,
-                            style = MaterialTheme.typography.labelLarge,
-                            fontWeight = if (selectedTabIndex == index) FontWeight.Bold else FontWeight.Medium
+                            style = MaterialTheme.typography.titleSmall.copy(
+                                fontSize = 11.5.sp,
+                                fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
+                                letterSpacing = 0.5.sp
+                            ),
+                            color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
+                            maxLines = 1,
+                            overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
                         )
                     }
                 )
@@ -608,7 +634,7 @@ fun GalacticCalculatorScreen(
                                                             color = Color.White
                                                         )
                                                         Text(
-                                                            text = "🌌 ${saved.galaxy} | ${saved.systemName}",
+                                                            text = "${saved.galaxy} | ${saved.systemName}",
                                                             style = MaterialTheme.typography.labelSmall,
                                                             color = Color.White.copy(alpha = 0.85f)
                                                         )
@@ -623,7 +649,7 @@ fun GalacticCalculatorScreen(
                                                         contentPadding = PaddingValues(horizontal = 8.dp, vertical = 2.dp)
                                                     ) {
                                                         Text(
-                                                            text = "🗑️ ELIMINAR",
+                                                            text = "ELIMINAR",
                                                             fontSize = 11.sp,
                                                             color = MaterialTheme.colorScheme.onErrorContainer,
                                                             fontWeight = FontWeight.Bold

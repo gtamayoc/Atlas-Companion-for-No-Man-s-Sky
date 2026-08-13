@@ -56,12 +56,20 @@ fun App(repository: DiscoveryRepository = remember { com.gtamayoc.atlasnms.share
     // Estado global de navegación
     var currentScreen by remember { mutableStateOf(AppScreen.DISCOVERIES) }
     var selectedDiscovery by remember { mutableStateOf<Discovery?>(null) }
+    var isWikiDetailActive by remember { mutableStateOf(false) }
 
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val coroutineScope = rememberCoroutineScope()
     val saveableStateHolder = rememberSaveableStateHolder()
 
-    val onScreenSelected: (AppScreen) -> Unit = remember { { newScreen -> currentScreen = newScreen } }
+    val onScreenSelected: (AppScreen) -> Unit = remember {
+        { newScreen ->
+            if (newScreen != AppScreen.WIKI) {
+                isWikiDetailActive = false
+            }
+            currentScreen = newScreen
+        }
+    }
     val onOpenDrawer: () -> Unit = remember(drawerState, coroutineScope) { { coroutineScope.launch { drawerState.open() } } }
     val onCloseDrawer: () -> Unit = remember(drawerState, coroutineScope) { { coroutineScope.launch { drawerState.close() } } }
     val onFabClick: () -> Unit = remember { { currentScreen = AppScreen.SCAN } }
@@ -71,10 +79,12 @@ fun App(repository: DiscoveryRepository = remember { com.gtamayoc.atlasnms.share
 
     // Manejo del botón de retroceso (BackHandler)
     AtlasBackHandler(
-        enabled = selectedDiscovery != null || drawerState.isOpen || currentScreen != AppScreen.DISCOVERIES,
+        enabled = selectedDiscovery != null || (currentScreen == AppScreen.WIKI && isWikiDetailActive) || drawerState.isOpen || currentScreen != AppScreen.DISCOVERIES,
         onBack = {
             if (selectedDiscovery != null) {
                 selectedDiscovery = null
+            } else if (currentScreen == AppScreen.WIKI && isWikiDetailActive) {
+                isWikiDetailActive = false
             } else if (drawerState.isOpen) {
                 coroutineScope.launch { drawerState.close() }
             } else if (currentScreen != AppScreen.DISCOVERIES) {
@@ -92,6 +102,7 @@ fun App(repository: DiscoveryRepository = remember { com.gtamayoc.atlasnms.share
         } else {
             ModalNavigationDrawer(
                 drawerState = drawerState,
+                gesturesEnabled = false,
                 drawerContent = {
                     AtlasNavigationDrawer(
                         currentScreen = currentScreen,
@@ -102,10 +113,12 @@ fun App(repository: DiscoveryRepository = remember { com.gtamayoc.atlasnms.share
             ) {
                 Scaffold(
                     topBar = {
-                        AtlasTopHeader(
-                            onOpenDrawer = onOpenDrawer,
-                            currentScreen = currentScreen
-                        )
+                        if (!(currentScreen == AppScreen.WIKI && isWikiDetailActive)) {
+                            AtlasTopHeader(
+                                onOpenDrawer = onOpenDrawer,
+                                currentScreen = currentScreen
+                            )
+                        }
                     },
                     bottomBar = {
                         AtlasBottomNav(
@@ -152,7 +165,8 @@ fun App(repository: DiscoveryRepository = remember { com.gtamayoc.atlasnms.share
                                         WikiScreen(
                                             currentScreen = targetScreen,
                                             onScreenSelected = onScreenSelected,
-                                            onFabClick = onFabClick
+                                            onFabClick = onFabClick,
+                                            onDetailActiveChanged = { active -> isWikiDetailActive = active }
                                         )
                                     }
                                     AppScreen.SETTINGS -> {

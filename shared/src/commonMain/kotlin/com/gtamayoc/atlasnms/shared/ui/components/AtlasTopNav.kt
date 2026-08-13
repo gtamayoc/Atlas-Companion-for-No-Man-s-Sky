@@ -13,9 +13,18 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CameraAlt
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -24,11 +33,11 @@ import androidx.compose.runtime.key
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.gtamayoc.atlasnms.shared.ui.navigation.AppScreen
-
-import androidx.compose.foundation.layout.statusBarsPadding
+import com.gtamayoc.atlasnms.shared.ui.theme.AtlasDimensions
 
 @Composable
 fun AtlasTopNav(
@@ -55,17 +64,17 @@ fun AtlasTopNav(
         ) {
             for (screen in AppScreen.entries) {
                 key(screen.name) {
-                    val iconSymbol = when (screen) {
-                        AppScreen.DISCOVERIES -> "📋"
-                        AppScreen.EXPLORE -> "📡"
-                        AppScreen.WIKI -> "📚"
-                        AppScreen.SETTINGS -> "⚙️"
-                        AppScreen.SCAN -> "📷"
+                    val iconVector = when (screen) {
+                        AppScreen.DISCOVERIES -> Icons.Default.Home
+                        AppScreen.EXPLORE -> Icons.Default.Search
+                        AppScreen.WIKI -> Icons.Default.Info
+                        AppScreen.SETTINGS -> Icons.Default.Settings
+                        AppScreen.SCAN -> Icons.Default.CameraAlt
                     }
 
                     TopNavItem(
                         label = screen.label,
-                        iconSymbol = iconSymbol,
+                        icon = iconVector,
                         isSelected = currentScreen == screen,
                         onClick = { onScreenSelected(screen) }
                     )
@@ -78,7 +87,7 @@ fun AtlasTopNav(
 @Composable
 private fun TopNavItem(
     label: String,
-    iconSymbol: String,
+    icon: ImageVector,
     isSelected: Boolean,
     onClick: () -> Unit
 ) {
@@ -110,9 +119,11 @@ private fun TopNavItem(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center
     ) {
-        Text(
-            text = iconSymbol,
-            style = MaterialTheme.typography.labelMedium
+        Icon(
+            imageVector = icon,
+            contentDescription = label,
+            tint = animatedColor,
+            modifier = Modifier.size(18.dp)
         )
         Spacer(modifier = Modifier.width(6.dp))
         Text(

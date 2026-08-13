@@ -68,7 +68,7 @@ fun GalaxySelectorModal(
             verticalArrangement = Arrangement.spacedBy(14.dp)
         ) {
             Text(
-                text = "🌌 SELECCIONAR GALAXIA (1 a 256)",
+                text = "SELECCIONAR GALAXIA (1 a 256)",
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.primary,
                 fontWeight = FontWeight.Bold

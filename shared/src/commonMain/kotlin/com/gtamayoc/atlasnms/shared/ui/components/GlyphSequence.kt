@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -38,27 +39,28 @@ import atlasnms.shared.generated.resources.glyph_f
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
 
+private val GlyphDrawables = arrayOf(
+    Res.drawable.glyph_0,
+    Res.drawable.glyph_1,
+    Res.drawable.glyph_2,
+    Res.drawable.glyph_3,
+    Res.drawable.glyph_4,
+    Res.drawable.glyph_5,
+    Res.drawable.glyph_6,
+    Res.drawable.glyph_7,
+    Res.drawable.glyph_8,
+    Res.drawable.glyph_9,
+    Res.drawable.glyph_a,
+    Res.drawable.glyph_b,
+    Res.drawable.glyph_c,
+    Res.drawable.glyph_d,
+    Res.drawable.glyph_e,
+    Res.drawable.glyph_f
+)
+
 fun getGlyphDrawableResource(glyphValue: Int): DrawableResource {
     val index = (glyphValue - 1).let { if (it < 0) (it % 16 + 16) % 16 else it % 16 }
-    return when (index) {
-        0 -> Res.drawable.glyph_0
-        1 -> Res.drawable.glyph_1
-        2 -> Res.drawable.glyph_2
-        3 -> Res.drawable.glyph_3
-        4 -> Res.drawable.glyph_4
-        5 -> Res.drawable.glyph_5
-        6 -> Res.drawable.glyph_6
-        7 -> Res.drawable.glyph_7
-        8 -> Res.drawable.glyph_8
-        9 -> Res.drawable.glyph_9
-        10 -> Res.drawable.glyph_a
-        11 -> Res.drawable.glyph_b
-        12 -> Res.drawable.glyph_c
-        13 -> Res.drawable.glyph_d
-        14 -> Res.drawable.glyph_e
-        15 -> Res.drawable.glyph_f
-        else -> Res.drawable.glyph_0
-    }
+    return GlyphDrawables.getOrElse(index) { Res.drawable.glyph_0 }
 }
 
 @Composable
@@ -67,9 +69,11 @@ fun GlyphSequence(
     modifier: Modifier = Modifier,
     iconSize: Int = 36
 ) {
-    val safeGlyphs = glyphs.take(12)
-    val firstHalf = safeGlyphs.take(6)
-    val secondHalf = if (safeGlyphs.size > 6) safeGlyphs.drop(6) else emptyList()
+    val safeGlyphs = remember(glyphs) { glyphs.take(12) }
+    val firstHalf = remember(safeGlyphs) { safeGlyphs.take(6) }
+    val secondHalf = remember(safeGlyphs) { if (safeGlyphs.size > 6) safeGlyphs.drop(6) else emptyList() }
+
+    val boxSize = iconSize.dp
 
     Column(
         modifier = modifier.fillMaxWidth(),
@@ -81,10 +85,10 @@ fun GlyphSequence(
             horizontalArrangement = Arrangement.spacedBy(4.dp, Alignment.CenterHorizontally)
         ) {
             for (glyphVal in firstHalf) {
-                val drawableRes = getGlyphDrawableResource(glyphVal)
+                val drawableRes = remember(glyphVal) { getGlyphDrawableResource(glyphVal) }
                 Box(
                     modifier = Modifier
-                        .size(36.dp)
+                        .size(boxSize)
                         .clip(RoundedCornerShape(4.dp))
                         .background(MaterialTheme.colorScheme.surfaceContainerHigh)
                         .border(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.5f), RoundedCornerShape(4.dp))
@@ -107,10 +111,10 @@ fun GlyphSequence(
                 horizontalArrangement = Arrangement.spacedBy(4.dp, Alignment.CenterHorizontally)
             ) {
                 for (glyphVal in secondHalf) {
-                    val drawableRes = getGlyphDrawableResource(glyphVal)
+                    val drawableRes = remember(glyphVal) { getGlyphDrawableResource(glyphVal) }
                     Box(
                         modifier = Modifier
-                            .size(36.dp)
+                            .size(boxSize)
                             .clip(RoundedCornerShape(4.dp))
                             .background(MaterialTheme.colorScheme.surfaceContainerHigh)
                             .border(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.5f), RoundedCornerShape(4.dp))
@@ -128,3 +132,4 @@ fun GlyphSequence(
         }
     }
 }
+

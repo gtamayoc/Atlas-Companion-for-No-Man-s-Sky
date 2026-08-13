@@ -33,6 +33,11 @@ import androidx.compose.ui.unit.sp
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
 
+private val GlyphShape = RoundedCornerShape(6.dp)
+private val ContainerShape = RoundedCornerShape(10.dp)
+private val GlyphListItems = (1..16).toList()
+private val GlyphChunks = GlyphListItems.chunked(8)
+
 @Composable
 fun GlyphSelector(
     selectedGlyphs: List<Int>,
@@ -76,12 +81,12 @@ fun GlyphSelector(
                 .fillMaxWidth()
                 .background(
                     color = MaterialTheme.colorScheme.surfaceContainerHigh,
-                    shape = RoundedCornerShape(10.dp)
+                    shape = ContainerShape
                 )
                 .border(
                     width = 1.dp,
                     color = MaterialTheme.colorScheme.outlineVariant,
-                    shape = RoundedCornerShape(10.dp)
+                    shape = ContainerShape
                 )
                 .padding(10.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp)
@@ -195,7 +200,7 @@ fun GlyphSelector(
                         }
                     },
                     enabled = selectedGlyphs.isNotEmpty(),
-                    shape = RoundedCornerShape(6.dp),
+                    shape = GlyphShape,
                     contentPadding = PaddingValues(horizontal = 10.dp, vertical = 4.dp)
                 ) {
                     Text(
@@ -214,7 +219,7 @@ fun GlyphSelector(
                     },
                     enabled = selectedGlyphs.isNotEmpty(),
                     colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.errorContainer),
-                    shape = RoundedCornerShape(6.dp),
+                    shape = GlyphShape,
                     contentPadding = PaddingValues(horizontal = 10.dp, vertical = 4.dp)
                 ) {
                     Text(
@@ -234,21 +239,21 @@ fun GlyphSelector(
             modifier = Modifier.fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
-            val glyphListItems = (1..16).toList()
-            glyphListItems.chunked(8).forEach { rowItems ->
+            GlyphChunks.forEach { rowItems ->
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(4.dp)
                 ) {
                     rowItems.forEach { i ->
                         val res = glyphResources[i]
+                        val onClick = remember(i, handleGlyphClick) { { handleGlyphClick(i) } }
                         GlyphButton(
                             glyphIndex = i,
                             drawableRes = res,
                             modifier = Modifier
                                 .weight(1f)
                                 .aspectRatio(1f),
-                            onClick = { handleGlyphClick(i) }
+                            onClick = onClick
                         )
                     }
                 }
@@ -271,7 +276,7 @@ private fun GlyphSlotCard(
     Box(
         modifier = modifier
             .aspectRatio(1f)
-            .clip(RoundedCornerShape(6.dp))
+            .clip(GlyphShape)
             .background(
                 when {
                     isActive -> MaterialTheme.colorScheme.primaryContainer
@@ -286,7 +291,7 @@ private fun GlyphSlotCard(
                     isFilled -> MaterialTheme.colorScheme.primary.copy(alpha = 0.5f)
                     else -> MaterialTheme.colorScheme.outlineVariant
                 },
-                shape = RoundedCornerShape(6.dp)
+                shape = GlyphShape
             )
             .clickable { onClick() }
             .padding(2.dp),
@@ -319,10 +324,10 @@ private fun GlyphButton(
     Surface(
         modifier = modifier
             .aspectRatio(1f)
-            .clip(RoundedCornerShape(6.dp))
+            .clip(GlyphShape)
             .clickable { onClick() },
         color = MaterialTheme.colorScheme.surfaceContainer,
-        shape = RoundedCornerShape(6.dp),
+        shape = GlyphShape,
         border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
     ) {
         Box(
@@ -339,3 +344,4 @@ private fun GlyphButton(
         }
     }
 }
+

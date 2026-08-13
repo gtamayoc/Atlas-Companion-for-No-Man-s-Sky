@@ -60,8 +60,10 @@ fun HomeScreen(
     var showFilterSheet by remember { mutableStateOf(false) }
 
     val currentState = uiState
-    val isFilterActive = currentState is HomeUiState.Success && 
+    val isFilterActive = remember(currentState) {
+        currentState is HomeUiState.Success && 
         (currentState.selectedType != null || currentState.searchQuery.isNotBlank())
+    }
 
     Box(
         modifier = Modifier.fillMaxSize()
@@ -135,9 +137,12 @@ fun HomeScreen(
                                 key = { discovery -> discovery.id },
                                 contentType = { discovery -> discovery.type }
                             ) { discovery ->
+                                val onItemClick = remember(discovery, onDiscoveryClick) {
+                                    { onDiscoveryClick(discovery) }
+                                }
                                 DiscoveryCard(
                                     discovery = discovery,
-                                    onClick = { onDiscoveryClick(discovery) }
+                                    onClick = onItemClick
                                 )
                             }
                         }

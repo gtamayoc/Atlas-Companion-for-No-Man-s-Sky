@@ -29,6 +29,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -45,6 +46,11 @@ fun AtlasBottomNav(
     onFabClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val onDiscoveriesClick = remember(onScreenSelected) { { onScreenSelected(AppScreen.DISCOVERIES) } }
+    val onExploreClick = remember(onScreenSelected) { { onScreenSelected(AppScreen.EXPLORE) } }
+    val onWikiClick = remember(onScreenSelected) { { onScreenSelected(AppScreen.WIKI) } }
+    val onSettingsClick = remember(onScreenSelected) { { onScreenSelected(AppScreen.SETTINGS) } }
+
     Box(
         modifier = modifier
             .fillMaxWidth()
@@ -63,7 +69,7 @@ fun AtlasBottomNav(
                 label = AppScreen.DISCOVERIES.label,
                 icon = Icons.Default.Home,
                 isSelected = currentScreen == AppScreen.DISCOVERIES,
-                onClick = { onScreenSelected(AppScreen.DISCOVERIES) }
+                onClick = onDiscoveriesClick
             )
 
             // Radar / Explore
@@ -71,7 +77,7 @@ fun AtlasBottomNav(
                 label = AppScreen.EXPLORE.label,
                 icon = Icons.Default.Search,
                 isSelected = currentScreen == AppScreen.EXPLORE,
-                onClick = { onScreenSelected(AppScreen.EXPLORE) }
+                onClick = onExploreClick
             )
 
             // Botón central de Acción: Analizar Captura
@@ -97,7 +103,7 @@ fun AtlasBottomNav(
                 label = AppScreen.WIKI.label,
                 icon = Icons.Default.Info,
                 isSelected = currentScreen == AppScreen.WIKI,
-                onClick = { onScreenSelected(AppScreen.WIKI) }
+                onClick = onWikiClick
             )
 
             // Settings
@@ -105,7 +111,7 @@ fun AtlasBottomNav(
                 label = AppScreen.SETTINGS.label,
                 icon = Icons.Default.Settings,
                 isSelected = currentScreen == AppScreen.SETTINGS,
-                onClick = { onScreenSelected(AppScreen.SETTINGS) }
+                onClick = onSettingsClick
             )
         }
     }

@@ -98,12 +98,22 @@ fun ExploreScreen(
                             }
                         }
 
+                        val (totalCount, shipCount, planetCount) = remember(state.discoveries) {
+                            var ships = 0
+                            var planets = 0
+                            for (d in state.discoveries) {
+                                if (d.type == DiscoveryType.SHIP) ships++
+                                else if (d.type == DiscoveryType.PLANET) planets++
+                            }
+                            Triple(state.discoveries.size, ships, planets)
+                        }
+
                         Column(modifier = Modifier.fillMaxSize()) {
                             // Panel de resumen de estadísticas de exploración
                             ExploreHeaderStats(
-                                totalCount = state.discoveries.size,
-                                shipCount = state.discoveries.count { it.type == DiscoveryType.SHIP },
-                                planetCount = state.discoveries.count { it.type == DiscoveryType.PLANET }
+                                totalCount = totalCount,
+                                shipCount = shipCount,
+                                planetCount = planetCount
                             )
 
                             // Barra de Búsqueda
@@ -137,10 +147,11 @@ fun ExploreScreen(
                                     )
                                 }
                                 items(DiscoveryType.entries) { type ->
+                                    val onChipClick = remember(type) { { selectedTypeFilter = type } }
                                     FilterChip(
                                         label = type.name,
                                         isSelected = selectedTypeFilter == type,
-                                        onClick = { selectedTypeFilter = type }
+                                        onClick = onChipClick
                                     )
                                 }
                             }
@@ -172,9 +183,12 @@ fun ExploreScreen(
                                         key = { discovery -> discovery.id },
                                         contentType = { discovery -> discovery.type }
                                     ) { discovery ->
+                                        val onItemClick = remember(discovery, onDiscoveryClick) {
+                                            { onDiscoveryClick(discovery) }
+                                        }
                                         DiscoveryCard(
                                             discovery = discovery,
-                                            onClick = { onDiscoveryClick(discovery) }
+                                            onClick = onItemClick
                                         )
                                     }
                                 }

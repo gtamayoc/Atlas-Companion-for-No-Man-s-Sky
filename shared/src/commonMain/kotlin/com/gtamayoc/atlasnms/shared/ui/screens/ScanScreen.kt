@@ -738,6 +738,9 @@ fun GlyphSlotBox(
     }
 }
 
+private val GlyphRangeFirstRow = (1..8).toList()
+private val GlyphRangeSecondRow = (9..16).toList()
+
 @Composable
 fun GlyphKeyboardPicker2x8(onGlyphSelected: (Int) -> Unit) {
     Column(
@@ -748,9 +751,10 @@ fun GlyphKeyboardPicker2x8(onGlyphSelected: (Int) -> Unit) {
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(4.dp)
         ) {
-            for (glyphValue in 1..8) {
+            for (glyphValue in GlyphRangeFirstRow) {
                 key(glyphValue) {
-                    val res = getGlyphDrawableResource(glyphValue)
+                    val res = remember(glyphValue) { getGlyphDrawableResource(glyphValue) }
+                    val onClick = remember(glyphValue, onGlyphSelected) { { onGlyphSelected(glyphValue) } }
                     Box(
                         modifier = Modifier
                             .weight(1f)
@@ -758,7 +762,7 @@ fun GlyphKeyboardPicker2x8(onGlyphSelected: (Int) -> Unit) {
                             .clip(RoundedCornerShape(0.dp))
                             .background(MaterialTheme.colorScheme.surfaceContainerHigh)
                             .border(1.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(0.dp))
-                            .clickable { onGlyphSelected(glyphValue) }
+                            .clickable(onClick = onClick)
                             .padding(4.dp),
                         contentAlignment = Alignment.Center
                     ) {
@@ -776,9 +780,10 @@ fun GlyphKeyboardPicker2x8(onGlyphSelected: (Int) -> Unit) {
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(4.dp)
         ) {
-            for (glyphValue in 9..16) {
+            for (glyphValue in GlyphRangeSecondRow) {
                 key(glyphValue) {
-                    val res = getGlyphDrawableResource(glyphValue)
+                    val res = remember(glyphValue) { getGlyphDrawableResource(glyphValue) }
+                    val onClick = remember(glyphValue, onGlyphSelected) { { onGlyphSelected(glyphValue) } }
                     Box(
                         modifier = Modifier
                             .weight(1f)
@@ -786,7 +791,7 @@ fun GlyphKeyboardPicker2x8(onGlyphSelected: (Int) -> Unit) {
                             .clip(RoundedCornerShape(0.dp))
                             .background(MaterialTheme.colorScheme.surfaceContainerHigh)
                             .border(1.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(0.dp))
-                            .clickable { onGlyphSelected(glyphValue) }
+                            .clickable(onClick = onClick)
                             .padding(4.dp),
                         contentAlignment = Alignment.Center
                     ) {

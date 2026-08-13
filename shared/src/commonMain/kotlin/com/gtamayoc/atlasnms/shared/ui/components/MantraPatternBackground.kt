@@ -38,6 +38,15 @@ fun MantraPatternBackground(
     val color2 = remember(secondaryHue) { Color.hsl(hue = secondaryHue, saturation = 0.75f, lightness = 0.20f) }
     val color3 = remember(accentHue) { Color.hsl(hue = accentHue, saturation = 0.85f, lightness = 0.08f) }
 
+    // OPTIMIZACIÓN DE RENDIMIENTO: Pincel de degradado memorizado para evitar GC Churn en DrawScope
+    val backgroundBrush = remember(color1, color2, color3) {
+        Brush.linearGradient(
+            colors = listOf(color1, color2, color3),
+            start = Offset(0f, 0f),
+            end = Offset(1000f, 1000f)
+        )
+    }
+
     val ringColors = remember(primaryHue) {
         (1..4).map { i ->
             Color.hsl(hue = (primaryHue + i * 30) % 360f, saturation = 0.8f, lightness = 0.5f, alpha = 0.18f)
@@ -55,7 +64,6 @@ fun MantraPatternBackground(
         }
     }
 
-    // Reutilización de un objeto Path estático para evitar la instanciación por fotograma
     val polygonPath = remember { Path() }
 
     Canvas(modifier = modifier) {
@@ -64,16 +72,9 @@ fun MantraPatternBackground(
         val center = Offset(width * 0.75f, height * 0.5f)
         val maxRadius = max(width, height) * 0.6f
 
-        // Fondo con degradado cósmico derivado de la semilla de glifos
-        drawRect(
-            brush = Brush.linearGradient(
-                colors = listOf(color1, color2, color3),
-                start = Offset(0f, 0f),
-                end = Offset(width, height)
-            )
-        )
+        // Reuso del Brush sin re-instanciación por fotograma
+        drawRect(brush = backgroundBrush)
 
-        // Anillos geométricos místicas (mantra)
         val ringCount = 4
         for (i in 1..ringCount) {
             val ringRadius = maxRadius * (i / ringCount.toFloat())
@@ -85,7 +86,6 @@ fun MantraPatternBackground(
             )
         }
 
-        // 12 nodos conectados formando una constelación/mantra única basada en la secuencia exacta
         if (glyphs.isNotEmpty()) {
             val sliceAngle = (2 * PI) / glyphs.size.toDouble()
             polygonPath.reset()
@@ -106,7 +106,6 @@ fun MantraPatternBackground(
                     polygonPath.lineTo(point.x, point.y)
                 }
 
-                // Rayo láser hacia el núcleo
                 drawLine(
                     color = rayColor,
                     start = center,
@@ -114,7 +113,6 @@ fun MantraPatternBackground(
                     strokeWidth = 1f
                 )
 
-                // Nodo estelar deslumbrante
                 drawCircle(
                     color = nodeColors.getOrElse(index) { rayColor },
                     radius = 3.5f + (glyphValue % 4),
@@ -133,3 +131,4 @@ fun MantraPatternBackground(
         }
     }
 }
+

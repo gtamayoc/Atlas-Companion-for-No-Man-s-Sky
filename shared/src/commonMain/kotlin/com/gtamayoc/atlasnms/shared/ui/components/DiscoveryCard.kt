@@ -32,6 +32,9 @@ import com.gtamayoc.atlasnms.shared.domain.model.DiscoveryType
 import com.gtamayoc.atlasnms.shared.ui.theme.RelicGoldHighlight
 import com.gtamayoc.atlasnms.shared.ui.theme.WarpFuelOrangeHighlight
 
+private val CardShape = RoundedCornerShape(4.dp)
+private val ChipShape = RoundedCornerShape(2.dp)
+
 @Composable
 fun DiscoveryCard(
     discovery: Discovery,
@@ -39,6 +42,10 @@ fun DiscoveryCard(
     onClick: () -> Unit = {}
 ) {
     val surfaceColor = MaterialTheme.colorScheme.surface
+    val outlineVariant = MaterialTheme.colorScheme.outlineVariant
+    val surfaceContainerHigh = MaterialTheme.colorScheme.surfaceContainerHigh
+    val outlineColor = MaterialTheme.colorScheme.outline
+
     val gradientBrush = remember(surfaceColor) {
         Brush.verticalGradient(
             colors = listOf(
@@ -49,20 +56,22 @@ fun DiscoveryCard(
         )
     }
 
-    val (accentBarColor, statusText, statusBg) = when (discovery.status) {
-        DiscoveryStatus.CONFIRMED -> Triple(WarpFuelOrangeHighlight, "CONFIRMED", WarpFuelOrangeHighlight)
-        DiscoveryStatus.PENDING -> Triple(RelicGoldHighlight, "PENDING", RelicGoldHighlight)
-        DiscoveryStatus.INCOMPLETE -> Triple(RelicGoldHighlight, "INCOMPLETE", RelicGoldHighlight)
-        DiscoveryStatus.DRAFT -> Triple(MaterialTheme.colorScheme.outline, "DRAFT", MaterialTheme.colorScheme.surfaceContainerHigh)
-        DiscoveryStatus.VALIDATED -> Triple(RelicGoldHighlight, "VALIDATED", RelicGoldHighlight)
+    val (accentBarColor, statusText, statusBg) = remember(discovery.status, outlineColor, surfaceContainerHigh) {
+        when (discovery.status) {
+            DiscoveryStatus.CONFIRMED -> Triple(WarpFuelOrangeHighlight, "CONFIRMED", WarpFuelOrangeHighlight)
+            DiscoveryStatus.PENDING -> Triple(RelicGoldHighlight, "PENDING", RelicGoldHighlight)
+            DiscoveryStatus.INCOMPLETE -> Triple(RelicGoldHighlight, "INCOMPLETE", RelicGoldHighlight)
+            DiscoveryStatus.DRAFT -> Triple(outlineColor, "DRAFT", surfaceContainerHigh)
+            DiscoveryStatus.VALIDATED -> Triple(RelicGoldHighlight, "VALIDATED", RelicGoldHighlight)
+        }
     }
 
     Surface(
         modifier = modifier
             .fillMaxWidth()
             .height(230.dp)
-            .clip(RoundedCornerShape(4.dp))
-            .border(1.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(4.dp)),
+            .clip(CardShape)
+            .border(1.dp, outlineVariant, CardShape),
         color = MaterialTheme.colorScheme.surfaceContainerLow,
         onClick = onClick
     ) {
@@ -75,7 +84,6 @@ fun DiscoveryCard(
                     modifier = Modifier.fillMaxSize()
                 )
             } else if (discovery.type == DiscoveryType.PORTAL || discovery.glyphs.isNotEmpty()) {
-                // Fondo cósmico místico (Mantra Pattern) único para portales y teleports en la Pantalla Principal
                 MantraPatternBackground(
                     glyphs = discovery.glyphs,
                     seed = discovery.id,
@@ -83,14 +91,12 @@ fun DiscoveryCard(
                 )
             }
 
-            // Gradient Overlay
             Box(
                 modifier = Modifier
                     .fillMaxSize()
                     .background(gradientBrush)
             )
 
-            // Vertical accent bar on left edge
             Box(
                 modifier = Modifier
                     .width(4.dp)
@@ -99,7 +105,6 @@ fun DiscoveryCard(
                     .background(accentBarColor)
             )
 
-            // Content
             Column(
                 modifier = Modifier
                     .align(Alignment.BottomStart)
@@ -109,35 +114,31 @@ fun DiscoveryCard(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    // Category Chip
                     Text(
                         text = discovery.type.name,
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.onPrimaryContainer,
                         modifier = Modifier
-                            .background(
-                                MaterialTheme.colorScheme.primaryContainer,
-                                RoundedCornerShape(2.dp)
-                            )
+                            .background(MaterialTheme.colorScheme.primaryContainer, ChipShape)
                             .padding(horizontal = 6.dp, vertical = 2.dp)
                     )
 
                     Spacer(modifier = Modifier.width(8.dp))
 
-                    // Status Chip
                     Text(
                         text = statusText,
                         style = MaterialTheme.typography.labelSmall,
                         color = if (discovery.status == DiscoveryStatus.DRAFT) MaterialTheme.colorScheme.onSurface else Color.Black,
                         modifier = Modifier
-                            .background(statusBg, RoundedCornerShape(2.dp))
+                            .background(statusBg, ChipShape)
                             .padding(horizontal = 6.dp, vertical = 2.dp)
                     )
 
                     Spacer(modifier = Modifier.weight(1f))
 
+                    val refId = remember(discovery.id) { discovery.id.takeLast(8) }
                     Text(
-                        text = "REF: ${discovery.id.takeLast(8)}",
+                        text = "REF: $refId",
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -163,7 +164,6 @@ fun DiscoveryCard(
 
                 Spacer(modifier = Modifier.height(8.dp))
 
-                // Secuencia de Glifos
                 if (discovery.glyphs.isNotEmpty()) {
                     GlyphSequence(
                         glyphs = discovery.glyphs,
@@ -174,3 +174,4 @@ fun DiscoveryCard(
         }
     }
 }
+

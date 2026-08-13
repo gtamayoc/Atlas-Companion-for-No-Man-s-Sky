@@ -116,9 +116,10 @@ fun GalacticCalculatorScreen(
         ) {
             for (index in tabs.indices) {
                 val title = tabs[index]
+                val onTabClick = remember(index) { { viewModel.setSelectedTabIndex(index) } }
                 Tab(
                     selected = selectedTabIndex == index,
-                    onClick = { viewModel.setSelectedTabIndex(index) },
+                    onClick = onTabClick,
                     text = {
                         Text(
                             text = title,

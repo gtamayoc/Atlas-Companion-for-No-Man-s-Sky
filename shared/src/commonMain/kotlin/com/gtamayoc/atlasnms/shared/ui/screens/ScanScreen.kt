@@ -39,6 +39,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -94,10 +95,10 @@ fun ScanScreen(
     onScreenSelected: (AppScreen) -> Unit,
     onDiscoverySaved: () -> Unit
 ) {
-    val currentStage by viewModel.currentStage.collectAsState()
-    val selectedImageUri by viewModel.selectedImageUri.collectAsState()
-    val isOcrRunning by viewModel.isOcrRunning.collectAsState()
-    val isAiRunning by viewModel.isAiRunning.collectAsState()
+    val currentStage by viewModel.currentStage.collectAsStateWithLifecycle()
+    val selectedImageUri by viewModel.selectedImageUri.collectAsStateWithLifecycle()
+    val isOcrRunning by viewModel.isOcrRunning.collectAsStateWithLifecycle()
+    val isAiRunning by viewModel.isAiRunning.collectAsStateWithLifecycle()
 
     LaunchedEffect(currentStage) {
         if (currentStage == AnalysisStage.STAGE_5_COMPLETED) {
@@ -108,20 +109,20 @@ fun ScanScreen(
     var showDevDebugDrawer by remember { mutableStateOf(false) }
     var showPhotoOverlayModal by remember { mutableStateOf(false) }
 
-    val enhanceContrast by viewModel.enhanceContrast.collectAsState()
-    val binarizeForOcr by viewModel.binarizeForOcr.collectAsState()
-    val extractionResult by viewModel.extractionResult.collectAsState()
-    val aiResult by viewModel.aiResult.collectAsState()
-    val validationDiscrepancies by viewModel.validationDiscrepancies.collectAsState()
+    val enhanceContrast by viewModel.enhanceContrast.collectAsStateWithLifecycle()
+    val binarizeForOcr by viewModel.binarizeForOcr.collectAsStateWithLifecycle()
+    val extractionResult by viewModel.extractionResult.collectAsStateWithLifecycle()
+    val aiResult by viewModel.aiResult.collectAsStateWithLifecycle()
+    val validationDiscrepancies by viewModel.validationDiscrepancies.collectAsStateWithLifecycle()
 
-    val userVerifiedName by viewModel.userVerifiedName.collectAsState()
-    val userVerifiedSystem by viewModel.userVerifiedSystem.collectAsState()
-    val userVerifiedGalaxy by viewModel.userVerifiedGalaxy.collectAsState()
+    val userVerifiedName by viewModel.userVerifiedName.collectAsStateWithLifecycle()
+    val userVerifiedSystem by viewModel.userVerifiedSystem.collectAsStateWithLifecycle()
+    val userVerifiedGalaxy by viewModel.userVerifiedGalaxy.collectAsStateWithLifecycle()
     var showScanGalaxyModal by remember { mutableStateOf(false) }
-    val userVerifiedType by viewModel.userVerifiedType.collectAsState()
-    val includeGlyphsInCapture by viewModel.includeGlyphsInCapture.collectAsState()
-    val userVerifiedGlyphs by viewModel.userVerifiedGlyphs.collectAsState()
-    val activeGlyphSlotIndex by viewModel.activeGlyphSlotIndex.collectAsState()
+    val userVerifiedType by viewModel.userVerifiedType.collectAsStateWithLifecycle()
+    val includeGlyphsInCapture by viewModel.includeGlyphsInCapture.collectAsStateWithLifecycle()
+    val userVerifiedGlyphs by viewModel.userVerifiedGlyphs.collectAsStateWithLifecycle()
+    val activeGlyphSlotIndex by viewModel.activeGlyphSlotIndex.collectAsStateWithLifecycle()
     val pickerHandler = rememberImagePickerHandler { uriPath ->
         viewModel.onImageSelected(uriPath)
     }
@@ -334,9 +335,10 @@ fun ScanScreen(
                             ) {
                                 for (type in DiscoveryType.entries) {
                                     key(type.name) {
+                                        val onTypeSelect = remember(type) { { viewModel.setUserVerifiedType(type) } }
                                         FilterChip(
                                             selected = userVerifiedType == type,
-                                            onClick = { viewModel.setUserVerifiedType(type) },
+                                            onClick = onTypeSelect,
                                             label = { Text(type.name, fontSize = 11.sp) },
                                             shape = RoundedCornerShape(0.dp),
                                             colors = FilterChipDefaults.filterChipColors(
@@ -417,27 +419,9 @@ fun ScanScreen(
                                     glyphs = userVerifiedGlyphs,
                                     activeSlotIndex = activeGlyphSlotIndex,
                                     onSlotClick = { viewModel.setActiveGlyphSlotIndex(it) },
-                                    onGlyphSelected = { clickedGlyph ->
-                                        val currentList = userVerifiedGlyphs.toMutableList()
-                                        while (currentList.size < 12) currentList.add(1)
-                                        val slotToReplace = activeGlyphSlotIndex.coerceIn(0, 11)
-                                        currentList[slotToReplace] = clickedGlyph
-                                        viewModel.setUserVerifiedGlyphs(currentList)
-                                        viewModel.setActiveGlyphSlotIndex((slotToReplace + 1) % 12)
-                                    },
-                                    onDeleteSingle = {
-                                        val currentList = userVerifiedGlyphs.toMutableList()
-                                        if (currentList.isNotEmpty()) {
-                                            val slotToClear = activeGlyphSlotIndex.coerceIn(0, currentList.size - 1)
-                                            currentList.removeAt(slotToClear)
-                                            viewModel.setUserVerifiedGlyphs(currentList)
-                                            viewModel.setActiveGlyphSlotIndex(maxOf(0, slotToClear - 1))
-                                        }
-                                    },
-                                    onClearAll = {
-                                        viewModel.setUserVerifiedGlyphs(emptyList())
-                                        viewModel.setActiveGlyphSlotIndex(0)
-                                    }
+                                    onGlyphSelected = { viewModel.updateGlyphAtActiveSlot(it) },
+                                    onDeleteSingle = { viewModel.deleteActiveOrLastGlyph() },
+                                    onClearAll = { viewModel.clearAllGlyphs() }
                                 )
                             }
 

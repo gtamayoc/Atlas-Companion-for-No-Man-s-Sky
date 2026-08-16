@@ -85,16 +85,16 @@ fun AtlasBottomNav(
                 modifier = Modifier
                     .clip(CircleShape)
                     .background(MaterialTheme.colorScheme.secondaryContainer)
-                    .border(1.dp, MaterialTheme.colorScheme.secondary, CircleShape)
-                    .clickable { onFabClick() }
-                    .padding(10.dp),
+                    .border(1.5.dp, MaterialTheme.colorScheme.secondary, CircleShape)
+                    .clickable(onClick = onFabClick)
+                    .padding(12.dp),
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
                     imageVector = Icons.Default.Add,
                     contentDescription = "Analizar Captura",
                     tint = MaterialTheme.colorScheme.onSecondaryContainer,
-                    modifier = Modifier.size(24.dp)
+                    modifier = Modifier.size(26.dp)
                 )
             }
 
@@ -126,28 +126,29 @@ private fun BottomNavItem(
 ) {
     val animatedColor by animateColorAsState(
         targetValue = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
-        animationSpec = tween(durationMillis = 250, easing = FastOutSlowInEasing),
+        animationSpec = tween(durationMillis = 200, easing = FastOutSlowInEasing),
         label = "BottomNavIconColor"
     )
 
     Column(
         modifier = Modifier
-            .clip(RoundedCornerShape(6.dp))
-            .clickable { onClick() }
-            .padding(horizontal = 8.dp, vertical = 4.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
+            .clip(RoundedCornerShape(8.dp))
+            .clickable(onClick = onClick)
+            .padding(horizontal = 12.dp, vertical = 6.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
     ) {
         Icon(
             imageVector = icon,
             contentDescription = label,
             tint = animatedColor,
-            modifier = Modifier.size(22.dp)
+            modifier = Modifier.size(24.dp)
         )
-        Spacer(modifier = Modifier.height(2.dp))
+        Spacer(modifier = Modifier.height(3.dp))
         Text(
             text = label,
             style = MaterialTheme.typography.labelSmall.copy(
-                fontSize = 9.sp,
+                fontSize = 10.sp,
                 fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium
             ),
             color = animatedColor

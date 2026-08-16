@@ -63,7 +63,7 @@ import coil3.compose.AsyncImage
 import com.gtamayoc.atlasnms.shared.domain.model.Discovery
 import com.gtamayoc.atlasnms.shared.domain.model.DiscoveryStatus
 import com.gtamayoc.atlasnms.shared.domain.model.DiscoveryType
-import com.gtamayoc.atlasnms.shared.domain.repository.DiscoveryRepository
+import com.gtamayoc.atlasnms.shared.ui.components.DiscoveryCard
 import com.gtamayoc.atlasnms.shared.ui.components.GalaxySelectorModal
 import com.gtamayoc.atlasnms.shared.ui.components.GlyphSelector
 import com.gtamayoc.atlasnms.shared.ui.components.GlyphSequence
@@ -331,33 +331,9 @@ fun GalacticCalculatorScreen(
                         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                             for (related in relatedPortals) {
                                 key(related.id) {
-                                    Card(
-                                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerHigh),
-                                        shape = RoundedCornerShape(8.dp)
-                                    ) {
-                                        Row(
-                                            modifier = Modifier
-                                                .fillMaxWidth()
-                                                .padding(12.dp),
-                                            horizontalArrangement = Arrangement.SpaceBetween,
-                                            verticalAlignment = Alignment.CenterVertically
-                                        ) {
-                                            Column(modifier = Modifier.weight(1f)) {
-                                                Text(
-                                                    text = related.name,
-                                                    style = MaterialTheme.typography.bodyLarge,
-                                                    fontWeight = FontWeight.Bold,
-                                                    color = MaterialTheme.colorScheme.primary
-                                                )
-                                                Text(
-                                                    text = "Galaxia: ${related.galaxy} | Sistema: ${related.systemName}",
-                                                    style = MaterialTheme.typography.bodySmall,
-                                                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                                                )
-                                            }
-                                            GlyphSequence(glyphs = related.glyphs, iconSize = 18)
-                                        }
-                                    }
+                                    DiscoveryCard(
+                                        discovery = related
+                                    )
                                 }
                             }
                         }
@@ -597,91 +573,17 @@ fun GalacticCalculatorScreen(
                             }
                         }
                     } else {
-                        // LISTA DE TELEPORTS CON FONDO DE MANTRA GEOMÉTRICO DINÁMICO ÚNICO POR CAPTURA
+                        // LISTA DE TELEPORTS CON COMPONENTE UNIFICADO DE ALTO RENDIMIENTO
                         Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                             for (saved in savedTeleports) {
                                 key(saved.id) {
-                                    val savedCoord = remember(saved.glyphs) {
-                                        GalacticCoordinateUtils.parseGlyphsToCoordinate(saved.glyphs)
+                                    val onItemDelete = remember(saved.id, viewModel) {
+                                        { viewModel.deleteDiscovery(saved.id) }
                                     }
-                                    Card(
-                                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer),
-                                        shape = RoundedCornerShape(12.dp),
-                                        modifier = Modifier.fillMaxWidth()
-                                    ) {
-                                        Box(modifier = Modifier.fillMaxWidth()) {
-                                            // Esquema dinámico divertido y único de fondo (Mantra Pattern) para cada captura
-                                            MantraPatternBackground(
-                                                glyphs = saved.glyphs,
-                                                seed = saved.id,
-                                                modifier = Modifier.matchParentSize()
-                                            )
-
-                                            Column(
-                                                modifier = Modifier.padding(14.dp),
-                                                verticalArrangement = Arrangement.spacedBy(10.dp)
-                                            ) {
-                                                Row(
-                                                    modifier = Modifier.fillMaxWidth(),
-                                                    horizontalArrangement = Arrangement.SpaceBetween,
-                                                    verticalAlignment = Alignment.CenterVertically
-                                                ) {
-                                                    Column(modifier = Modifier.weight(1f)) {
-                                                        Text(
-                                                            text = saved.name,
-                                                            style = MaterialTheme.typography.titleMedium,
-                                                            fontWeight = FontWeight.Bold,
-                                                            color = Color.White
-                                                        )
-                                                        Text(
-                                                            text = "${saved.galaxy} | ${saved.systemName}",
-                                                            style = MaterialTheme.typography.labelSmall,
-                                                            color = Color.White.copy(alpha = 0.85f)
-                                                        )
-                                                    }
-
-                                                    Button(
-                                                        onClick = {
-                                                            viewModel.deleteDiscovery(saved.id)
-                                                        },
-                                                        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.85f)),
-                                                        shape = RoundedCornerShape(6.dp),
-                                                        contentPadding = PaddingValues(horizontal = 8.dp, vertical = 2.dp)
-                                                    ) {
-                                                        Text(
-                                                            text = "ELIMINAR",
-                                                            fontSize = 11.sp,
-                                                            color = MaterialTheme.colorScheme.onErrorContainer,
-                                                            fontWeight = FontWeight.Bold
-                                                        )
-                                                    }
-                                                }
-
-                                                Box(
-                                                    modifier = Modifier
-                                                        .fillMaxWidth()
-                                                        .background(Color.Black.copy(alpha = 0.40f), RoundedCornerShape(6.dp))
-                                                        .padding(8.dp)
-                                                ) {
-                                                    Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
-                                                        Text(
-                                                            text = "📍 Coordenada: ${savedCoord.formattedString}",
-                                                            style = MaterialTheme.typography.bodySmall,
-                                                            color = Color.White,
-                                                            fontWeight = FontWeight.Bold
-                                                        )
-                                                        Text(
-                                                            text = "Distancia al Centro: ${savedCoord.distanceToCoreLightYears} Años Luz",
-                                                            style = MaterialTheme.typography.labelSmall,
-                                                            color = Color.White.copy(alpha = 0.85f)
-                                                        )
-                                                    }
-                                                }
-
-                                                GlyphSequence(glyphs = saved.glyphs, iconSize = 22)
-                                            }
-                                        }
-                                    }
+                                    DiscoveryCard(
+                                        discovery = saved,
+                                        onDelete = onItemDelete
+                                    )
                                 }
                             }
                         }

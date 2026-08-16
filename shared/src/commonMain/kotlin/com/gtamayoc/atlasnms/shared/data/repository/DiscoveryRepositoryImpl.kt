@@ -33,7 +33,7 @@ class DiscoveryRepositoryImpl(
             .mapToList(Dispatchers.Default)
             .map { entities ->
                 entities.map { entity ->
-                    val parsedGlyphs = if (entity.glyphs.isBlank()) emptyList() else entity.glyphs.split(",").mapNotNull { it.toIntOrNull() }
+                    val parsedGlyphs = parseGlyphs(entity.glyphs)
                     Discovery(
                         id = entity.id,
                         type = DiscoveryType.valueOf(entity.type),
@@ -48,6 +48,24 @@ class DiscoveryRepositoryImpl(
                     )
                 }
             }
+    }
+
+    private fun parseGlyphs(glyphsStr: String): List<Int> {
+        if (glyphsStr.isBlank()) return emptyList()
+        val result = ArrayList<Int>(12)
+        var start = 0
+        while (start < glyphsStr.length) {
+            val commaIndex = glyphsStr.indexOf(',', start)
+            val end = if (commaIndex == -1) glyphsStr.length else commaIndex
+            val item = glyphsStr.substring(start, end).trim()
+            val intVal = item.toIntOrNull()
+            if (intVal != null) {
+                result.add(intVal)
+            }
+            if (commaIndex == -1) break
+            start = commaIndex + 1
+        }
+        return result
     }
 
     override suspend fun getDiscoveryById(id: String): Discovery? = withContext(Dispatchers.Default) {

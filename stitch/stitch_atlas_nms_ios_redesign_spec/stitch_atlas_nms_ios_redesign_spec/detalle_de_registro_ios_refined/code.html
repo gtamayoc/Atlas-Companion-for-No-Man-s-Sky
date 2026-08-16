@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/>
+<title>Bitácora - Atlas NMS</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-background": "#e3e2e7",
+                        "on-primary-fixed": "#001b3e",
+                        "on-error-container": "#ffdad6",
+                        "surface-bright": "#38393d",
+                        "surface-container-lowest": "#0d0e12",
+                        "tertiary": "#ffb4aa",
+                        "tertiary-fixed-dim": "#ffb4aa",
+                        "on-tertiary": "#690004",
+                        "surface-dim": "#121317",
+                        "primary": "#aac7ff",
+                        "on-primary-fixed-variant": "#00468d",
+                        "secondary-container": "#09bf49",
+                        "primary-fixed-dim": "#aac7ff",
+                        "inverse-on-surface": "#2f3034",
+                        "surface": "#121317",
+                        "outline": "#8b91a0",
+                        "on-secondary-fixed-variant": "#00531a",
+                        "on-secondary-container": "#004615",
+                        "on-tertiary-fixed": "#410001",
+                        "error-container": "#93000a",
+                        "secondary": "#47e266",
+                        "surface-container-high": "#292a2e",
+                        "tertiary-container": "#ff5447",
+                        "background": "#121317",
+                        "on-surface": "#e3e2e7",
+                        "surface-tint": "#aac7ff",
+                        "error": "#ffb4ab",
+                        "outline-variant": "#414754",
+                        "primary-fixed": "#d6e3ff",
+                        "tertiary-fixed": "#ffdad5",
+                        "primary-container": "#3e90ff",
+                        "secondary-fixed": "#6cff82",
+                        "surface-container": "#1e1f23",
+                        "on-primary-container": "#002957",
+                        "surface-container-low": "#1a1b1f",
+                        "on-tertiary-fixed-variant": "#930007",
+                        "on-error": "#690005",
+                        "inverse-primary": "#005db8",
+                        "surface-container-highest": "#343539",
+                        "inverse-surface": "#e3e2e7",
+                        "secondary-fixed-dim": "#47e266",
+                        "on-surface-variant": "#c0c6d6",
+                        "on-secondary": "#003910",
+                        "on-primary": "#003064",
+                        "on-tertiary-container": "#5c0003",
+                        "surface-variant": "#343539",
+                        "on-secondary-fixed": "#002106"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "padding_cell": "12px",
+                        "tab_bar_height": "49px",
+                        "stack_gap_tight": "4px",
+                        "margin_screen": "16px",
+                        "nav_bar_height": "44px",
+                        "stack_gap_standard": "8px"
+                    },
+                    "fontFamily": {
+                        "technical-data": ["JetBrains Mono"],
+                        "title-1": ["Inter"],
+                        "footnote": ["Inter"],
+                        "headline": ["Inter"],
+                        "body": ["Inter"],
+                        "large-title": ["Inter"]
+                    },
+                    "fontSize": {
+                        "technical-data": ["12px", { "lineHeight": "16px", "fontWeight": "500" }],
+                        "title-1": ["28px", { "lineHeight": "34px", "fontWeight": "600" }],
+                        "footnote": ["13px", { "lineHeight": "18px", "fontWeight": "400" }],
+                        "headline": ["17px", { "lineHeight": "22px", "fontWeight": "600" }],
+                        "body": ["17px", { "lineHeight": "22px", "fontWeight": "400" }],
+                        "large-title": ["34px", { "lineHeight": "41px", "letterSpacing": "0.37px", "fontWeight": "700" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body {
+            background-color: #000000;
+            color: #ffffff;
+            -webkit-font-smoothing: antialiased;
+        }
+        .ios-grouped-cell {
+            background-color: #1C1C1E;
+        }
+        .ios-secondary-text {
+            color: rgba(235, 235, 245, 0.6);
+        }
+        .ios-separator {
+            border-bottom: 1px solid rgba(84, 84, 88, 0.6);
+        }
+        .ios-tint {
+            color: #0A84FF;
+        }
+        .ios-tint-bg {
+            background-color: #0A84FF;
+        }
+        .nav-blur {
+            background-color: rgba(22, 22, 23, 0.72);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+        
+        /* Hide scrollbar for cleaner UI */
+        ::-webkit-scrollbar {
+            display: none;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="min-h-screen relative font-body selection:bg-[#0A84FF] selection:text-white pb-32">
+<!-- Top Navigation Bar (Shared Component Style but linear/focused so custom mapped) -->
+<!-- Note: Standard navigation is suppressed as this is a detail/task-focused screen with a 'Back' action -->
+<header class="fixed top-0 w-full z-50 nav-blur">
+<!-- Safe area padding for Dynamic Island / Notch -->
+<div class="h-12 w-full"></div>
+<div class="flex items-center justify-between px-4 h-[44px]">
+<button class="flex items-center gap-1 ios-tint hover:opacity-80 transition-opacity active:opacity-50">
+<span class="material-symbols-outlined text-[24px]" style="font-variation-settings: 'FILL' 0, 'wght' 600;">chevron_left</span>
+<span class="font-headline text-headline">Bitácora</span>
+</button>
+<h1 class="font-headline text-headline text-white absolute left-1/2 -translate-x-1/2 opacity-0 transition-opacity duration-300" id="inline-title">Epsilon IV</h1>
+<div class="w-20"></div> <!-- Balancer for centering -->
+</div>
+</header>
+<!-- Main Scrollable Content -->
+<main class="pt-[92px] pb-safe">
+<!-- Large Title Area -->
+<div class="px-4 pb-4 pt-2">
+<h1 class="font-large-title text-large-title text-white">Epsilon IV</h1>
+</div>
+<!-- Hero Image -->
+<div class="relative w-full aspect-video mb-6">
+<img class="w-full h-full object-cover" data-alt="A breathtaking, hyper-realistic shot of a vibrant, exotic alien planet landscape viewed from low orbit, featuring glowing crystalline structures piercing through a dense, bioluminescent atmosphere. Deep blacks of space contrast sharply with the planet's atmospheric luminescence. Pure black OLED background aesthetic, highly detailed, sci-fi cinematic lighting, 8k resolution, photorealistic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCZvP4wYpVCyvYyuwvr7zUaxtHBiByl4fSo9cwq2Z1qCKhieo4BYusS01F29XSFrTaRR6mJ8eT31MTwbPWKq1myNLrCxBRdfE91nXhApelFkEAHSI0MLxCpuA6aBefvFnUtb7hDP_MxokyXcCgR_0hqi1zIucJFbiSurDz06SN-fIYsAwIYy4U6GfHvfRt-jCSXzAztKAKJBzGOjP9BB2jqPZhtOajVriEX0X1YZh5h2dksSBK0r4A"/>
+<!-- S-CLASS Badge -->
+<div class="absolute bottom-4 right-4 bg-[#FFD60A]/20 backdrop-blur-md rounded px-2 py-1 flex items-center">
+<span class="font-technical-data text-[10px] text-[#FFD60A] font-bold tracking-wider">S-CLASS</span>
+</div>
+</div>
+<!-- Grouped Lists Container -->
+<div class="px-4 space-y-6">
+<!-- Section 1: INFORMACIÓN DEL REGISTRO -->
+<section>
+<h2 class="font-footnote text-[13px] ios-secondary-text uppercase mb-2 ml-4">INFORMACIÓN DEL REGISTRO</h2>
+<div class="ios-grouped-cell rounded-[10px] overflow-hidden">
+<div class="flex justify-between items-center px-4 py-3 ios-separator">
+<span class="font-body text-body text-white">Sistema Estelar</span>
+<span class="ios-secondary-text font-body text-body">Odyalutai</span>
+</div>
+<div class="flex justify-between items-center px-4 py-3 ios-separator">
+<span class="font-body text-body text-white">Galaxia</span>
+<span class="ios-secondary-text font-body text-body">Euclides</span>
+</div>
+<div class="flex justify-between items-center px-4 py-3 ios-separator">
+<span class="font-body text-body text-white">Coordenadas</span>
+<span class="font-technical-data text-technical-data ios-secondary-text">042F:0079:0D55:006A</span>
+</div>
+<div class="flex justify-between items-center px-4 py-3 ios-separator">
+<span class="font-body text-body text-white">Distancia al centro</span>
+<span class="ios-secondary-text font-body text-body">715,300 AL</span>
+</div>
+<div class="flex justify-between items-center px-4 py-3">
+<span class="font-body text-body text-white">Confianza de extracción</span>
+<span class="text-[#32D74B] font-body text-body">98.4%</span>
+</div>
+</div>
+</section>
+<!-- Section 2: DIRECCIÓN DE PORTAL -->
+<section>
+<h2 class="font-footnote text-[13px] ios-secondary-text uppercase mb-2 ml-4">DIRECCIÓN DE PORTAL</h2>
+<div class="ios-grouped-cell rounded-[10px] overflow-hidden">
+<div class="px-4 py-4 flex justify-between items-center">
+<!-- Glyph Placeholders (Using generic symbols as requested for data-icons) -->
+<span class="material-symbols-outlined text-white text-2xl" style="font-variation-settings: 'FILL' 1;">eco</span>
+<span class="material-symbols-outlined text-white text-2xl" style="font-variation-settings: 'FILL' 1;">water_drop</span>
+<span class="material-symbols-outlined text-white text-2xl" style="font-variation-settings: 'FILL' 1;">dark_mode</span>
+<span class="material-symbols-outlined text-white text-2xl" style="font-variation-settings: 'FILL' 1;">explore</span>
+<span class="material-symbols-outlined text-white text-2xl" style="font-variation-settings: 'FILL' 1;">local_fire_department</span>
+<span class="material-symbols-outlined text-white text-2xl" style="font-variation-settings: 'FILL' 1;">filter_drama</span>
+<span class="material-symbols-outlined text-white text-2xl" style="font-variation-settings: 'FILL' 1;">bug_report</span>
+<span class="material-symbols-outlined text-white text-2xl" style="font-variation-settings: 'FILL' 1;">change_history</span>
+<span class="material-symbols-outlined text-white text-2xl" style="font-variation-settings: 'FILL' 1;">anchor</span>
+<span class="material-symbols-outlined text-white text-2xl" style="font-variation-settings: 'FILL' 1;">flight</span>
+<span class="material-symbols-outlined text-white text-2xl" style="font-variation-settings: 'FILL' 1;">cruelty_free</span>
+<span class="material-symbols-outlined text-white text-2xl" style="font-variation-settings: 'FILL' 1;">pets</span>
+</div>
+</div>
+</section>
+<!-- Section 3: NOTAS DE EXPLORACIÓN -->
+<section>
+<h2 class="font-footnote text-[13px] ios-secondary-text uppercase mb-2 ml-4">NOTAS DE EXPLORACIÓN</h2>
+<div class="ios-grouped-cell rounded-[10px] overflow-hidden">
+<div class="px-4 py-3">
+<p class="font-body text-body text-white leading-relaxed">
+                            Planeta anómalo con alta concentración de recursos exóticos. Tormentas térmicas frecuentes, se recomienda escudo nivel 3. Detectada actividad centinela moderada cerca de los depósitos de indio activado. Flora bioluminiscente abundante en el hemisferio norte.
+                        </p>
+</div>
+</div>
+</section>
+</div>
+</main>
+<!-- Bottom Fixed Action Button -->
+<div class="fixed bottom-0 w-full px-4 pb-8 pt-4 nav-blur z-40">
+<button class="w-full h-[50px] ios-tint-bg rounded-[12px] flex items-center justify-center active:scale-[0.98] transition-transform">
+<span class="font-headline text-headline text-white font-semibold">REGRESAR A LA BITÁCORA</span>
+</button>
+</div>
+<!-- Script for scrolling inline title effect -->
+<script>
+        document.addEventListener('scroll', () => {
+            const inlineTitle = document.getElementById('inline-title');
+            if (window.scrollY > 120) {
+                inlineTitle.style.opacity = '1';
+            } else {
+                inlineTitle.style.opacity = '0';
+            }
+        });
+    </script>
+</body></html>

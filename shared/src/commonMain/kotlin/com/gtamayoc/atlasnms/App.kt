@@ -99,95 +99,105 @@ fun App(repository: DiscoveryRepository = remember { com.gtamayoc.atlasnms.share
     )
 
     AtlasNMSTheme {
-        if (selectedDiscovery != null) {
-            DiscoveryDetailScreen(
-                discovery = selectedDiscovery!!,
-                onBack = onClearSelectedDiscovery
-            )
-        } else {
-            ModalNavigationDrawer(
-                drawerState = drawerState,
-                gesturesEnabled = false,
-                drawerContent = {
-                    AtlasNavigationDrawer(
-                        currentScreen = currentScreen,
-                        onScreenSelected = onScreenSelected,
-                        onCloseDrawer = onCloseDrawer
-                    )
-                }
-            ) {
-                Scaffold(
-                    topBar = {
-                        if (!(currentScreen == AppScreen.WIKI && isWikiDetailActive)) {
-                            AtlasTopHeader(
-                                onOpenDrawer = onOpenDrawer,
-                                currentScreen = currentScreen
-                            )
-                        }
-                    },
-                    bottomBar = {
-                        AtlasBottomNav(
+        AnimatedContent(
+            targetState = selectedDiscovery,
+            transitionSpec = {
+                (fadeIn(animationSpec = tween(durationMillis = 220, easing = FastOutSlowInEasing)) togetherWith
+                fadeOut(animationSpec = tween(durationMillis = 180, easing = FastOutSlowInEasing)))
+                    .using(SizeTransform(clip = false))
+            },
+            label = "DetailScreenTransition"
+        ) { activeDiscovery ->
+            if (activeDiscovery != null) {
+                DiscoveryDetailScreen(
+                    discovery = activeDiscovery,
+                    onBack = onClearSelectedDiscovery
+                )
+            } else {
+                ModalNavigationDrawer(
+                    drawerState = drawerState,
+                    gesturesEnabled = false,
+                    drawerContent = {
+                        AtlasNavigationDrawer(
                             currentScreen = currentScreen,
                             onScreenSelected = onScreenSelected,
-                            onFabClick = onFabClick
+                            onCloseDrawer = onCloseDrawer
                         )
                     }
-                ) { paddingValues ->
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(paddingValues)
-                    ) {
-                        AnimatedContent(
-                            targetState = currentScreen,
-                            transitionSpec = {
-                                (fadeIn(animationSpec = tween(durationMillis = 50, easing = LinearOutSlowInEasing)) togetherWith
-                                fadeOut(animationSpec = tween(durationMillis = 40, easing = LinearOutSlowInEasing)))
-                                    .using(SizeTransform(clip = false))
-                            },
-                            label = "ScreenTransition"
-                        ) { targetScreen ->
-                            saveableStateHolder.SaveableStateProvider(key = targetScreen) {
-                                when (targetScreen) {
-                                    AppScreen.DISCOVERIES -> {
-                                        HomeScreen(
-                                            viewModel = homeViewModel,
-                                            currentScreen = targetScreen,
-                                            onScreenSelected = onScreenSelected,
-                                            onFabClick = onFabClick,
-                                            onDiscoveryClick = onDiscoveryClick
-                                        )
-                                    }
-                                    AppScreen.EXPLORE -> {
-                                        GalacticCalculatorScreen(
-                                            viewModel = galacticViewModel,
-                                            currentScreen = targetScreen,
-                                            onScreenSelected = onScreenSelected,
-                                            onDiscoverySaved = onDiscoverySaved
-                                        )
-                                    }
-                                    AppScreen.WIKI -> {
-                                        WikiScreen(
-                                            currentScreen = targetScreen,
-                                            onScreenSelected = onScreenSelected,
-                                            onFabClick = onFabClick,
-                                            onDetailActiveChanged = { active -> isWikiDetailActive = active }
-                                        )
-                                    }
-                                    AppScreen.SETTINGS -> {
-                                        SettingsScreen(
-                                            currentScreen = targetScreen,
-                                            onScreenSelected = onScreenSelected,
-                                            onFabClick = onFabClick
-                                        )
-                                    }
-                                    AppScreen.SCAN -> {
-                                        ScanScreen(
-                                            viewModel = scanViewModel,
-                                            currentScreen = targetScreen,
-                                            onScreenSelected = onScreenSelected,
-                                            onDiscoverySaved = onDiscoverySaved
-                                        )
+                ) {
+                    Scaffold(
+                        topBar = {
+                            if (!(currentScreen == AppScreen.WIKI && isWikiDetailActive)) {
+                                AtlasTopHeader(
+                                    onOpenDrawer = onOpenDrawer,
+                                    currentScreen = currentScreen
+                                )
+                            }
+                        },
+                        bottomBar = {
+                            AtlasBottomNav(
+                                currentScreen = currentScreen,
+                                onScreenSelected = onScreenSelected,
+                                onFabClick = onFabClick
+                            )
+                        }
+                    ) { paddingValues ->
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(paddingValues)
+                        ) {
+                            AnimatedContent(
+                                targetState = currentScreen,
+                                transitionSpec = {
+                                    (fadeIn(animationSpec = tween(durationMillis = 220, easing = FastOutSlowInEasing)) togetherWith
+                                    fadeOut(animationSpec = tween(durationMillis = 180, easing = FastOutSlowInEasing)))
+                                        .using(SizeTransform(clip = false))
+                                },
+                                label = "ScreenTransition"
+                            ) { targetScreen ->
+                                saveableStateHolder.SaveableStateProvider(key = targetScreen) {
+                                    when (targetScreen) {
+                                        AppScreen.DISCOVERIES -> {
+                                            HomeScreen(
+                                                viewModel = homeViewModel,
+                                                currentScreen = targetScreen,
+                                                onScreenSelected = onScreenSelected,
+                                                onFabClick = onFabClick,
+                                                onDiscoveryClick = onDiscoveryClick
+                                            )
+                                        }
+                                        AppScreen.EXPLORE -> {
+                                            GalacticCalculatorScreen(
+                                                viewModel = galacticViewModel,
+                                                currentScreen = targetScreen,
+                                                onScreenSelected = onScreenSelected,
+                                                onDiscoverySaved = onDiscoverySaved
+                                            )
+                                        }
+                                        AppScreen.WIKI -> {
+                                            WikiScreen(
+                                                currentScreen = targetScreen,
+                                                onScreenSelected = onScreenSelected,
+                                                onFabClick = onFabClick,
+                                                onDetailActiveChanged = { active -> isWikiDetailActive = active }
+                                            )
+                                        }
+                                        AppScreen.SETTINGS -> {
+                                            SettingsScreen(
+                                                currentScreen = targetScreen,
+                                                onScreenSelected = onScreenSelected,
+                                                onFabClick = onFabClick
+                                            )
+                                        }
+                                        AppScreen.SCAN -> {
+                                            ScanScreen(
+                                                viewModel = scanViewModel,
+                                                currentScreen = targetScreen,
+                                                onScreenSelected = onScreenSelected,
+                                                onDiscoverySaved = onDiscoverySaved
+                                            )
+                                        }
                                     }
                                 }
                             }

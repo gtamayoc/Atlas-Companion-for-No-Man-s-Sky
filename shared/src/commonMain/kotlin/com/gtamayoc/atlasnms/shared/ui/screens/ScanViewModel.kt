@@ -102,14 +102,37 @@ class ScanViewModel(
     fun setActiveGlyphSlotIndex(index: Int) { _activeGlyphSlotIndex.value = index }
     fun setCurrentStage(stage: AnalysisStage) { _currentStage.value = stage }
 
+    fun updateGlyphAtActiveSlot(clickedGlyph: Int) {
+        val currentList = _userVerifiedGlyphs.value.toMutableList()
+        while (currentList.size < 12) currentList.add(1)
+        val slotToReplace = _activeGlyphSlotIndex.value.coerceIn(0, 11)
+        currentList[slotToReplace] = clickedGlyph
+        _userVerifiedGlyphs.value = currentList
+        _activeGlyphSlotIndex.value = (slotToReplace + 1) % 12
+    }
+
+    fun deleteActiveOrLastGlyph() {
+        val currentList = _userVerifiedGlyphs.value.toMutableList()
+        if (currentList.isNotEmpty()) {
+            val slotToClear = _activeGlyphSlotIndex.value.coerceIn(0, currentList.size - 1)
+            currentList.removeAt(slotToClear)
+            _userVerifiedGlyphs.value = currentList
+            _activeGlyphSlotIndex.value = maxOf(0, slotToClear - 1)
+        }
+    }
+
+    fun clearAllGlyphs() {
+        _userVerifiedGlyphs.value = emptyList()
+        _activeGlyphSlotIndex.value = 0
+    }
+
     fun runOcrProcessing() {
         val uri = _selectedImageUri.value ?: return
         viewModelScope.launch(Dispatchers.Default) {
             _isOcrRunning.value = true
-            val dummyPixels = IntArray(600 * 400) { (0xFF shl 24) or ((it % 255) shl 16) or ((it % 255) shl 8) or (it % 255) }
             val extRes = VisionExtractionEngine.extractHybridData(
                 imageUriOrPath = uri,
-                rawPixels = dummyPixels,
+                rawPixels = DUMMY_PIXELS,
                 width = 600,
                 height = 400,
                 enhanceContrast = _enhanceContrast.value,
@@ -179,6 +202,12 @@ class ScanViewModel(
         viewModelScope.launch(Dispatchers.Default) {
             repository.saveDiscovery(discovery)
             _currentStage.value = AnalysisStage.STAGE_5_COMPLETED
+        }
+    }
+
+    companion object {
+        private val DUMMY_PIXELS by lazy {
+            IntArray(600 * 400) { (0xFF shl 24) or ((it % 255) shl 16) or ((it % 255) shl 8) or (it % 255) }
         }
     }
 }

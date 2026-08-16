@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/>
+<title>Ajustes - Atlas NMS</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-background": "#e3e2e7",
+                        "on-primary-fixed": "#001b3e",
+                        "on-error-container": "#ffdad6",
+                        "surface-bright": "#38393d",
+                        "surface-container-lowest": "#0d0e12",
+                        "tertiary": "#ffb4aa",
+                        "tertiary-fixed-dim": "#ffb4aa",
+                        "on-tertiary": "#690004",
+                        "surface-dim": "#121317",
+                        "primary": "#aac7ff",
+                        "on-primary-fixed-variant": "#00468d",
+                        "secondary-container": "#09bf49",
+                        "primary-fixed-dim": "#aac7ff",
+                        "inverse-on-surface": "#2f3034",
+                        "surface": "#121317",
+                        "outline": "#8b91a0",
+                        "on-secondary-fixed-variant": "#00531a",
+                        "on-secondary-container": "#004615",
+                        "on-tertiary-fixed": "#410001",
+                        "error-container": "#93000a",
+                        "secondary": "#47e266",
+                        "surface-container-high": "#292a2e",
+                        "tertiary-container": "#ff5447",
+                        "background": "#121317",
+                        "on-surface": "#e3e2e7",
+                        "surface-tint": "#aac7ff",
+                        "error": "#ffb4ab",
+                        "outline-variant": "#414754",
+                        "primary-fixed": "#d6e3ff",
+                        "tertiary-fixed": "#ffdad5",
+                        "primary-container": "#3e90ff",
+                        "secondary-fixed": "#6cff82",
+                        "surface-container": "#1e1f23",
+                        "on-primary-container": "#002957",
+                        "surface-container-low": "#1a1b1f",
+                        "on-tertiary-fixed-variant": "#930007",
+                        "on-error": "#690005",
+                        "inverse-primary": "#005db8",
+                        "surface-container-highest": "#343539",
+                        "inverse-surface": "#e3e2e7",
+                        "secondary-fixed-dim": "#47e266",
+                        "on-surface-variant": "#c0c6d6",
+                        "on-secondary": "#003910",
+                        "on-primary": "#003064",
+                        "on-tertiary-container": "#5c0003",
+                        "surface-variant": "#343539",
+                        "on-secondary-fixed": "#002106"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "padding_cell": "12px",
+                        "tab_bar_height": "49px",
+                        "stack_gap_tight": "4px",
+                        "margin_screen": "16px",
+                        "nav_bar_height": "44px",
+                        "stack_gap_standard": "8px"
+                    },
+                    "fontFamily": {
+                        "technical-data": ["JetBrains Mono"],
+                        "title-1": ["Inter"],
+                        "footnote": ["Inter"],
+                        "headline": ["Inter"],
+                        "body": ["Inter"],
+                        "large-title": ["Inter"]
+                    },
+                    "fontSize": {
+                        "technical-data": ["12px", {"lineHeight": "16px", "fontWeight": "500"}],
+                        "title-1": ["28px", {"lineHeight": "34px", "fontWeight": "600"}],
+                        "footnote": ["13px", {"lineHeight": "18px", "fontWeight": "400"}],
+                        "headline": ["17px", {"lineHeight": "22px", "fontWeight": "600"}],
+                        "body": ["17px", {"lineHeight": "22px", "fontWeight": "400"}],
+                        "large-title": ["34px", {"lineHeight": "41px", "letterSpacing": "0.37px", "fontWeight": "700"}]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="bg-[#000000] text-white antialiased selection:bg-[#007AFF]/30 selection:text-white flex flex-col h-[884px] overflow-hidden">
+<!-- TopAppBar -->
+<header class="bg-[#000000]/70 dark:bg-[#000000]/70 backdrop-blur-xl fixed top-0 w-full z-50 flex items-center justify-between px-margin_screen h-[calc(44px+env(safe-area-inset-top))] pt-[env(safe-area-inset-top)] border-none">
+<button class="hover:opacity-80 transition-opacity active:scale-95 duration-150 text-[#007AFF] w-11 h-11 flex items-center justify-start">
+<span class="material-symbols-outlined text-[24px]">menu</span>
+</button>
+<span class="font-headline text-headline text-white pointer-events-none">Bitácora</span>
+<button class="hover:opacity-80 transition-opacity active:scale-95 duration-150 text-[#007AFF] w-11 h-11 flex items-center justify-end">
+<span class="material-symbols-outlined text-[24px]">account_circle</span>
+</button>
+</header>
+<!-- Main Content -->
+<main class="flex-1 overflow-y-auto no-scrollbar px-margin_screen pt-[calc(44px+env(safe-area-inset-top)+24px)] pb-[calc(49px+env(safe-area-inset-bottom)+40px)]">
+<h1 class="font-large-title text-large-title text-white mb-6">Ajustes</h1>
+<!-- Section 1: AI Engine -->
+<section class="mb-8">
+<h2 class="font-footnote text-footnote text-[rgba(235,235,245,0.6)] uppercase ml-4 mb-2 tracking-wide">MOTOR DE INTELIGENCIA ARTIFICIAL</h2>
+<div class="bg-[#1C1C1E] rounded-[10px] overflow-hidden flex flex-col">
+<!-- API Key Row -->
+<div class="flex items-center justify-between min-h-[44px] px-4 py-2 border-b border-[#38383A] bg-[#1C1C1E] active:bg-[#2C2C2E] transition-colors">
+<span class="font-body text-body text-white">API Key</span>
+<div class="flex items-center gap-2">
+<span class="font-technical-data text-technical-data text-[rgba(235,235,245,0.6)] tracking-widest mt-1">••••••••••••</span>
+<button class="text-[rgba(235,235,245,0.6)] hover:text-white transition-colors flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px]">visibility_off</span>
+</button>
+</div>
+</div>
+<!-- AI Model Row -->
+<div class="flex items-center justify-between min-h-[44px] px-4 py-2 border-b border-[#38383A] bg-[#1C1C1E] active:bg-[#2C2C2E] transition-colors">
+<span class="font-body text-body text-white">Modelo AI</span>
+<div class="flex items-center gap-2">
+<span class="font-body text-body text-[rgba(235,235,245,0.6)]">GPT-4 Turbo</span>
+<span class="material-symbols-outlined text-[rgba(235,235,245,0.6)] text-[20px]">chevron_right</span>
+</div>
+</div>
+<!-- Base URL Row -->
+<div class="flex items-center justify-between min-h-[44px] px-4 py-2 bg-[#1C1C1E] active:bg-[#2C2C2E] transition-colors">
+<span class="font-body text-body text-white whitespace-nowrap mr-4">Base URL</span>
+<input class="w-full bg-transparent border-none text-right font-body text-body text-[rgba(235,235,245,0.6)] focus:ring-0 p-0" spellcheck="false" type="text" value="https://api.atlasnms.net/v2"/>
+</div>
+</div>
+</section>
+<!-- Section 2: Integrity Status -->
+<section class="mb-8">
+<h2 class="font-footnote text-footnote text-[rgba(235,235,245,0.6)] uppercase ml-4 mb-2 tracking-wide">ESTADO DE INTEGRIDAD</h2>
+<div class="bg-[#1C1C1E] rounded-[10px] overflow-hidden flex flex-col">
+<div class="flex items-center justify-between min-h-[44px] px-4 py-2 border-b border-[#38383A] bg-[#1C1C1E]">
+<span class="font-body text-body text-white">Base de datos SQLite</span>
+<div class="flex items-center gap-2">
+<span class="font-footnote text-footnote text-[#30D158]">OK</span>
+<div class="w-2.5 h-2.5 rounded-full bg-[#30D158] shadow-[0_0_8px_rgba(48,209,88,0.5)]"></div>
+</div>
+</div>
+<div class="flex items-center justify-between min-h-[44px] px-4 py-2 border-b border-[#38383A] bg-[#1C1C1E]">
+<span class="font-body text-body text-white">Motor nativo C</span>
+<div class="flex items-center gap-2">
+<span class="font-footnote text-footnote text-[#30D158]">Optimo</span>
+<div class="w-2.5 h-2.5 rounded-full bg-[#30D158] shadow-[0_0_8px_rgba(48,209,88,0.5)]"></div>
+</div>
+</div>
+<div class="flex items-center justify-between min-h-[44px] px-4 py-2 bg-[#1C1C1E]">
+<span class="font-body text-body text-white">Glifos PNG 16/16</span>
+<div class="flex items-center gap-2">
+<span class="font-footnote text-footnote text-[#FF453A]">Faltan recursos</span>
+<div class="w-2.5 h-2.5 rounded-full bg-[#FF453A] shadow-[0_0_8px_rgba(255,69,58,0.5)]"></div>
+</div>
+</div>
+</div>
+</section>
+<!-- Section 3: Legal Info -->
+<section class="mb-10">
+<h2 class="font-footnote text-footnote text-[rgba(235,235,245,0.6)] uppercase ml-4 mb-2 tracking-wide">INFORMACIÓN LEGAL</h2>
+<div class="bg-[#1C1C1E] rounded-[10px] overflow-hidden flex flex-col">
+<div class="flex items-center justify-between min-h-[44px] px-4 py-2 bg-[#1C1C1E] active:bg-[#2C2C2E] transition-colors">
+<span class="font-body text-body text-white">Versión</span>
+<span class="font-technical-data text-technical-data text-[rgba(235,235,245,0.6)] bg-[#2C2C2E] px-2 py-1 rounded">AtlasNMS v1.0.0-PRO</span>
+</div>
+</div>
+<p class="font-footnote text-footnote text-[rgba(235,235,245,0.6)] text-center mt-4">Términos de servicio y Política de privacidad.<br/>Núcleo licenciado bajo propiedad de Atlas Corp.</p>
+</section>
+<!-- Primary Action Button -->
+<button class="w-full bg-[#007AFF] text-white font-headline text-headline h-[50px] rounded-[10px] flex items-center justify-center gap-2 hover:opacity-90 active:scale-[0.98] transition-all duration-150 shadow-sm mt-4">
+<span class="material-symbols-outlined text-[20px]">save</span>
+            GUARDAR CONFIGURACIÓN
+        </button>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full h-[calc(49px+env(safe-area-inset-bottom))] pb-[env(safe-area-inset-bottom)] z-50 flex justify-around items-center px-padding_cell bg-[#000000]/70 dark:bg-[#000000]/70 backdrop-blur-xl border-t border-[#38383A]">
+<!-- Tab 1 -->
+<button class="hover:bg-white/10 active:scale-90 transition-transform duration-100 flex flex-col items-center justify-center text-[rgba(235,235,245,0.6)] w-16 h-full pt-1">
+<span class="material-symbols-outlined text-[24px] mb-0.5" style="font-variation-settings: 'FILL' 0;">list_alt</span>
+<span class="font-footnote text-[10px] leading-none">Bitácora</span>
+</button>
+<!-- Tab 2 -->
+<button class="hover:bg-white/10 active:scale-90 transition-transform duration-100 flex flex-col items-center justify-center text-[rgba(235,235,245,0.6)] w-16 h-full pt-1">
+<span class="material-symbols-outlined text-[24px] mb-0.5" style="font-variation-settings: 'FILL' 0;">radar</span>
+<span class="font-footnote text-[10px] leading-none">Radar</span>
+</button>
+<!-- Tab 3 -->
+<button class="hover:bg-white/10 active:scale-90 transition-transform duration-100 flex flex-col items-center justify-center text-[rgba(235,235,245,0.6)] w-16 h-full pt-1">
+<span class="material-symbols-outlined text-[24px] mb-0.5" style="font-variation-settings: 'FILL' 0;">menu_book</span>
+<span class="font-footnote text-[10px] leading-none">Wiki</span>
+</button>
+<!-- Tab 4: ACTIVE (Settings) -->
+<button class="hover:bg-white/10 active:scale-90 transition-transform duration-100 flex flex-col items-center justify-center text-[#007AFF] w-16 h-full pt-1">
+<span class="material-symbols-outlined text-[24px] mb-0.5" style="font-variation-settings: 'FILL' 1;">settings</span>
+<span class="font-footnote text-[10px] leading-none font-semibold">Ajustes</span>
+</button>
+<!-- Tab 5 -->
+<button class="hover:bg-white/10 active:scale-90 transition-transform duration-100 flex flex-col items-center justify-center text-[rgba(235,235,245,0.6)] w-16 h-full pt-1">
+<span class="material-symbols-outlined text-[24px] mb-0.5" style="font-variation-settings: 'FILL' 0;">analytics</span>
+<span class="font-footnote text-[10px] leading-none">Analizar</span>
+</button>
+</nav>
+</body></html>

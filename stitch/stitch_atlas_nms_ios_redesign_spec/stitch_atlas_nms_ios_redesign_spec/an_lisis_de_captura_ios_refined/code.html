@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
+<title>Análisis de captura</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        "colors": {
+          "secondary-fixed-dim": "#c8c6c8",
+          "surface-bright": "#393939",
+          "surface-variant": "#353535",
+          "text-secondary": "rgba(235, 235, 245, 0.6)",
+          "on-tertiary-container": "#29292b",
+          "surface-container": "#1f1f1f",
+          "on-secondary": "#303032",
+          "on-tertiary": "#303032",
+          "surface-container-low": "#1b1b1b",
+          "on-tertiary-fixed-variant": "#474649",
+          "surface-container-lowest": "#0e0e0e",
+          "on-secondary-fixed-variant": "#474649",
+          "on-background": "#e2e2e2",
+          "surface": "#131313",
+          "system-orange": "#FF9F0A",
+          "material-bar": "rgba(22, 22, 23, 0.72)",
+          "primary-fixed-dim": "#aac7ff",
+          "background": "#131313",
+          "secondary": "#c8c6c8",
+          "inverse-primary": "#005db8",
+          "on-secondary-container": "#b6b4b7",
+          "inverse-on-surface": "#303030",
+          "primary": "#aac7ff",
+          "tertiary-fixed": "#e4e2e4",
+          "tertiary": "#c8c6c8",
+          "on-error": "#690005",
+          "on-primary-fixed": "#001b3e",
+          "on-primary-container": "#002957",
+          "error": "#ffb4ab",
+          "surface-dim": "#131313",
+          "outline-variant": "#414754",
+          "on-surface": "#e2e2e2",
+          "separator": "rgba(84, 84, 88, 0.6)",
+          "text-primary": "#FFFFFF",
+          "system-yellow": "#FFD60A",
+          "outline": "#8b91a0",
+          "secondary-container": "#474649",
+          "on-surface-variant": "#c0c6d6",
+          "surface-container-highest": "#353535",
+          "primary-container": "#3e90ff",
+          "error-container": "#93000a",
+          "surface-tint": "#aac7ff",
+          "inverse-surface": "#e2e2e2",
+          "surface-container-high": "#2a2a2a",
+          "on-error-container": "#ffdad6",
+          "on-secondary-fixed": "#1b1b1d",
+          "primary-fixed": "#d6e3ff",
+          "on-primary-fixed-variant": "#00468d",
+          "secondary-fixed": "#e4e2e4",
+          "tertiary-container": "#919092",
+          "on-primary": "#003064",
+          "tertiary-fixed-dim": "#c8c6c8",
+          "on-tertiary-fixed": "#1b1b1d"
+        },
+        "borderRadius": {
+          "DEFAULT": "0.25rem",
+          "lg": "0.5rem",
+          "xl": "0.75rem",
+          "full": "9999px"
+        },
+        "spacing": {
+          "margin-screen": "16px",
+          "tab-bar-height": "49px",
+          "gutter-stack": "8px",
+          "padding-cell": "12px",
+          "nav-bar-height": "44px"
+        },
+        "fontFamily": {
+          "footnote": ["Inter"],
+          "technical-data": ["JetBrains Mono"],
+          "headline": ["Inter"],
+          "large-title": ["Inter"],
+          "body": ["Inter"]
+        },
+        "fontSize": {
+          "footnote": ["13px", { "lineHeight": "18px", "letterSpacing": "-0.08px", "fontWeight": "400" }],
+          "technical-data": ["12px", { "lineHeight": "16px", "fontWeight": "500" }],
+          "headline": ["17px", { "lineHeight": "22px", "letterSpacing": "-0.41px", "fontWeight": "600" }],
+          "large-title": ["34px", { "lineHeight": "41px", "letterSpacing": "0.37px", "fontWeight": "700" }],
+          "body": ["17px", { "lineHeight": "22px", "letterSpacing": "-0.41px", "fontWeight": "400" }]
+        }
+      }
+    }
+  }
+</script>
+<style>
+  /* Custom iOS toggle switch styling */
+  .ios-toggle:checked {
+    background-color: #30D158; /* iOS System Green */
+  }
+  .ios-toggle:checked:after {
+    transform: translateX(100%);
+    border-color: white;
+  }
+  .ios-toggle {
+    appearance: none;
+    width: 51px;
+    height: 31px;
+    background-color: #39393D; /* iOS Gray */
+    border-radius: 999px;
+    position: relative;
+    cursor: pointer;
+    transition: background-color 0.3s ease-in-out;
+    outline: none;
+  }
+  .ios-toggle:after {
+    content: '';
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 27px;
+    height: 27px;
+    background-color: white;
+    border-radius: 50%;
+    transition: transform 0.3s ease-in-out;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  }
+  
+  body {
+    min-height: max(884px, 100dvh);
+  }
+  
+  /* Utility to hide scrollbar for horizontal chip scroll */
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .hide-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+</style>
+</head>
+<body class="bg-black text-white antialiased font-body selection:bg-[#0A84FF]/30 selection:text-[#0A84FF]">
+<!-- Top App Bar (Task-Focused Header) -->
+<header class="fixed top-0 w-full z-50 bg-black/80 backdrop-blur-xl border-b border-[#38383A] pt-[env(safe-area-inset-top)]">
+<div class="h-nav-bar-height px-margin-screen flex items-center justify-between">
+<button class="flex items-center text-[#0A84FF] active:opacity-70 transition-opacity">
+<span class="material-symbols-outlined text-[28px] -ml-2">chevron_left</span>
+<span class="font-body text-body">Atrás</span>
+</button>
+<h1 class="font-headline text-headline absolute left-1/2 -translate-x-1/2">Análisis de captura</h1>
+<div class="w-[70px]"></div> <!-- Spacer to balance header -->
+</div>
+</header>
+<!-- Main Scrollable Content -->
+<main class="pt-[calc(44px+env(safe-area-inset-top)+16px)] pb-[calc(140px+env(safe-area-inset-bottom))] px-margin-screen space-y-8">
+<!-- Stepper Navigation -->
+<section class="w-full">
+<div class="flex items-center justify-between relative">
+<!-- Connecting Line Base -->
+<div class="absolute top-[12px] left-[10%] right-[10%] h-[2px] bg-[#38383A] z-0"></div>
+<!-- Connecting Line Active Progress -->
+<div class="absolute top-[12px] left-[10%] w-[40%] h-[2px] bg-[#0A84FF] z-0"></div>
+<!-- Step 1: Completed -->
+<div class="relative z-10 flex flex-col items-center gap-2">
+<div class="w-6 h-6 rounded-full bg-[#0A84FF] flex items-center justify-center">
+<span class="material-symbols-outlined text-[14px] text-white" style="font-variation-settings: 'FILL' 1;">check</span>
+</div>
+<span class="font-footnote text-technical-data text-[rgba(235,235,245,0.6)]">Captura</span>
+</div>
+<!-- Step 2: Completed -->
+<div class="relative z-10 flex flex-col items-center gap-2">
+<div class="w-6 h-6 rounded-full bg-[#0A84FF] flex items-center justify-center">
+<span class="material-symbols-outlined text-[14px] text-white" style="font-variation-settings: 'FILL' 1;">check</span>
+</div>
+<span class="font-footnote text-technical-data text-[rgba(235,235,245,0.6)]">OCR</span>
+</div>
+<!-- Step 3: Active -->
+<div class="relative z-10 flex flex-col items-center gap-2">
+<div class="w-[28px] h-[28px] rounded-full border-2 border-[#0A84FF] bg-black flex items-center justify-center -mt-[2px]">
+<div class="w-2.5 h-2.5 rounded-full bg-[#0A84FF]"></div>
+</div>
+<span class="font-footnote text-technical-data text-[#0A84FF]">Revisión</span>
+</div>
+<!-- Step 4: Pending -->
+<div class="relative z-10 flex flex-col items-center gap-2">
+<div class="w-6 h-6 rounded-full bg-[#1C1C1E] flex items-center justify-center border border-[#38383A]"></div>
+<span class="font-footnote text-technical-data text-[rgba(235,235,245,0.6)]">IA</span>
+</div>
+<!-- Step 5: Pending -->
+<div class="relative z-10 flex flex-col items-center gap-2">
+<div class="w-6 h-6 rounded-full bg-[#1C1C1E] flex items-center justify-center border border-[#38383A]"></div>
+<span class="font-footnote text-technical-data text-[rgba(235,235,245,0.6)]">Guardado</span>
+</div>
+</div>
+</section>
+<!-- Preview Image Section -->
+<section class="flex flex-col items-center gap-4">
+<div class="w-full aspect-video rounded-xl overflow-hidden border border-[#38383A] bg-[#1C1C1E] relative">
+<img class="w-full h-full object-cover" data-alt="A highly detailed, ultra-high resolution interface screenshot from a sci-fi exploration simulation. The central focus is a massive, glowing geometric alien structure emitting a faint blue pulse on a desolate, dark rocky planet. The sky above is a rich, moody expanse of deep space nebulae in purples and blacks. The image acts as a technical preview window within a sleek, minimal dark mode operating system, featuring crisp edges, subtle technical overlays, and a sophisticated cinematic lighting setup." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBMxFS-pOIo2wj0hRfweR_UqIlfWhjogO76Z1xixEl7E3mY9m-xRExSCq3GAlaifQXmvXPTQD_I0O8nGC2c4-HJNvFvyoOkUYrtAB8X_PCLdD5mIsIYp0sSVse5qpz7tJlB5uD1YOv4A6Jwx5AMAqgXF37w1i1JA0Nn9SnDj0jt8aNYH8iD71IlZEDmuLfXejZuBIrA1RDLV5mzSXEdyZzx6VVcxqEl4FlUk2mRIA7j3Jh8wN236sE"/>
+<div class="absolute bottom-2 right-2 bg-black/80 backdrop-blur px-2 py-1 rounded text-technical-data font-technical-data text-[rgba(235,235,245,0.6)]">
+        1920x1080
+      </div>
+</div>
+<button class="flex items-center gap-1 text-[#0A84FF] font-headline text-headline px-4 py-2 rounded-full border border-[#0A84FF] active:bg-[#0A84FF]/10 transition-colors">
+<span class="material-symbols-outlined text-[18px]">search</span>
+      VER FOTO COMPLETA
+    </button>
+</section>
+<!-- Image Processing Toggles (Grouped Cells) -->
+<section>
+<h2 class="font-footnote text-footnote text-[rgba(235,235,245,0.6)] mb-2 px-padding-cell uppercase tracking-wider">Procesamiento de Imagen</h2>
+<div class="bg-[#1C1C1E] rounded-xl overflow-hidden">
+<!-- Cell 1 -->
+<div class="flex items-center justify-between p-margin-screen bg-[#1C1C1E] active:bg-[#2C2C2E] transition-colors">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-white">contrast</span>
+<span class="font-body text-body text-white">Alto Contraste (OCR)</span>
+</div>
+<input checked="" class="ios-toggle" type="checkbox"/>
+</div>
+<!-- Divider -->
+<div class="h-[0.5px] bg-[#38383A] ml-[48px]"></div>
+<!-- Cell 2 -->
+<div class="flex items-center justify-between p-margin-screen bg-[#1C1C1E] active:bg-[#2C2C2E] transition-colors">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-white">tune</span>
+<span class="font-body text-body text-white">Binarización adaptativa</span>
+</div>
+<input class="ios-toggle" type="checkbox"/>
+</div>
+</div>
+</section>
+<!-- Extracted Data Form (Grouped Cells) -->
+<section>
+<h2 class="font-footnote text-footnote text-[rgba(235,235,245,0.6)] mb-2 px-padding-cell uppercase tracking-wider">Datos Extraídos</h2>
+<div class="bg-[#1C1C1E] rounded-xl overflow-hidden">
+<!-- Field 1 -->
+<div class="flex items-center p-margin-screen bg-[#1C1C1E]">
+<label class="w-1/3 font-body text-body text-white">Hallazgo</label>
+<input class="w-2/3 bg-transparent font-body text-body text-[rgba(235,235,245,0.6)] text-right border-none focus:ring-0 p-0 text-ellipsis outline-none" type="text" value="Monolito Korvax"/>
+</div>
+<!-- Divider -->
+<div class="h-[0.5px] bg-[#38383A] ml-4"></div>
+<!-- Field 2 -->
+<div class="flex items-center p-margin-screen bg-[#1C1C1E]">
+<label class="w-1/3 font-body text-body text-white">Sistema</label>
+<input class="w-2/3 bg-transparent font-body text-body text-[rgba(235,235,245,0.6)] text-right border-none focus:ring-0 p-0 text-ellipsis outline-none" type="text" value="Odyalutai"/>
+</div>
+<!-- Divider -->
+<div class="h-[0.5px] bg-[#38383A] ml-4"></div>
+<!-- Field 3 -->
+<div class="flex items-center p-margin-screen bg-[#1C1C1E]">
+<label class="w-1/3 font-body text-body text-white">Galaxia</label>
+<input class="w-2/3 bg-transparent font-body text-body text-[rgba(235,235,245,0.6)] text-right border-none focus:ring-0 p-0 text-ellipsis outline-none" type="text" value="Euclides"/>
+</div>
+</div>
+</section>
+<!-- Category Chips -->
+<section>
+<h2 class="font-footnote text-footnote text-[rgba(235,235,245,0.6)] mb-3 px-padding-cell uppercase tracking-wider">Categoría</h2>
+<div class="flex overflow-x-auto gap-2 pb-2 hide-scrollbar">
+<button class="whitespace-nowrap px-4 py-2 rounded-full bg-[#0A84FF] text-white font-headline text-footnote">Punto de Interés</button>
+<button class="whitespace-nowrap px-4 py-2 rounded-full bg-[#1C1C1E] text-white font-body text-footnote active:bg-[#2C2C2E] transition-colors">Nave Estrellada</button>
+<button class="whitespace-nowrap px-4 py-2 rounded-full bg-[#1C1C1E] text-white font-body text-footnote active:bg-[#2C2C2E] transition-colors">Base</button>
+<button class="whitespace-nowrap px-4 py-2 rounded-full bg-[#1C1C1E] text-white font-body text-footnote active:bg-[#2C2C2E] transition-colors">Fauna</button>
+<button class="whitespace-nowrap px-4 py-2 rounded-full bg-[#1C1C1E] text-white font-body text-footnote active:bg-[#2C2C2E] transition-colors">Flota</button>
+</div>
+</section>
+<!-- Glyphs Section -->
+<section>
+<div class="flex justify-between items-end mb-3 px-padding-cell">
+<h2 class="font-footnote text-footnote text-[rgba(235,235,245,0.6)] uppercase tracking-wider">Glifos de Portal</h2>
+<span class="font-technical-data text-technical-data text-[#0A84FF]">Detectados 12/12</span>
+</div>
+<div class="grid grid-cols-6 gap-2">
+<!-- 12 Glyph Slots -->
+<div class="aspect-square rounded-lg bg-[#1C1C1E] flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px] text-white">hexagon</span>
+</div>
+<div class="aspect-square rounded-lg bg-[#1C1C1E] flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px] text-white">eco</span>
+</div>
+<div class="aspect-square rounded-lg bg-[#1C1C1E] flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px] text-white">flight</span>
+</div>
+<div class="aspect-square rounded-lg bg-[#1C1C1E] flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px] text-white">bug_report</span>
+</div>
+<div class="aspect-square rounded-lg bg-[#1C1C1E] flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px] text-white">anchor</span>
+</div>
+<div class="aspect-square rounded-lg bg-[#1C1C1E] flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px] text-white">rocket</span>
+</div>
+<div class="aspect-square rounded-lg bg-[#1C1C1E] flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px] text-white">radar</span>
+</div>
+<div class="aspect-square rounded-lg bg-[#1C1C1E] flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px] text-white">sailing</span>
+</div>
+<div class="aspect-square rounded-lg bg-[#1C1C1E] flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px] text-white">wb_sunny</span>
+</div>
+<div class="aspect-square rounded-lg bg-[#1C1C1E] flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px] text-white">dark_mode</span>
+</div>
+<div class="aspect-square rounded-lg bg-[#1C1C1E] flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px] text-white">pets</span>
+</div>
+<div class="aspect-square rounded-lg bg-[#1C1C1E] flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px] text-white">architecture</span>
+</div>
+</div>
+</section>
+</main>
+<!-- Bottom Dock Actions -->
+<footer class="fixed bottom-0 w-full bg-black/80 backdrop-blur-xl border-t border-[#38383A] px-margin-screen pt-4 pb-[calc(16px+env(safe-area-inset-bottom))] z-50 flex flex-col gap-3">
+<button class="w-full bg-[#0A84FF] text-white font-headline text-headline py-3.5 rounded-xl flex items-center justify-center gap-2 active:scale-[0.98] transition-transform">
+<span class="material-symbols-outlined text-[20px]">smart_toy</span>
+    ANALIZAR CON IA Y GUARDAR
+  </button>
+<button class="w-full bg-[#1C1C1E] text-white font-headline text-headline py-3.5 rounded-xl active:bg-[#2C2C2E] transition-colors">
+    Guardar Directo
+  </button>
+</footer>
+</body></html>

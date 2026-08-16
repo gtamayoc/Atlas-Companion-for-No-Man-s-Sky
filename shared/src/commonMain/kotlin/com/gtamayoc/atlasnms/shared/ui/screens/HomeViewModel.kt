@@ -15,6 +15,8 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.stateIn
 
+import kotlinx.coroutines.launch
+
 sealed interface HomeUiState {
     data object Loading : HomeUiState
     data class Success(
@@ -78,4 +80,11 @@ class HomeViewModel(
         _selectedType.value = null
         _searchQuery.value = ""
     }
+
+    fun deleteDiscovery(id: String) {
+        viewModelScope.launch {
+            repository.deleteDiscovery(id)
+        }
+    }
 }
+

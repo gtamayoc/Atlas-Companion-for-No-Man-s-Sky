@@ -1,5 +1,12 @@
 package com.gtamayoc.atlasnms.shared.ui.screens
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.togetherWith
+import androidx.compose.animation.SizeTransform
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -71,74 +78,83 @@ fun HomeScreen(
     Box(
         modifier = Modifier.fillMaxSize()
     ) {
-        when (val state = uiState) {
-            is HomeUiState.Loading -> {
-                com.gtamayoc.atlasnms.shared.ui.components.AtlasLoadingOverlay(
-                    message = "CARGANDO BITÁCORA GALÁCTICA...",
-                    subMessage = "Recuperando registros de exploraciones"
-                )
-            }
-            is HomeUiState.Error -> {
-                Box(
-                    modifier = Modifier.fillMaxSize().padding(spacing.xxl),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = "Error de enlace: ${state.message}",
-                        color = MaterialTheme.colorScheme.error,
-                        style = MaterialTheme.typography.titleMedium,
-                        textAlign = TextAlign.Center
+        AnimatedContent(
+            targetState = uiState,
+            transitionSpec = {
+                (fadeIn(animationSpec = tween(durationMillis = 220, easing = FastOutSlowInEasing)) togetherWith
+                fadeOut(animationSpec = tween(durationMillis = 180, easing = FastOutSlowInEasing)))
+                    .using(SizeTransform(clip = false))
+            },
+            label = "HomeUiStateTransition"
+        ) { state ->
+            when (state) {
+                is HomeUiState.Loading -> {
+                    com.gtamayoc.atlasnms.shared.ui.components.AtlasLoadingOverlay(
+                        message = "CARGANDO BITÁCORA GALÁCTICA...",
+                        subMessage = "Recuperando registros de exploraciones"
                     )
                 }
-            }
-            is HomeUiState.Success -> {
-                if (state.discoveries.isEmpty()) {
+                is HomeUiState.Error -> {
                     Box(
                         modifier = Modifier.fillMaxSize().padding(spacing.xxl),
                         contentAlignment = Alignment.Center
                     ) {
-                        Column(
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.spacedBy(spacing.md)
-                        ) {
-                            Text(
-                                text = "BITÁCORA VACÍA",
-                                style = MaterialTheme.typography.titleLarge,
-                                color = MaterialTheme.colorScheme.primary,
-                                fontWeight = FontWeight.Bold
-                            )
-                            Text(
-                                text = "Aún no se han registrado descubrimientos en este sector galáctico. Presiona ANALIZAR para registrar tu primer hallazgo.",
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                textAlign = TextAlign.Center
-                            )
-                        }
+                        Text(
+                            text = "Error de enlace: ${state.message}",
+                            color = MaterialTheme.colorScheme.error,
+                            style = MaterialTheme.typography.titleMedium,
+                            textAlign = TextAlign.Center
+                        )
                     }
-                } else if (state.filteredDiscoveries.isEmpty()) {
-                    Box(
-                        modifier = Modifier.fillMaxSize().padding(spacing.xxl),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Column(
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.spacedBy(spacing.md)
+                }
+                is HomeUiState.Success -> {
+                    if (state.discoveries.isEmpty()) {
+                        Box(
+                            modifier = Modifier.fillMaxSize().padding(spacing.xxl),
+                            contentAlignment = Alignment.Center
                         ) {
-                            Text(
-                                text = "SIN RESULTADOS CON EL FILTRO ACTUAL",
-                                style = MaterialTheme.typography.titleMedium,
-                                color = MaterialTheme.colorScheme.secondary,
-                                fontWeight = FontWeight.Bold
-                            )
-                            OutlinedButton(
-                                onClick = { viewModel.clearFilters() },
-                                shape = RoundedCornerShape(AtlasDimensions.corners.extraSmall)
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.spacedBy(spacing.md)
                             ) {
-                                Text("LIMPIAR FILTROS", style = MaterialTheme.typography.labelLarge)
+                                Text(
+                                    text = "BITÁCORA VACÍA",
+                                    style = MaterialTheme.typography.titleLarge,
+                                    color = MaterialTheme.colorScheme.primary,
+                                    fontWeight = FontWeight.Bold
+                                )
+                                Text(
+                                    text = "Aún no se han registrado descubrimientos en este sector galáctico. Presiona ANALIZAR para registrar tu primer hallazgo.",
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    textAlign = TextAlign.Center
+                                )
                             }
                         }
-                    }
-                } else {
+                    } else if (state.filteredDiscoveries.isEmpty()) {
+                        Box(
+                            modifier = Modifier.fillMaxSize().padding(spacing.xxl),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.spacedBy(spacing.md)
+                            ) {
+                                Text(
+                                    text = "SIN RESULTADOS CON EL FILTRO ACTUAL",
+                                    style = MaterialTheme.typography.titleMedium,
+                                    color = MaterialTheme.colorScheme.secondary,
+                                    fontWeight = FontWeight.Bold
+                                )
+                                OutlinedButton(
+                                    onClick = { viewModel.clearFilters() },
+                                    shape = RoundedCornerShape(AtlasDimensions.corners.extraSmall)
+                                ) {
+                                    Text("LIMPIAR FILTROS", style = MaterialTheme.typography.labelLarge)
+                                }
+                            }
+                        }
+                    } else {
                         LazyColumn(
                             contentPadding = PaddingValues(spacing.lg),
                             verticalArrangement = Arrangement.spacedBy(spacing.lg),
@@ -152,106 +168,112 @@ fun HomeScreen(
                                 val onItemClick = remember(discovery, onDiscoveryClick) {
                                     { onDiscoveryClick(discovery) }
                                 }
+                                val onItemDelete = remember(discovery.id, viewModel) {
+                                    { viewModel.deleteDiscovery(discovery.id) }
+                                }
                                 DiscoveryCard(
                                     discovery = discovery,
-                                    onClick = onItemClick
+                                    onClick = onItemClick,
+                                    onDelete = onItemDelete
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        // ModalBottomSheet de Filtros M3
+        if (showFilterSheet && uiState is HomeUiState.Success) {
+            val successState = uiState as HomeUiState.Success
+            ModalBottomSheet(
+                onDismissRequest = { showFilterSheet = false },
+                sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
+                containerColor = MaterialTheme.colorScheme.surfaceContainer
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(spacing.xl),
+                    verticalArrangement = Arrangement.spacedBy(spacing.lg)
+                ) {
+                    Text(
+                        text = "⚡ FILTRAR BITÁCORA",
+                        style = MaterialTheme.typography.titleMedium,
+                        color = MaterialTheme.colorScheme.primary,
+                        fontWeight = FontWeight.Bold
+                    )
+
+                    OutlinedTextField(
+                        value = successState.searchQuery,
+                        onValueChange = { viewModel.setSearchQuery(it) },
+                        label = { Text("Buscar por nombre, sistema o galaxia") },
+                        singleLine = true,
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedBorderColor = MaterialTheme.colorScheme.primary,
+                            unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant
+                        )
+                    )
+
+                    Text(
+                        text = "CATEGORÍA DE HALLAZGO",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+
+                    FlowRow(
+                        horizontalArrangement = Arrangement.spacedBy(spacing.sm),
+                        verticalArrangement = Arrangement.spacedBy(spacing.sm),
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        FilterChip(
+                            selected = successState.selectedType == null,
+                            onClick = { viewModel.setTypeFilter(null) },
+                            label = { Text("TODOS") },
+                            colors = FilterChipDefaults.filterChipColors(
+                                selectedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+                                selectedLabelColor = MaterialTheme.colorScheme.onPrimaryContainer
+                            )
+                        )
+                        for (type in DiscoveryType.entries) {
+                            key(type.name) {
+                                FilterChip(
+                                    selected = successState.selectedType == type,
+                                    onClick = { viewModel.setTypeFilter(type) },
+                                    label = { Text(type.name) },
+                                    colors = FilterChipDefaults.filterChipColors(
+                                        selectedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+                                        selectedLabelColor = MaterialTheme.colorScheme.onPrimaryContainer
+                                    )
                                 )
                             }
                         }
                     }
 
-                    // ModalBottomSheet de Filtros M3
-                    if (showFilterSheet) {
-                        ModalBottomSheet(
-                            onDismissRequest = { showFilterSheet = false },
-                            sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
-                            containerColor = MaterialTheme.colorScheme.surfaceContainer
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.End
+                    ) {
+                        OutlinedButton(
+                            onClick = {
+                                viewModel.clearFilters()
+                                showFilterSheet = false
+                            },
+                            shape = RoundedCornerShape(AtlasDimensions.corners.small)
                         ) {
-                            Column(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(spacing.xl),
-                                verticalArrangement = Arrangement.spacedBy(spacing.lg)
-                            ) {
-                                Text(
-                                    text = "⚡ FILTRAR BITÁCORA",
-                                    style = MaterialTheme.typography.titleMedium,
-                                    color = MaterialTheme.colorScheme.primary,
-                                    fontWeight = FontWeight.Bold
-                                )
-
-                                OutlinedTextField(
-                                    value = state.searchQuery,
-                                    onValueChange = { viewModel.setSearchQuery(it) },
-                                    label = { Text("Buscar por nombre, sistema o galaxia") },
-                                    singleLine = true,
-                                    modifier = Modifier.fillMaxWidth(),
-                                    colors = OutlinedTextFieldDefaults.colors(
-                                        focusedBorderColor = MaterialTheme.colorScheme.primary,
-                                        unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant
-                                    )
-                                )
-
-                                Text(
-                                    text = "CATEGORÍA DE HALLAZGO",
-                                    style = MaterialTheme.typography.labelSmall,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                                )
-
-                                FlowRow(
-                                    horizontalArrangement = Arrangement.spacedBy(spacing.sm),
-                                    verticalArrangement = Arrangement.spacedBy(spacing.sm),
-                                    modifier = Modifier.fillMaxWidth()
-                                ) {
-                                    FilterChip(
-                                        selected = state.selectedType == null,
-                                        onClick = { viewModel.setTypeFilter(null) },
-                                        label = { Text("TODOS") },
-                                        colors = FilterChipDefaults.filterChipColors(
-                                            selectedContainerColor = MaterialTheme.colorScheme.primaryContainer,
-                                            selectedLabelColor = MaterialTheme.colorScheme.onPrimaryContainer
-                                        )
-                                    )
-                                    for (type in DiscoveryType.entries) {
-                                        key(type.name) {
-                                            FilterChip(
-                                                selected = state.selectedType == type,
-                                                onClick = { viewModel.setTypeFilter(type) },
-                                                label = { Text(type.name) },
-                                                colors = FilterChipDefaults.filterChipColors(
-                                                    selectedContainerColor = MaterialTheme.colorScheme.primaryContainer,
-                                                    selectedLabelColor = MaterialTheme.colorScheme.onPrimaryContainer
-                                                )
-                                            )
-                                        }
-                                    }
-                                }
-
-                                Row(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    horizontalArrangement = Arrangement.End
-                                ) {
-                                    OutlinedButton(
-                                        onClick = {
-                                            viewModel.clearFilters()
-                                            showFilterSheet = false
-                                        },
-                                        shape = RoundedCornerShape(AtlasDimensions.corners.small)
-                                    ) {
-                                        Text("RESETEAR")
-                                    }
-                                    Spacer(modifier = Modifier.width(spacing.md))
-                                    Button(
-                                        onClick = { showFilterSheet = false },
-                                        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
-                                        shape = RoundedCornerShape(AtlasDimensions.corners.small)
-                                    ) {
-                                        Text("APLICAR", color = MaterialTheme.colorScheme.onPrimary)
-                                    }
-                                }
-                            }
+                            Text("RESETEAR")
+                        }
+                        Spacer(modifier = Modifier.width(spacing.md))
+                        Button(
+                            onClick = { showFilterSheet = false },
+                            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
+                            shape = RoundedCornerShape(AtlasDimensions.corners.small)
+                        ) {
+                            Text("APLICAR", color = MaterialTheme.colorScheme.onPrimary)
                         }
                     }
+                }
             }
         }
 

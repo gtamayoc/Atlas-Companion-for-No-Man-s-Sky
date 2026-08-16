@@ -43,8 +43,7 @@ fun DiscoveryDetailScreen(
 ) {
     val scrollState = rememberScrollState()
 
-    AtlasNMSTheme {
-        Scaffold { paddingValues ->
+    Scaffold { paddingValues ->
             Column(
                 modifier = Modifier
                     .fillMaxSize()
@@ -212,7 +211,6 @@ fun DiscoveryDetailScreen(
             }
         }
     }
-}
 
 @Composable
 private fun DetailRow(label: String, value: String) {

@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/>
+<title>Atlas NMS</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        body {
+            background-color: #000000;
+            -webkit-tap-highlight-color: transparent;
+            min-height: max(884px, 100dvh);
+        }
+        .glass-nav {
+            background-color: rgba(22, 22, 23, 0.72);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+        .safe-top {
+            padding-top: env(safe-area-inset-top, 47px);
+        }
+        .safe-bottom {
+            padding-bottom: env(safe-area-inset-bottom, 34px);
+        }
+        .ios-search-input::-webkit-search-cancel-button {
+            -webkit-appearance: none;
+        }
+        .sf-pro {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+</style>
+</head>
+<body class="bg-[#000000] text-[#FFFFFF] min-h-screen flex flex-col sf-pro antialiased pb-[140px]">
+<!-- Top Navigation Area -->
+<header class="fixed top-0 w-full z-50 glass-nav border-b border-[rgba(84,84,88,0.6)]">
+<div class="safe-top"></div>
+<div class="flex items-center justify-between px-[16px] h-[44px] w-full text-[#0A84FF]">
+<button class="flex items-center hover:opacity-80 active:scale-95 transition-all">
+<span class="material-symbols-outlined text-[24px]">menu</span>
+</button>
+<div class="text-[17px] font-semibold text-[#FFFFFF] tracking-[-0.41px]">Bitácora</div>
+<button class="flex items-center hover:opacity-80 active:scale-95 transition-all">
+<span class="material-symbols-outlined text-[24px]">account_circle</span>
+</button>
+</div>
+</header>
+<!-- Main Content -->
+<main class="flex-1 mt-[90px] px-[16px]">
+<!-- Header & Stats -->
+<div class="mb-6">
+<h1 class="text-[34px] font-bold text-[#FFFFFF] tracking-[0.37px] leading-[41px]">Bitácora</h1>
+<p class="text-[13px] text-[rgba(235,235,245,0.6)] mt-1 tracking-[-0.08px]">128 descubrimientos</p>
+</div>
+<!-- iOS Search Bar -->
+<div class="mb-6 relative">
+<div class="absolute inset-y-0 left-0 pl-2 flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-[rgba(235,235,245,0.6)] text-[20px]">search</span>
+</div>
+<input class="w-full bg-[#1C1C1E] text-[#FFFFFF] rounded-[10px] pl-9 pr-3 py-[7px] text-[17px] leading-[22px] border-none focus:ring-0 placeholder:text-[rgba(235,235,245,0.6)] ios-search-input" placeholder="Buscar..." type="search"/>
+<div class="absolute inset-y-0 right-0 pr-2 flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-[rgba(235,235,245,0.6)] text-[16px] hidden">mic</span>
+</div>
+</div>
+<!-- Segmented Control -->
+<div class="flex bg-[#1C1C1E] p-0.5 rounded-[8.91px] mb-6 relative z-10">
+<button class="flex-1 text-center py-1 rounded-[6.93px] bg-[rgba(84,84,88,0.4)] text-[#FFFFFF] text-[13px] font-medium shadow-sm">Todos</button>
+<button class="flex-1 text-center py-1 rounded-[6.93px] text-[rgba(235,235,245,0.6)] text-[13px] hover:bg-[#2C2C2E] transition-colors">Planetas</button>
+<button class="flex-1 text-center py-1 rounded-[6.93px] text-[rgba(235,235,245,0.6)] text-[13px] hover:bg-[#2C2C2E] transition-colors">Naves</button>
+<button class="flex-1 text-center py-1 rounded-[6.93px] text-[rgba(235,235,245,0.6)] text-[13px] hover:bg-[#2C2C2E] transition-colors">Fauna</button>
+</div>
+<!-- Inset Grouped List -->
+<div class="bg-[#1C1C1E] rounded-[10px] overflow-hidden flex flex-col mb-24">
+<!-- Discovery Item 1 -->
+<button class="flex items-center p-[12px] w-full text-left bg-[#1C1C1E] hover:bg-[#2C2C2E] active:bg-[#3A3A3C] transition-colors border-b border-[rgba(84,84,88,0.6)] last:border-0 relative">
+<div class="w-[56px] h-[56px] rounded-[6px] overflow-hidden shrink-0 mr-3 bg-[#2C2C2E]">
+<img class="w-full h-full object-cover" data-alt="A lush, vibrant alien planet landscape from a sci-fi video game, viewed from orbit. Bright glowing neon flora dot the surface. Deep black space background with a brilliant white and pale blue atmosphere rim. High contrast, technical sci-fi aesthetic, extreme detail." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBXIWq-ujs4W5kbBYkLl49Kd1tJUoiN7Vj9prCstPVb6kxwRHwmIrJZpfHrj3LWE1L0uWKf9wuGH89pkaAQhg10nr2XZZVSfK7P3zqJCapaWWtc68NLMq0VufFdxjf_ZN1p90CLatiUkgVtVvS0eTwWHIVV_BRPfACirag40UEA_Ks30duo-frNxM__00BrnmTXaAonVrjNidRpkzvEE-mlvtQGkVmrZoQe8cwLhQhDnDTPBo_NaG4"/>
+</div>
+<div class="flex-1 min-w-0 pr-2">
+<div class="flex justify-between items-start mb-0.5">
+<h3 class="text-[17px] font-semibold text-[#FFFFFF] truncate tracking-[-0.41px]">Eissentam Prime</h3>
+<span class="inline-flex items-center px-1.5 py-0.5 rounded-full text-[10px] font-semibold bg-[rgba(84,84,88,0.3)] text-[rgba(235,235,245,0.6)] uppercase shrink-0 ml-2 mt-0.5">Confirmed</span>
+</div>
+<p class="text-[13px] text-[rgba(235,235,245,0.6)] truncate mb-1 tracking-[-0.08px]">Sistema: Ocopadica — Galaxia: Euclid</p>
+<div class="font-mono text-[12px] font-medium text-[rgba(235,235,245,0.4)] flex gap-1 items-center">
+<span class="material-symbols-outlined text-[14px]">hexagon</span>
+<span>042F:0079:0D55:0039</span>
+</div>
+</div>
+<span class="material-symbols-outlined text-[rgba(235,235,245,0.3)] ml-1">chevron_right</span>
+</button>
+<!-- Discovery Item 2 -->
+<button class="flex items-center p-[12px] w-full text-left bg-[#1C1C1E] hover:bg-[#2C2C2E] active:bg-[#3A3A3C] transition-colors border-b border-[rgba(84,84,88,0.6)] last:border-0 relative">
+<div class="w-[56px] h-[56px] rounded-[6px] overflow-hidden shrink-0 mr-3 bg-[#2C2C2E]">
+<img class="w-full h-full object-cover" data-alt="A sleek, aerodynamic starship docked on a metallic space station landing pad. The ship has aggressive angular wings, painted in dark matte greys with striking icy blue accents. Ambient stark white hangar lighting illuminates the hull details. Pure black vacuum of space visible through a viewport." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDZgvR8DFNffQisxrW_V0DRC9PT4dtx-rQcWzw62m5baAa-f0Rg4hlAOgYWZpMOMG6o_q9wElS-_wd5h7APxgssY9lDykL-Lj98YqKgfy87VBecsW9fjyxDDieTms8vn2LjbNaIWlzF3TsYrFantwqLG_SefBNn5OoS1pU4xpKuA67d1t9HfQJLBkyloZGSPl9i0c4U186xCGtg9dduw9RBYuvJHoPBrTAMJnFZNhQqFXzsdMdh7Oo"/>
+</div>
+<div class="flex-1 min-w-0 pr-2">
+<div class="flex justify-between items-start mb-0.5">
+<h3 class="text-[17px] font-semibold text-[#FFFFFF] truncate tracking-[-0.41px]">Vector de Hierro S7</h3>
+<span class="inline-flex items-center px-1.5 py-0.5 rounded-full text-[10px] font-semibold bg-[rgba(84,84,88,0.3)] text-[rgba(235,235,245,0.6)] uppercase shrink-0 ml-2 mt-0.5">Pending</span>
+</div>
+<p class="text-[13px] text-[rgba(235,235,245,0.6)] truncate mb-1 tracking-[-0.08px]">Sistema: Dorigia — Galaxia: Hilbert</p>
+<div class="font-mono text-[12px] font-medium text-[rgba(235,235,245,0.4)] flex gap-1 items-center">
+<span class="material-symbols-outlined text-[14px]">rocket_launch</span>
+<span>CL-88 Alpha</span>
+</div>
+</div>
+<span class="material-symbols-outlined text-[rgba(235,235,245,0.3)] ml-1">chevron_right</span>
+</button>
+<!-- Discovery Item 3 -->
+<button class="flex items-center p-[12px] w-full text-left bg-[#1C1C1E] hover:bg-[#2C2C2E] active:bg-[#3A3A3C] transition-colors border-b border-[rgba(84,84,88,0.6)] last:border-0 relative">
+<div class="w-[56px] h-[56px] rounded-[6px] overflow-hidden shrink-0 mr-3 bg-[#2C2C2E]">
+<img class="w-full h-full object-cover" data-alt="A bizarre alien creature standing in a dense, dark crimson forest. The creature resembles a towering crystalline quadruped with glowing pale blue bioluminescent nodes on its joints. The scene is shrouded in atmospheric dark grey mist. Technical scanning UI overlays faintly visible in pure white." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD1rRA7i81hbj885wXkjnTBvYA6jIBxTyaTLM7w4N7ALp5SkPFyF-O5MxVk0DBZ-08z4XDH0TLBxJ5FX2qPzvojpdZg8Jx0iyV9lWz1Yvnr41ijZZxgKvFKokaqFj8C6y_jmw3o90p2-dReGLbCStvnWpLsVyiaJvdOG7sDF7nmUmGMzYFbsX--FF_XoxTZW3Ryx6y_jfOxgumXrtTiAn7DxjDOAC-IdKEQhpiTdBXSCzlWQe5WVTQ"/>
+</div>
+<div class="flex-1 min-w-0 pr-2">
+<div class="flex justify-between items-start mb-0.5">
+<h3 class="text-[17px] font-semibold text-[#FFFFFF] truncate tracking-[-0.41px]">Cervus Cristalis</h3>
+<span class="inline-flex items-center px-1.5 py-0.5 rounded-full text-[10px] font-semibold bg-[rgba(84,84,88,0.3)] text-[rgba(235,235,245,0.6)] uppercase shrink-0 ml-2 mt-0.5">Confirmed</span>
+</div>
+<p class="text-[13px] text-[rgba(235,235,245,0.6)] truncate mb-1 tracking-[-0.08px]">Sistema: Xobeurindj — Galaxia: Calypso</p>
+<div class="font-mono text-[12px] font-medium text-[rgba(235,235,245,0.4)] flex gap-1 items-center">
+<span class="material-symbols-outlined text-[14px]">pets</span>
+<span>Fauna: Alpha</span>
+</div>
+</div>
+<span class="material-symbols-outlined text-[rgba(235,235,245,0.3)] ml-1">chevron_right</span>
+</button>
+</div>
+</main>
+<!-- Floating Action Button Area -->
+<div class="fixed bottom-[83px] left-0 w-full px-[16px] z-40 pointer-events-none flex justify-center pb-4">
+<button class="pointer-events-auto bg-[#0A84FF] text-[#FFFFFF] text-[17px] font-semibold px-6 py-3.5 rounded-full shadow-lg flex items-center gap-2 active:scale-95 transition-transform tracking-[-0.41px]">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">photo_camera</span>
+            Analizar captura
+        </button>
+</div>
+<!-- Bottom Navigation Bar -->
+<nav class="fixed bottom-0 left-0 w-full z-50 glass-nav flex justify-around items-center px-[12px] safe-bottom h-[83px] border-t border-[rgba(84,84,88,0.6)]">
+<button class="flex flex-col items-center justify-center text-[#0A84FF] active:scale-90 transition-transform duration-100 min-w-[64px]">
+<span class="material-symbols-outlined text-[24px] mb-1" style="font-variation-settings: 'FILL' 1;">list_alt</span>
+<span class="text-[10px] font-medium leading-tight tracking-[-0.08px]">Bitácora</span>
+</button>
+<button class="flex flex-col items-center justify-center text-[rgba(235,235,245,0.6)] hover:bg-[#2C2C2E] rounded-lg p-1 active:scale-90 transition-transform duration-100 min-w-[64px]">
+<span class="material-symbols-outlined text-[24px] mb-1">radar</span>
+<span class="text-[10px] font-medium leading-tight tracking-[-0.08px]">Radar</span>
+</button>
+<button class="flex flex-col items-center justify-center text-[rgba(235,235,245,0.6)] hover:bg-[#2C2C2E] rounded-lg p-1 active:scale-90 transition-transform duration-100 min-w-[64px]">
+<span class="material-symbols-outlined text-[24px] mb-1">menu_book</span>
+<span class="text-[10px] font-medium leading-tight tracking-[-0.08px]">Wiki</span>
+</button>
+<button class="flex flex-col items-center justify-center text-[rgba(235,235,245,0.6)] hover:bg-[#2C2C2E] rounded-lg p-1 active:scale-90 transition-transform duration-100 min-w-[64px]">
+<span class="material-symbols-outlined text-[24px] mb-1">settings</span>
+<span class="text-[10px] font-medium leading-tight tracking-[-0.08px]">Ajustes</span>
+</button>
+<button class="flex flex-col items-center justify-center text-[rgba(235,235,245,0.6)] hover:bg-[#2C2C2E] rounded-lg p-1 active:scale-90 transition-transform duration-100 min-w-[64px]">
+<span class="material-symbols-outlined text-[24px] mb-1">analytics</span>
+<span class="text-[10px] font-medium leading-tight tracking-[-0.08px]">Analizar</span>
+</button>
+</nav>
+</body></html>

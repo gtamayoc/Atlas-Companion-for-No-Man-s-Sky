@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
+<title>Atlas NMS - Radar</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "system-blue": "#0A84FF",
+                        "ios-bg": "#000000",
+                        "ios-surface": "#1C1C1E",
+                        "ios-separator": "#38383A",
+                        "ios-text-secondary": "rgba(235, 235, 245, 0.6)",
+                        "ios-gray": "#8E8E93"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "padding_cell": "12px",
+                        "tab_bar_height": "49px",
+                        "stack_gap_tight": "4px",
+                        "margin_screen": "16px",
+                        "nav_bar_height": "44px",
+                        "stack_gap_standard": "8px",
+                        "safe-bottom": "env(safe-area-inset-bottom)",
+                        "safe-top": "env(safe-area-inset-top)"
+                    },
+                    "fontFamily": {
+                        "technical-data": ["JetBrains Mono", "monospace"],
+                        "title-1": ["Inter", "sans-serif"],
+                        "footnote": ["Inter", "sans-serif"],
+                        "headline": ["Inter", "sans-serif"],
+                        "body": ["Inter", "sans-serif"],
+                        "large-title": ["Inter", "sans-serif"]
+                    },
+                    "fontSize": {
+                        "technical-data": ["12px", {"lineHeight": "16px", "fontWeight": "500"}],
+                        "title-1": ["28px", {"lineHeight": "34px", "fontWeight": "600"}],
+                        "footnote": ["13px", {"lineHeight": "18px", "fontWeight": "400"}],
+                        "headline": ["17px", {"lineHeight": "22px", "fontWeight": "600"}],
+                        "body": ["17px", {"lineHeight": "22px", "fontWeight": "400"}],
+                        "large-title": ["34px", {"lineHeight": "41px", "letterSpacing": "0.37px", "fontWeight": "700"}]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body {
+            -webkit-tap-highlight-color: transparent;
+            padding-top: env(safe-area-inset-top);
+            padding-bottom: calc(env(safe-area-inset-bottom) + 49px);
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .material-symbols-outlined[data-weight="fill"] {
+            font-variation-settings: 'FILL' 1;
+        }
+        
+        /* Custom iOS style Segmented Control sliding background */
+        .segmented-bg {
+            transition: transform 0.25s cubic-bezier(0.2, 0, 0, 1);
+            transform: translateX(200%);
+            width: calc(33.333% - 2px);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="bg-ios-bg text-white antialiased min-h-screen flex flex-col">
+<!-- Main Canvas -->
+<main class="flex-1 px-margin_screen pt-6 pb-12 flex flex-col gap-6">
+<!-- Large Title -->
+<header>
+<h1 class="font-large-title text-large-title text-white">Radar</h1>
+</header>
+<!-- iOS Segmented Control -->
+<div class="relative w-full bg-[rgba(118,118,128,0.24)] rounded-[8.91px] p-[2px] flex items-center h-[32px]">
+<!-- Sliding Indicator -->
+<div class="absolute left-[2px] top-[2px] bottom-[2px] rounded-[6.91px] bg-[#636366] shadow-[0_3px_1px_rgba(0,0,0,0.04),0_3px_8px_rgba(0,0,0,0.12)] segmented-bg z-0"></div>
+<button class="flex-1 relative z-10 font-footnote text-footnote text-white py-1 text-center truncate">Portal</button>
+<button class="flex-1 relative z-10 font-footnote text-footnote text-white py-1 text-center truncate">Calculadora</button>
+<button class="flex-1 relative z-10 font-footnote text-footnote text-white py-1 text-center truncate font-semibold">Teleports</button>
+</div>
+<!-- Teleports Tab Content -->
+<div class="flex flex-col gap-5 animate-[fadeIn_0.3s_ease-out]">
+<!-- Glyph Section -->
+<section class="flex flex-col gap-2">
+<h2 class="font-footnote text-footnote text-ios-text-secondary uppercase tracking-wider pl-4">Secuencia de Portal</h2>
+<div class="bg-ios-surface rounded-[10px] p-padding_cell">
+<div class="flex justify-between items-center bg-ios-bg rounded py-3 px-2">
+<!-- Simulated NMS Glyphs -->
+<span class="font-technical-data text-technical-data text-system-blue tracking-[0.3em]">0 4 2 9 0 1 A B C 7 F E</span>
+<button class="w-8 h-8 flex items-center justify-center rounded-full bg-ios-surface hover:bg-ios-separator transition-colors">
+<span class="material-symbols-outlined text-[18px] text-system-blue" data-icon="content_copy">content_copy</span>
+</button>
+</div>
+</div>
+</section>
+<!-- Generate Button -->
+<button class="w-full bg-system-blue text-white font-headline text-headline rounded-xl py-3.5 flex items-center justify-center gap-2 active:scale-[0.98] transition-transform duration-150">
+<span class="text-[20px]">🎲</span>
+                GENERAR TELEPORT
+            </button>
+<!-- Results Section -->
+<section class="flex flex-col gap-2 mt-2">
+<h2 class="font-footnote text-footnote text-ios-text-secondary uppercase tracking-wider pl-4">Datos Tácticos</h2>
+<div class="bg-ios-surface rounded-[10px] divide-y divide-ios-separator overflow-hidden">
+<div class="flex justify-between items-center p-padding_cell">
+<span class="font-body text-body text-white">Coordenadas</span>
+<span class="font-technical-data text-technical-data text-system-blue bg-ios-bg px-2 py-1 rounded">X:-42.5 Y:12.1 Z:108.9</span>
+</div>
+<div class="flex justify-between items-center p-padding_cell">
+<span class="font-body text-body text-white">Dist. al Centro</span>
+<span class="font-technical-data text-technical-data text-ios-text-secondary">42,501 LY</span>
+</div>
+<div class="flex justify-between items-center p-padding_cell">
+<span class="font-body text-body text-white">Región</span>
+<span class="font-body text-body text-ios-text-secondary">Owdia Expanses</span>
+</div>
+</div>
+</section>
+<!-- Save Button -->
+<button class="w-full bg-ios-surface text-system-blue font-headline text-headline rounded-xl py-3.5 flex items-center justify-center gap-2 active:scale-[0.98] transition-transform duration-150 mt-2">
+<span class="text-[20px]">💾</span>
+                Guardar en bitácora
+            </button>
+<!-- Saved List Section -->
+<section class="flex flex-col gap-2 mt-4">
+<h2 class="font-footnote text-footnote text-ios-text-secondary uppercase tracking-wider pl-4">Recientes</h2>
+<div class="bg-ios-surface rounded-[10px] divide-y divide-ios-separator overflow-hidden">
+<button class="w-full flex items-center gap-3 p-padding_cell active:bg-ios-separator transition-colors text-left">
+<div class="w-8 h-8 rounded-full bg-system-blue/20 flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-[18px] text-system-blue" data-icon="location_on" data-weight="fill">location_on</span>
+</div>
+<div class="flex-1 flex flex-col overflow-hidden">
+<span class="font-headline text-headline text-white truncate">Alpha Centauri Hub</span>
+<span class="font-footnote text-footnote text-ios-text-secondary truncate">Euclides • 0429...</span>
+</div>
+<span class="material-symbols-outlined text-ios-gray text-[20px]" data-icon="chevron_right">chevron_right</span>
+</button>
+<button class="w-full flex items-center gap-3 p-padding_cell active:bg-ios-separator transition-colors text-left">
+<div class="w-8 h-8 rounded-full bg-system-blue/20 flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-[18px] text-system-blue" data-icon="explore" data-weight="fill">explore</span>
+</div>
+<div class="flex-1 flex flex-col overflow-hidden">
+<span class="font-headline text-headline text-white truncate">Punto de Salto Eissentam</span>
+<span class="font-footnote text-footnote text-ios-text-secondary truncate">Eissentam • 1B4C...</span>
+</div>
+<span class="material-symbols-outlined text-ios-gray text-[20px]" data-icon="chevron_right">chevron_right</span>
+</button>
+</div>
+</section>
+</div>
+</main>
+<!-- BottomNavBar (Shared Component) -->
+<nav class="fixed bottom-0 left-0 w-full h-tab_bar_height z-50 flex justify-around items-center px-padding_cell pb-safe bg-black/75 backdrop-blur-xl border-t border-[#38383A] shadow-none">
+<!-- Bitácora -->
+<a class="flex flex-col items-center justify-center text-ios-gray hover:bg-ios-separator/20 active:scale-90 transition-transform duration-100 w-16 h-full" href="#">
+<span class="material-symbols-outlined text-[24px] mb-0.5" data-icon="list_alt">list_alt</span>
+<span class="font-footnote text-[10px] font-medium tracking-tight">Bitácora</span>
+</a>
+<!-- Radar (Active) -->
+<a class="flex flex-col items-center justify-center text-system-blue hover:bg-ios-separator/20 active:scale-90 transition-transform duration-100 w-16 h-full" href="#">
+<span class="material-symbols-outlined text-[24px] mb-0.5" data-icon="radar" data-weight="fill">radar</span>
+<span class="font-footnote text-[10px] font-medium tracking-tight">Radar</span>
+</a>
+<!-- Wiki -->
+<a class="flex flex-col items-center justify-center text-ios-gray hover:bg-ios-separator/20 active:scale-90 transition-transform duration-100 w-16 h-full" href="#">
+<span class="material-symbols-outlined text-[24px] mb-0.5" data-icon="menu_book">menu_book</span>
+<span class="font-footnote text-[10px] font-medium tracking-tight">Wiki</span>
+</a>
+<!-- Ajustes -->
+<a class="flex flex-col items-center justify-center text-ios-gray hover:bg-ios-separator/20 active:scale-90 transition-transform duration-100 w-16 h-full" href="#">
+<span class="material-symbols-outlined text-[24px] mb-0.5" data-icon="settings">settings</span>
+<span class="font-footnote text-[10px] font-medium tracking-tight">Ajustes</span>
+</a>
+<!-- Analizar -->
+<a class="flex flex-col items-center justify-center text-ios-gray hover:bg-ios-separator/20 active:scale-90 transition-transform duration-100 w-16 h-full" href="#">
+<span class="material-symbols-outlined text-[24px] mb-0.5" data-icon="analytics">analytics</span>
+<span class="font-footnote text-[10px] font-medium tracking-tight">Analizar</span>
+</a>
+</nav>
+</body></html>

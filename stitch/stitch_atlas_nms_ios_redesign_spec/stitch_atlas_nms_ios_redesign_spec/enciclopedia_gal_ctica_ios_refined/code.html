@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/>
+<title>Atlas NMS Encyclopedia</title>
+<!-- Google Fonts & Material Symbols -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        "colors": {
+                "secondary-fixed-dim": "#c8c6c8",
+                "surface-bright": "#393939",
+                "surface-variant": "#353535",
+                "text-secondary": "rgba(235, 235, 245, 0.6)",
+                "on-tertiary-container": "#29292b",
+                "surface-container": "#1C1C1E",
+                "on-secondary": "#303032",
+                "on-tertiary": "#303032",
+                "surface-container-low": "#1b1b1b",
+                "on-tertiary-fixed-variant": "#474649",
+                "surface-container-lowest": "#0e0e0e",
+                "on-secondary-fixed-variant": "#474649",
+                "on-background": "#FFFFFF",
+                "surface": "#000000",
+                "system-orange": "#FF9F0A",
+                "material-bar": "rgba(22, 22, 23, 0.72)",
+                "primary-fixed-dim": "#aac7ff",
+                "background": "#000000",
+                "secondary": "#c8c6c8",
+                "inverse-primary": "#005db8",
+                "on-secondary-container": "#b6b4b7",
+                "inverse-on-surface": "#303030",
+                "primary": "#0A84FF",
+                "tertiary-fixed": "#e4e2e4",
+                "tertiary": "#c8c6c8",
+                "on-error": "#690005",
+                "on-primary-fixed": "#001b3e",
+                "on-primary-container": "#FFFFFF",
+                "error": "#ffb4ab",
+                "surface-dim": "#131313",
+                "outline-variant": "#414754",
+                "on-surface": "#FFFFFF",
+                "separator": "rgba(84, 84, 88, 0.6)",
+                "text-primary": "#FFFFFF",
+                "system-yellow": "#FFD60A",
+                "outline": "#8b91a0",
+                "secondary-container": "#474649",
+                "on-surface-variant": "rgba(235, 235, 245, 0.6)",
+                "surface-container-highest": "#353535",
+                "primary-container": "#0A84FF",
+                "error-container": "#93000a",
+                "surface-tint": "#aac7ff",
+                "inverse-surface": "#e2e2e2",
+                "surface-container-high": "#2a2a2a",
+                "on-error-container": "#ffdad6",
+                "on-secondary-fixed": "#1b1b1d",
+                "primary-fixed": "#d6e3ff",
+                "on-primary-fixed-variant": "#00468d",
+                "secondary-fixed": "#e4e2e4",
+                "tertiary-container": "#919092",
+                "on-primary": "#FFFFFF",
+                "tertiary-fixed-dim": "#c8c6c8",
+                "on-tertiary-fixed": "#1b1b1d"
+        },
+        "borderRadius": {
+                "DEFAULT": "0.25rem",
+                "lg": "0.5rem",
+                "xl": "0.75rem",
+                "full": "9999px"
+        },
+        "spacing": {
+                "margin-screen": "16px",
+                "tab-bar-height": "49px",
+                "gutter-stack": "8px",
+                "padding-cell": "12px",
+                "nav-bar-height": "44px"
+        },
+        "fontFamily": {
+                "footnote": [
+                        "Inter"
+                ],
+                "technical-data": [
+                        "JetBrains Mono"
+                ],
+                "headline": [
+                        "Inter"
+                ],
+                "large-title": [
+                        "Inter"
+                ],
+                "body": [
+                        "Inter"
+                ]
+        },
+        "fontSize": {
+                "footnote": [
+                        "13px",
+                        {
+                                "lineHeight": "18px",
+                                "letterSpacing": "-0.08px",
+                                "fontWeight": "400"
+                        }
+                ],
+                "technical-data": [
+                        "12px",
+                        {
+                                "lineHeight": "16px",
+                                "fontWeight": "500"
+                        }
+                ],
+                "headline": [
+                        "17px",
+                        {
+                                "lineHeight": "22px",
+                                "letterSpacing": "-0.41px",
+                                "fontWeight": "600"
+                        }
+                ],
+                "large-title": [
+                        "34px",
+                        {
+                                "lineHeight": "41px",
+                                "letterSpacing": "0.37px",
+                                "fontWeight": "700"
+                        }
+                ],
+                "body": [
+                        "17px",
+                        {
+                                "lineHeight": "22px",
+                                "letterSpacing": "-0.41px",
+                                "fontWeight": "400"
+                        }
+                ]
+        }
+},
+    },
+  }
+</script>
+<style>
+        /* Hide scrollbar for chips */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        /* Safe area handling for standalone web app mode */
+        @supports (padding-top: env(safe-area-inset-top)) {
+            .pt-safe-nav { padding-top: calc(env(safe-area-inset-top) + 44px); }
+            .pb-safe-tab { padding-bottom: calc(env(safe-area-inset-bottom) + 49px); }
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="bg-background text-text-primary min-h-screen antialiased selection:bg-primary/30">
+<!-- TopAppBar -->
+<nav class="fixed top-0 w-full z-50 bg-material-bar backdrop-blur-xl flex items-center justify-between px-margin-screen h-nav-bar-height pt-[env(safe-area-inset-top)] border-b border-separator">
+<button class="text-primary hover:opacity-80 transition-opacity active:scale-95 duration-150 flex items-center justify-center w-11 h-11 -ml-2">
+<span class="material-symbols-outlined">menu</span>
+</button>
+<span class="font-headline text-headline text-text-primary">Bitácora</span>
+<button class="text-primary hover:opacity-80 transition-opacity active:scale-95 duration-150 flex items-center justify-center w-11 h-11 -mr-2">
+<span class="material-symbols-outlined">account_circle</span>
+</button>
+</nav>
+<!-- Main Content Canvas -->
+<main class="pt-[calc(44px+env(safe-area-inset-top))] pb-[calc(49px+env(safe-area-inset-bottom))]">
+<!-- Large Title -->
+<div class="px-margin-screen pt-4 pb-2">
+<h1 class="font-large-title text-large-title text-text-primary">Enciclopedia</h1>
+</div>
+<!-- iOS Standard Search Bar -->
+<div class="px-margin-screen pb-4">
+<div class="flex items-center bg-[#1C1C1E] rounded-[10px] h-[36px] px-2 text-text-secondary focus-within:ring-2 focus-within:ring-primary/50 transition-shadow">
+<span class="material-symbols-outlined text-[20px] mr-1.5">search</span>
+<input class="bg-transparent border-none outline-none w-full font-body text-body text-text-primary placeholder:text-text-secondary focus:ring-0 p-0" placeholder="Buscar en la enciclopedia..." type="text"/>
+<button class="hidden material-symbols-outlined text-[20px] ml-1.5 text-text-secondary">cancel</button>
+</div>
+</div>
+<!-- Horizontal Chip Categories -->
+<div class="flex overflow-x-auto no-scrollbar gap-2 px-margin-screen pb-6 snap-x">
+<button class="snap-start shrink-0 px-4 py-1.5 rounded-full bg-primary text-text-primary font-headline text-headline text-[15px] transition-transform active:scale-95">Todos</button>
+<button class="snap-start shrink-0 px-4 py-1.5 rounded-full bg-[#1C1C1E] text-text-primary font-body text-body text-[15px] hover:bg-surface-variant transition-colors active:scale-95">Navegación</button>
+<button class="snap-start shrink-0 px-4 py-1.5 rounded-full bg-[#1C1C1E] text-text-primary font-body text-body text-[15px] hover:bg-surface-variant transition-colors active:scale-95">Recursos</button>
+<button class="snap-start shrink-0 px-4 py-1.5 rounded-full bg-[#1C1C1E] text-text-primary font-body text-body text-[15px] hover:bg-surface-variant transition-colors active:scale-95">Naves</button>
+<button class="snap-start shrink-0 px-4 py-1.5 rounded-full bg-[#1C1C1E] text-text-primary font-body text-body text-[15px] hover:bg-surface-variant transition-colors active:scale-95">Lore</button>
+</div>
+<!-- Grouped Inset List (Guide Topics) -->
+<div class="px-margin-screen">
+<div class="bg-surface-container rounded-[10px] flex flex-col overflow-hidden">
+<!-- Cell 1 -->
+<a class="flex items-start p-padding-cell gap-3 border-b border-separator last:border-0 hover:bg-surface-variant active:bg-surface-container-highest transition-colors" href="#">
+<div class="w-10 h-10 rounded-lg bg-primary/20 flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">rocket_launch</span>
+</div>
+<div class="flex-1 min-w-0 pt-0.5">
+<h3 class="font-headline text-headline text-text-primary truncate">Mecánicas de Vuelo Atmosférico</h3>
+<p class="font-footnote text-footnote text-text-secondary line-clamp-2 mt-0.5">Aprende a dominar las corrientes de viento y la gestión de propulsores al entrar en atmósferas densas de planetas de clase G.</p>
+<div class="mt-2 flex gap-2">
+<span class="font-technical-data text-technical-data text-text-secondary">#navegacion</span>
+<span class="font-technical-data text-technical-data text-text-secondary">#avanzado</span>
+</div>
+</div>
+<span class="material-symbols-outlined text-text-secondary self-center shrink-0 ml-2">chevron_right</span>
+</a>
+<!-- Cell 2 -->
+<a class="flex items-start p-padding-cell gap-3 border-b border-separator last:border-0 hover:bg-surface-variant active:bg-surface-container-highest transition-colors" href="#">
+<div class="w-10 h-10 rounded-lg bg-primary/20 flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">diamond</span>
+</div>
+<div class="flex-1 min-w-0 pt-0.5">
+<h3 class="font-headline text-headline text-text-primary truncate">Extracción de Isótopos Raros</h3>
+<p class="font-footnote text-footnote text-text-secondary line-clamp-2 mt-0.5">Guía de localizaciones óptimas y calibración del láser minero para maximizar la recolección de Thamium9 y Plutonio.</p>
+<div class="mt-2 flex gap-2">
+<span class="font-technical-data text-technical-data text-text-secondary">#recursos</span>
+<span class="font-technical-data text-technical-data text-text-secondary">#supervivencia</span>
+</div>
+</div>
+<span class="material-symbols-outlined text-text-secondary self-center shrink-0 ml-2">chevron_right</span>
+</a>
+<!-- Cell 3 -->
+<a class="flex items-start p-padding-cell gap-3 border-b border-separator last:border-0 hover:bg-surface-variant active:bg-surface-container-highest transition-colors" href="#">
+<div class="w-10 h-10 rounded-lg bg-primary/20 flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">public</span>
+</div>
+<div class="flex-1 min-w-0 pt-0.5">
+<h3 class="font-headline text-headline text-text-primary truncate">La Historia de los Korvax</h3>
+<p class="font-footnote text-footnote text-text-secondary line-clamp-2 mt-0.5">Archivos desencriptados sobre la convergencia, su devoción al Atlas y la historia de su esclavitud por los Vy'keen.</p>
+<div class="mt-2 flex gap-2">
+<span class="font-technical-data text-technical-data text-text-secondary">#lore</span>
+<span class="font-technical-data text-technical-data text-text-secondary">#korvax</span>
+</div>
+</div>
+<span class="material-symbols-outlined text-text-secondary self-center shrink-0 ml-2">chevron_right</span>
+</a>
+</div>
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full h-tab-bar-height z-50 flex justify-around items-start pt-2 px-padding-cell pb-[env(safe-area-inset-bottom)] bg-material-bar backdrop-blur-xl border-t border-separator">
+<!-- Item 1: Bitácora -->
+<button class="flex flex-col items-center justify-center text-text-secondary hover:bg-surface-container-high/20 active:scale-90 transition-all duration-100 w-16 rounded-xl py-1">
+<span class="material-symbols-outlined mb-1">list_alt</span>
+<span class="font-footnote text-footnote text-[10px] leading-none">Bitácora</span>
+</button>
+<!-- Item 2: Radar -->
+<button class="flex flex-col items-center justify-center text-text-secondary hover:bg-surface-container-high/20 active:scale-90 transition-all duration-100 w-16 rounded-xl py-1">
+<span class="material-symbols-outlined mb-1">radar</span>
+<span class="font-footnote text-footnote text-[10px] leading-none">Radar</span>
+</button>
+<!-- Item 3: Wiki (ACTIVE) -->
+<button class="flex flex-col items-center justify-center text-primary active:scale-90 transition-all duration-100 w-16 rounded-xl py-1">
+<span class="material-symbols-outlined mb-1" style="font-variation-settings: 'FILL' 1;">menu_book</span>
+<span class="font-footnote text-footnote text-[10px] leading-none font-semibold">Wiki</span>
+</button>
+<!-- Item 4: Ajustes -->
+<button class="flex flex-col items-center justify-center text-text-secondary hover:bg-surface-container-high/20 active:scale-90 transition-all duration-100 w-16 rounded-xl py-1">
+<span class="material-symbols-outlined mb-1">settings</span>
+<span class="font-footnote text-footnote text-[10px] leading-none">Ajustes</span>
+</button>
+<!-- Item 5: Analizar -->
+<button class="flex flex-col items-center justify-center text-text-secondary hover:bg-surface-container-high/20 active:scale-90 transition-all duration-100 w-16 rounded-xl py-1">
+<span class="material-symbols-outlined mb-1">analytics</span>
+<span class="font-footnote text-footnote text-[10px] leading-none">Analizar</span>
+</button>
+</nav>
+</body></html>

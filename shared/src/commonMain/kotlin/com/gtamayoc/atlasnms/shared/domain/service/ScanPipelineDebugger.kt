@@ -73,7 +73,8 @@ object ScanPipelineDebugger {
             summary = summary,
             details = details
         )
-        _logs.value = _logs.value + newEntry
+        val updatedList = (_logs.value + newEntry).takeLast(100)
+        _logs.value = updatedList
     }
 
     fun updateTelemetry(transform: (PipelineTelemetrySnapshot) -> PipelineTelemetrySnapshot) {

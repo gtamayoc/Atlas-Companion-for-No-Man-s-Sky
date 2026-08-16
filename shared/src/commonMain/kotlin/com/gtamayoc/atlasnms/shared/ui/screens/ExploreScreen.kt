@@ -75,13 +75,22 @@ fun ExploreScreen(
             ) {
                 when (val state = uiState) {
                     is HomeUiState.Loading -> {
-                        CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+                        com.gtamayoc.atlasnms.shared.ui.components.AtlasLoadingOverlay(
+                            message = "ESCANEANDO RED DE EXPLORACIÓN...",
+                            subMessage = "Filtrando firmas cuánticas del sector"
+                        )
                     }
                     is HomeUiState.Error -> {
-                        Text(
-                            text = "Error: ${state.message}",
-                            modifier = Modifier.align(Alignment.Center)
-                        )
+                        Box(
+                            modifier = Modifier.fillMaxSize().padding(32.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = "Error de conexión: ${state.message}",
+                                style = MaterialTheme.typography.titleMedium,
+                                color = MaterialTheme.colorScheme.error
+                            )
+                        }
                     }
                     is HomeUiState.Success -> {
                         val filteredDiscoveries by remember(searchQuery, selectedTypeFilter, state.discoveries) {

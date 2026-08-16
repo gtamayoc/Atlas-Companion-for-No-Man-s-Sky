@@ -162,7 +162,7 @@ class ScanViewModel(
         }
     }
 
-    fun saveFinalDiscovery(onSuccess: () -> Unit) {
+    fun saveFinalDiscovery() {
         val discovery = Discovery(
             id = currentTimeMillis().toString(),
             type = _userVerifiedType.value,
@@ -178,10 +178,7 @@ class ScanViewModel(
 
         viewModelScope.launch(Dispatchers.Default) {
             repository.saveDiscovery(discovery)
-            withContext(Dispatchers.Main) {
-                _currentStage.value = AnalysisStage.STAGE_5_COMPLETED
-                onSuccess()
-            }
+            _currentStage.value = AnalysisStage.STAGE_5_COMPLETED
         }
     }
 }

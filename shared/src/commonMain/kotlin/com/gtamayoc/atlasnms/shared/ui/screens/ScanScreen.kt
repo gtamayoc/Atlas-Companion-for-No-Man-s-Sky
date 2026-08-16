@@ -36,6 +36,7 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
@@ -97,6 +98,12 @@ fun ScanScreen(
     val selectedImageUri by viewModel.selectedImageUri.collectAsState()
     val isOcrRunning by viewModel.isOcrRunning.collectAsState()
     val isAiRunning by viewModel.isAiRunning.collectAsState()
+
+    LaunchedEffect(currentStage) {
+        if (currentStage == AnalysisStage.STAGE_5_COMPLETED) {
+            onDiscoverySaved()
+        }
+    }
 
     var showDevDebugDrawer by remember { mutableStateOf(false) }
     var showPhotoOverlayModal by remember { mutableStateOf(false) }
@@ -221,23 +228,10 @@ fun ScanScreen(
                             }
 
                             if (isOcrRunning || isAiRunning) {
-                                Box(
-                                    modifier = Modifier
-                                        .fillMaxSize()
-                                        .background(MaterialTheme.colorScheme.surface.copy(alpha = 0.85f)),
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                        CircularProgressIndicator(color = AmberDustHighlight)
-                                        Spacer(modifier = Modifier.height(8.dp))
-                                        Text(
-                                            text = if (isOcrRunning) "Analizando texto y visión..." else "Estructurando con IA Multimodal...",
-                                            style = MaterialTheme.typography.labelMedium,
-                                            color = AmberDustHighlight,
-                                            fontWeight = FontWeight.Bold
-                                        )
-                                    }
-                                }
+                                com.gtamayoc.atlasnms.shared.ui.components.AtlasLoadingOverlay(
+                                    message = if (isOcrRunning) "PROCESANDO VISIÓN OPTICA Y OCR..." else "ANALIZANDO CON IA MULTIMODAL...",
+                                    subMessage = if (isOcrRunning) "Extrayendo glifos, textos y metadatos" else "Sintetizando clasificación del hallazgo"
+                                )
                             }
                         }
 
@@ -453,7 +447,7 @@ fun ScanScreen(
                             ) {
                                 OutlinedButton(
                                     onClick = {
-                                        viewModel.saveFinalDiscovery(onDiscoverySaved)
+                                        viewModel.saveFinalDiscovery()
                                     },
                                     modifier = Modifier.weight(1f),
                                     shape = RoundedCornerShape(4.dp)
@@ -513,7 +507,7 @@ fun ScanScreen(
 
                             Button(
                                 onClick = {
-                                    viewModel.saveFinalDiscovery(onDiscoverySaved)
+                                    viewModel.saveFinalDiscovery()
                                 },
                                 modifier = Modifier.fillMaxWidth(),
                                 colors = ButtonDefaults.buttonColors(containerColor = AmberDustHighlight),

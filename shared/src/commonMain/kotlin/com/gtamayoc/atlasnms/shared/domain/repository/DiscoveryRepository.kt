@@ -4,6 +4,7 @@ import com.gtamayoc.atlasnms.shared.domain.model.Discovery
 import kotlinx.coroutines.flow.Flow
 
 interface DiscoveryRepository {
+    suspend fun initialize()
     fun getAllDiscoveries(): Flow<List<Discovery>>
     suspend fun getDiscoveryById(id: String): Discovery?
     suspend fun saveDiscovery(discovery: Discovery)

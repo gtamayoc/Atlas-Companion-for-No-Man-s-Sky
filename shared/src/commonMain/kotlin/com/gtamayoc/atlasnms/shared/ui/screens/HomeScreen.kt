@@ -73,63 +73,72 @@ fun HomeScreen(
     ) {
         when (val state = uiState) {
             is HomeUiState.Loading -> {
-                    CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
-                }
-                is HomeUiState.Error -> {
+                com.gtamayoc.atlasnms.shared.ui.components.AtlasLoadingOverlay(
+                    message = "CARGANDO BITÁCORA GALÁCTICA...",
+                    subMessage = "Recuperando registros de exploraciones"
+                )
+            }
+            is HomeUiState.Error -> {
+                Box(
+                    modifier = Modifier.fillMaxSize().padding(spacing.xxl),
+                    contentAlignment = Alignment.Center
+                ) {
                     Text(
-                        text = "Error: ${state.message}",
+                        text = "Error de enlace: ${state.message}",
                         color = MaterialTheme.colorScheme.error,
-                        modifier = Modifier.align(Alignment.Center)
+                        style = MaterialTheme.typography.titleMedium,
+                        textAlign = TextAlign.Center
                     )
                 }
-                is HomeUiState.Success -> {
-                    if (state.discoveries.isEmpty()) {
-                        Box(
-                            modifier = Modifier.fillMaxSize().padding(spacing.xxl),
-                            contentAlignment = Alignment.Center
+            }
+            is HomeUiState.Success -> {
+                if (state.discoveries.isEmpty()) {
+                    Box(
+                        modifier = Modifier.fillMaxSize().padding(spacing.xxl),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.spacedBy(spacing.md)
                         ) {
-                            Column(
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                                verticalArrangement = Arrangement.spacedBy(spacing.md)
+                            Text(
+                                text = "BITÁCORA VACÍA",
+                                style = MaterialTheme.typography.titleLarge,
+                                color = MaterialTheme.colorScheme.primary,
+                                fontWeight = FontWeight.Bold
+                            )
+                            Text(
+                                text = "Aún no se han registrado descubrimientos en este sector galáctico. Presiona ANALIZAR para registrar tu primer hallazgo.",
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                textAlign = TextAlign.Center
+                            )
+                        }
+                    }
+                } else if (state.filteredDiscoveries.isEmpty()) {
+                    Box(
+                        modifier = Modifier.fillMaxSize().padding(spacing.xxl),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.spacedBy(spacing.md)
+                        ) {
+                            Text(
+                                text = "SIN RESULTADOS CON EL FILTRO ACTUAL",
+                                style = MaterialTheme.typography.titleMedium,
+                                color = MaterialTheme.colorScheme.secondary,
+                                fontWeight = FontWeight.Bold
+                            )
+                            OutlinedButton(
+                                onClick = { viewModel.clearFilters() },
+                                shape = RoundedCornerShape(AtlasDimensions.corners.extraSmall)
                             ) {
-                                Text(
-                                    text = "BITÁCORA VACÍA",
-                                    style = MaterialTheme.typography.titleMedium,
-                                    color = MaterialTheme.colorScheme.primary,
-                                    fontWeight = FontWeight.Bold
-                                )
-                                Text(
-                                    text = "Aún no se han registrado descubrimientos en este sector galáctico. Presiona ANALIZAR para registrar tu primer hallazgo.",
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                    textAlign = TextAlign.Center
-                                )
+                                Text("LIMPIAR FILTROS", style = MaterialTheme.typography.labelLarge)
                             }
                         }
-                    } else if (state.filteredDiscoveries.isEmpty()) {
-                        Box(
-                            modifier = Modifier.fillMaxSize().padding(spacing.xxl),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Column(
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                                verticalArrangement = Arrangement.spacedBy(spacing.md)
-                            ) {
-                                Text(
-                                    text = "SIN RESULTADOS CON EL FILTRO ACTUAL",
-                                    style = MaterialTheme.typography.titleSmall,
-                                    color = MaterialTheme.colorScheme.secondary,
-                                    fontWeight = FontWeight.Bold
-                                )
-                                OutlinedButton(
-                                    onClick = { viewModel.clearFilters() },
-                                    shape = RoundedCornerShape(AtlasDimensions.corners.small)
-                                ) {
-                                    Text("LIMPIAR FILTROS")
-                                }
-                            }
-                        }
-                    } else {
+                    }
+                } else {
                         LazyColumn(
                             contentPadding = PaddingValues(spacing.lg),
                             verticalArrangement = Arrangement.spacedBy(spacing.lg),

@@ -7,6 +7,7 @@ import com.gtamayoc.atlasnms.shared.domain.model.Discovery
 import com.gtamayoc.atlasnms.shared.domain.model.DiscoveryStatus
 import com.gtamayoc.atlasnms.shared.domain.model.DiscoveryType
 import com.gtamayoc.atlasnms.shared.domain.repository.DiscoveryRepository
+import com.gtamayoc.atlasnms.shared.domain.service.SettingsManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -20,9 +21,9 @@ class DiscoveryRepositoryImpl(
 
     private val queries = database.atlasDatabaseQueries
 
-    init {
-        CoroutineScope(Dispatchers.Default).launch {
-            com.gtamayoc.atlasnms.shared.domain.service.SettingsManager.initialize(database)
+    override suspend fun initialize() {
+        withContext(Dispatchers.Default) {
+            SettingsManager.initialize(database)
         }
     }
 

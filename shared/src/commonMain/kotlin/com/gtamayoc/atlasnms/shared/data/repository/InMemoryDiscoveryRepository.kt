@@ -8,6 +8,10 @@ import kotlinx.coroutines.flow.MutableStateFlow
 class InMemoryDiscoveryRepository : DiscoveryRepository {
     private val discoveries = MutableStateFlow<List<Discovery>>(emptyList())
 
+    override suspend fun initialize() {
+        // Sin operaciones asíncronas de inicialización requeridas para simulación en memoria
+    }
+
     override fun getAllDiscoveries(): Flow<List<Discovery>> {
         return discoveries
     }
